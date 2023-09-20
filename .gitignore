@@ -1,3 +1,4 @@
 .idea
 wdm.log
 .webdriver
+__pycache__
