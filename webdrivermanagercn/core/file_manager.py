@@ -32,7 +32,7 @@ class FileManager:
 
     def driver_path(self):
         suffix = ''
-        if OSManager.get_os_name == OSType.WIN:
+        if OSManager().get_os_name == OSType.WIN:
             suffix = '.exe'
         driver_name = self.__driver_name + suffix
         for i in self.unpack_list():

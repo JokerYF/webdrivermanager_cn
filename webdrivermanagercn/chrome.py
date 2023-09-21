@@ -1,6 +1,6 @@
 import os
 
-from drivers.chrome import ChromeDriver
+from webdrivermanagercn.drivers.chrome import ChromeDriver
 
 
 class ChromeDriverManager(ChromeDriver):
@@ -12,4 +12,4 @@ class ChromeDriverManager(ChromeDriver):
 
 
 if __name__ == '__main__':
-    print(ChromeDriverManager('113.0.5672.63', os.getcwd()).install())
+    print(ChromeDriverManager('', os.getcwd()).install())

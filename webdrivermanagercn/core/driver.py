@@ -5,7 +5,6 @@ import os.path
 from packaging import version as vs
 from requests import HTTPError
 
-from webdrivermanagercn.core.config import wdm_logger as log
 from webdrivermanagercn.core.download_manager import DownloadManager
 from webdrivermanagercn.core.driver_cache import DriverCacheManager
 from webdrivermanagercn.core.file_manager import FileManager
@@ -17,7 +16,6 @@ class DriverManager(metaclass=abc.ABCMeta):
         self.version = version
         self.__cache_manager = DriverCacheManager(root_dir=root_dir)
         self.__driver_path = os.path.join(self.__cache_manager.root_dir, self.driver_name, self.version)
-        log.info(f'{"#" * 20} WebDriverManager {"#" * 20}')
 
     @property
     def version_parse(self):
@@ -51,12 +49,10 @@ class DriverManager(metaclass=abc.ABCMeta):
     def install(self):
         driver_path = self.get_cache()
         if not driver_path:
-            log.info(f'缓存不存在: {self.driver_name} - {self.version}')
             try:
                 driver_path = self.download()
             except HTTPError:
                 raise Exception(f'无版本: {self.driver_name} - {self.version}')
             self.__set_cache(driver_path)
         os.chmod(driver_path, 0o755)
-        log.info(f'driver 路径: {driver_path}')
         return driver_path

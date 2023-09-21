@@ -1,12 +1,13 @@
 from webdrivermanagercn.core import config
 from webdrivermanagercn.core.driver import DriverManager
-from webdrivermanagercn.core.os_manager import OSManager, GetVersion, ClientType
+from webdrivermanagercn.core.os_manager import OSManager, OSType
+from webdrivermanagercn.core.version_manager import GetClientVersion, ClientType
 
 
 class ChromeDriver(DriverManager):
     def __init__(self, version=None, root_dir=None):
         if not version:
-            version = GetVersion().get_version(ClientType.Chrome)
+            version = GetClientVersion().get_version(ClientType.Chrome)
         super().__init__(driver_name='chromedriver', version=version, root_dir=root_dir)
 
     def download_url(self):
@@ -34,10 +35,11 @@ class ChromeDriver(DriverManager):
         if os_type:
             return os_type
         _os_type = f"{os_info.get_os_type}{os_info.get_framework}"
-        if mac_format:
-            mac_suffix = os_info.get_mac_framework
-            if mac_suffix and mac_suffix in _os_type:
-                return "mac-arm64"
-            else:
-                return "mac-x64"
+        if os_info.get_os_name == OSType.MAC:
+            if mac_format:
+                mac_suffix = os_info.get_mac_framework
+                if mac_suffix and mac_suffix in _os_type:
+                    return "mac-arm64"
+                else:
+                    return "mac-x64"
         return _os_type

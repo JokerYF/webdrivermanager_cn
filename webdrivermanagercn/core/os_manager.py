@@ -3,8 +3,6 @@
 """
 
 import platform
-import re
-import subprocess
 import sys
 
 
@@ -12,19 +10,6 @@ class OSType:
     LINUX = "linux"
     MAC = "mac"
     WIN = "win"
-
-
-class ClientType:
-    Chrome = "google-chrome"
-    Chromium = "chromium"
-    Edge = "edge"
-    Firefox = "firefox"
-    Safari = "safari"
-
-
-CLIENT_PATTERN = {
-    ClientType.Chrome: r"\d+\.\d+\.\d+.\d+",
-}
 
 
 class OSManager:
@@ -105,39 +90,4 @@ class OSManager:
             return self.get_mac_framework
         elif self.get_os_name == OSType.LINUX:
             ...
-        return None
-
-
-class GetVersion:
-    @staticmethod
-    def cmd_dict(client):
-        os_type = OSManager().get_os_name
-        cmd_map = {
-            OSType.MAC: {
-                ClientType.Chrome: "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
-            },
-            OSType.WIN: {},
-            OSType.LINUX: {},
-        }
-        return cmd_map[os_type][client], CLIENT_PATTERN[client]
-
-    def get_version(self, client):
-        return self.read_version_from_cmd(*self.cmd_dict(client))
-
-    @staticmethod
-    def read_version_from_cmd(cmd, pattern):
-        with subprocess.Popen(
-                cmd,
-                stdout=subprocess.PIPE,
-                stdin=subprocess.DEVNULL,
-                shell=True,
-        ) as stream:
-            stdout = stream.communicate()[0].decode()
-            version = re.search(pattern, stdout)
-            version = version.group(0) if version else None
-        return version
-
-
-if __name__ == "__main__":
-    # print(RunCmd().get_version(ClientType.Chrome))
-    print(OSManager().get_os_info())
+        return ''
