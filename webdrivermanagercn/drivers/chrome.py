@@ -5,10 +5,10 @@ from webdrivermanagercn.core.version_manager import GetClientVersion, ClientType
 
 
 class ChromeDriver(DriverManager):
-    def __init__(self, version=None, root_dir=None):
+    def __init__(self, version=None, path=None):
         if not version:
             version = GetClientVersion().get_version(ClientType.Chrome)
-        super().__init__(driver_name='chromedriver', version=version, root_dir=root_dir)
+        super().__init__(driver_name='chromedriver', version=version, root_dir=path)
 
     def download_url(self):
         if self.version_parse.major <= 114:
