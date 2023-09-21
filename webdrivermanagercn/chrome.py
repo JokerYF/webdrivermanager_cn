@@ -7,3 +7,7 @@ class ChromeDriverManager(ChromeDriver):
 
     def install(self):
         return super().install()
+
+
+if __name__ == '__main__':
+    print(ChromeDriverManager(version='85.0.4183.83').install())

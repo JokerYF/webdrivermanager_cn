@@ -21,8 +21,7 @@ class ChromeDriver(DriverManager):
         url = f'{host}{self.version}/{params}'
         return url
 
-    @staticmethod
-    def get_os_info(os_type=None, mac_format=True):
+    def get_os_info(self, os_type=None, mac_format=True):
         """
         格式化操作系统类型
         用于拼接下载url相关信息
@@ -42,4 +41,7 @@ class ChromeDriver(DriverManager):
                     return "mac-arm64"
                 else:
                     return "mac-x64"
+        elif os_info.get_os_name == OSType.WIN:
+            if not GetClientVersion(self.version).is_new_version:
+                return 'win32'
         return _os_type

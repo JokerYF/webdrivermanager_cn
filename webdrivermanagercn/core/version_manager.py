@@ -37,8 +37,12 @@ class GetUrl:
         return vs.parse(self._version)
 
     @property
+    def is_new_version(self):
+        return self._version_obj.major >= 115
+
+    @property
     def get_host(self):
-        if self._version_obj.major >= 115:
+        if self.is_new_version:
             return config.ChromeDriverUrlNew
         else:
             return config.ChromeDriverUrl
@@ -48,8 +52,7 @@ class GetUrl:
         return [i['name'].replace('/', '') for i in requests.get(self.get_host).json()]
 
     def get_correct_version(self):
-        _version = self._version
-        return self.__compare_versions(_version, self._version_list)
+        return self.__compare_versions(self._version, self._version_list)
 
     @staticmethod
     def __compare_versions(target_version, version_list):
@@ -75,6 +78,10 @@ class GetClientVersion(GetUrl):
     """
     获取当前环境下浏览器版本
     """
+
+    def __init__(self, version=''):
+        super().__init__()
+        self._version = version
 
     @staticmethod
     def cmd_dict(client):
@@ -104,5 +111,6 @@ class GetClientVersion(GetUrl):
         return version
 
     def get_version(self, client):
-        self._version = self.__read_version_from_cmd(*self.cmd_dict(client))
+        if not self._version:
+            self._version = self.__read_version_from_cmd(*self.cmd_dict(client))
         return self.get_correct_version()
