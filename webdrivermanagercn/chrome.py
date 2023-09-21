@@ -1,5 +1,3 @@
-import os
-
 from webdrivermanagercn.drivers.chrome import ChromeDriver
 
 
@@ -9,7 +7,3 @@ class ChromeDriverManager(ChromeDriver):
 
     def install(self):
         return super().install()
-
-
-if __name__ == '__main__':
-    print(ChromeDriverManager('', os.getcwd()).install())
