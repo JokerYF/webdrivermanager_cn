@@ -21,10 +21,9 @@ stages:
         commands:
           - pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
           - '# 可以使用pip下载依赖'
-          - pip install --user -r requirements.txt
           - python --version
-          - echo --user
-          - echo ${GITEE_REPO}
+          - pip install --user -r requirements.txt
+          - python ${GITEE_REPO}/setup.py bdist_wheel
         artifacts:
           - name: BUILD_ARTIFACT
             path:
