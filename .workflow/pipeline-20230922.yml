@@ -23,7 +23,7 @@ stages:
           - '# 可以使用pip下载依赖'
           - python --version
           - pip install --user -r requirements.txt
-          - python ${GITEE_REPO}/setup.py bdist_wheel
+          - python setup.py bdist_wheel
         artifacts:
           - name: BUILD_ARTIFACT
             path:
