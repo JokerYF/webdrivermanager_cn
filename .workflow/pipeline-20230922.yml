@@ -23,7 +23,7 @@ stages:
           - '# 可以使用pip下载依赖'
           - python --version
           - pip install --user -r requirements.txt
-          - python setup.py .
+          - python setup.py
         artifacts:
           - name: BUILD_ARTIFACT
             path:
