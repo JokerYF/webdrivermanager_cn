@@ -30,9 +30,11 @@ stages:
           - '# 安装指定打包模块'
           - pip install setuptools wheel twine
           - ''
-          - '# 发布到pipy测试环境'
-          - python setup.py bdist_wheel
+          - '# 编译为wheel包'
+          - 'python setup.py bdist_wheel '
           - ''
+          - '# 上传到pipy测试环境'
+          - twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u ${pipy_user} -p ${pipy_pwd}
           - ''
         artifacts:
           - name: BUILD_ARTIFACT
