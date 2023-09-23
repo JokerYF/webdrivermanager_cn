@@ -1,6 +1,6 @@
 version: '1.0'
 name: pipeline-20230922
-displayName: 发布到测试pipy
+displayName: 发布到 pypi test
 triggers:
   trigger: manual
   push:
@@ -12,7 +12,7 @@ variables:
     - pipy_test_api_account_token
 stages:
   - name: stage-3cda854d
-    displayName: step1
+    displayName: wheel 文件构建并发布
     strategy: naturally
     trigger: auto
     executor: []
