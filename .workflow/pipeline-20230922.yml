@@ -20,11 +20,20 @@ stages:
         pythonVersion: '3.8'
         commands:
           - pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+          - ''
           - '# 可以使用pip下载依赖'
           - python --version
+          - ''
+          - '# 安装项目依赖'
           - pip install --user -r requirements.txt
-          - pip install setuptools wheel
+          - ''
+          - '# 安装指定打包模块'
+          - pip install setuptools wheel twine
+          - ''
+          - '# 发布到pipy测试环境'
           - python setup.py bdist_wheel
+          - ''
+          - ''
         artifacts:
           - name: BUILD_ARTIFACT
             path:
