@@ -10,6 +10,7 @@ triggers:
 variables:
   global:
     - pipy_test_api_account_token
+    - pipy_user
 stages:
   - name: stage-3cda854d
     displayName: step1
