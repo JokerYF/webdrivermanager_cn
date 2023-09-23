@@ -1,5 +1,5 @@
 """
-搜索版本，如果版本不存在，则找大一或者小一版本
+搜索版本，如果版本不存在，则找比当前小一版本
 """
 import re
 import subprocess
@@ -34,14 +34,26 @@ class GetUrl:
 
     @property
     def _version_obj(self):
+        """
+        获取版本解析对象
+        :return:
+        """
         return vs.parse(self._version)
 
     @property
     def is_new_version(self):
+        """
+        判断是否为新版本（chrome）
+        :return:
+        """
         return self._version_obj.major >= 115
 
     @property
     def get_host(self):
+        """
+        根据判断获取chromedriver的url
+        :return:
+        """
         if self.is_new_version:
             return config.ChromeDriverUrlNew
         else:
@@ -49,9 +61,17 @@ class GetUrl:
 
     @property
     def _version_list(self):
+        """
+        解析driver url，获取所有driver版本
+        :return:
+        """
         return [i['name'].replace('/', '') for i in requests.get(self.get_host).json()]
 
     def get_correct_version(self):
+        """
+        根据传入的版本号，判断是否存在，如果不存在，则返回与它最近的小一版本
+        :return:
+        """
         return self.__compare_versions(self._version, self._version_list)
 
     @staticmethod
@@ -85,6 +105,11 @@ class GetClientVersion(GetUrl):
 
     @staticmethod
     def cmd_dict(client):
+        """
+        根据不同操作系统、不同客户端，返回获取版本号的命令、正则表达式
+        :param client:
+        :return:
+        """
         os_type = OSManager().get_os_name
         cmd_map = {
             OSType.MAC: {
@@ -99,6 +124,12 @@ class GetClientVersion(GetUrl):
 
     @staticmethod
     def __read_version_from_cmd(cmd, pattern):
+        """
+        执行命令，并根据传入的正则表达式，获取到正确的版本号
+        :param cmd:
+        :param pattern:
+        :return:
+        """
         with subprocess.Popen(
                 cmd,
                 stdout=subprocess.PIPE,
@@ -111,6 +142,12 @@ class GetClientVersion(GetUrl):
         return version
 
     def get_version(self, client):
+        """
+        获取指定浏览器版本
+        如果当前类的属性中有版本号，则直接返回目标版本号
+        :param client:
+        :return:
+        """
         if not self._version:
             self._version = self.__read_version_from_cmd(*self.cmd_dict(client))
         return self.get_correct_version()
