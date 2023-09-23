@@ -37,7 +37,7 @@ stages:
           - 'python setup.py bdist_wheel '
           - ''
           - '# 上传到pipy测试环境'
-          - twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u ${pipy_user} -p ${pipy_test_api_account_token}
+          - python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u ${pipy_user} -p ${pipy_test_api_account_token}
           - ''
         artifacts:
           - name: BUILD_ARTIFACT
