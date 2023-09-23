@@ -23,7 +23,8 @@ stages:
           - '# 可以使用pip下载依赖'
           - python --version
           - pip install --user -r requirements.txt
-          - python setup.py --help
+          - pip install setuptools wheel
+          - python setup.py bdist_wheel
         artifacts:
           - name: BUILD_ARTIFACT
             path:
