@@ -7,6 +7,9 @@ triggers:
     branches:
       prefix:
         - ''
+variables:
+  global:
+    - pipy_test_api_account_token
 stages:
   - name: stage-3cda854d
     displayName: step1
@@ -34,7 +37,7 @@ stages:
           - 'python setup.py bdist_wheel '
           - ''
           - '# 上传到pipy测试环境'
-          - twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u ${pipy_user} -p ${pipy_pwd}
+          - twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u ${pipy_user} -p ${pipy_test_api_account_token}
           - ''
         artifacts:
           - name: BUILD_ARTIFACT
