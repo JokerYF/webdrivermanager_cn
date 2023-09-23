@@ -1,6 +1,6 @@
 version: '1.0'
 name: pipeline-20230922
-displayName: pipeline-20230922
+displayName: 发布到测试pipy
 triggers:
   trigger: manual
   push:
