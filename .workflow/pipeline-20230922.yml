@@ -1,6 +1,6 @@
 version: '1.0'
 name: pipeline-20230922
-displayName: 发布到 pypi test
+displayName: 发布到pypi_test
 triggers:
   trigger: manual
   push:
@@ -9,7 +9,7 @@ triggers:
         - ''
 variables:
   global:
-    - pipy_test_api_account_token
+    - pypi_test_account_token
 stages:
   - name: stage-3cda854d
     displayName: wheel 文件构建并发布
@@ -37,7 +37,7 @@ stages:
           - 'python setup.py bdist_wheel '
           - ''
           - '# 上传到pipy测试环境'
-          - python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u __token__ -p ${pipy_test_api_account_token}
+          - python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u __token__ -p ${pypi_test_account_token}
           - ''
         artifacts:
           - name: BUILD_ARTIFACT
