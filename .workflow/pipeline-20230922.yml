@@ -34,7 +34,7 @@ stages:
           - pip install setuptools wheel twine
           - ''
           - '# 编译为wheel包'
-          - 'python setup.py bdist_wheel '
+          - python setup.py bdist_wheel
           - ''
           - '# 上传到pipy测试环境'
           - python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u __token__ -p ${pypi_test_account_token}
