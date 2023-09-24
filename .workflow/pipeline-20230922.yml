@@ -2,11 +2,11 @@ version: '1.0'
 name: pipeline-20230922
 displayName: 发布到pypi_test
 triggers:
-  trigger: manual
+  trigger: auto
   push:
-    branches:
+    tags:
       prefix:
-        - ''
+        - V
 variables:
   global:
     - pypi_test_account_token
