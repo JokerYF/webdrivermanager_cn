@@ -1,4 +1,4 @@
-from webdrivermanagercn.drivers.geckodriver import Geckodriver
+from webdrivermanager_cn.drivers.geckodriver import Geckodriver
 
 
 class GeckodriverManager(Geckodriver):

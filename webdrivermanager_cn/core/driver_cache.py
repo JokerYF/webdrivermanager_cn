@@ -4,7 +4,7 @@ Driver 缓存记录
 import json
 import os
 
-from webdrivermanagercn.core.os_manager import OSManager
+from webdrivermanager_cn.core.os_manager import OSManager
 
 
 class DriverCacheManager:

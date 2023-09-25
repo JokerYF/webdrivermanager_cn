@@ -7,8 +7,8 @@ import subprocess
 import requests
 from packaging import version as vs
 
-from webdrivermanagercn.core import config
-from webdrivermanagercn.core.os_manager import OSManager, OSType
+from webdrivermanager_cn.core import config
+from webdrivermanager_cn.core.os_manager import OSManager, OSType
 
 
 class ClientType:

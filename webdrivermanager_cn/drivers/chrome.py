@@ -1,7 +1,7 @@
-from webdrivermanagercn.core import config
-from webdrivermanagercn.core.driver import DriverManager
-from webdrivermanagercn.core.os_manager import OSManager, OSType
-from webdrivermanagercn.core.version_manager import GetClientVersion, ClientType
+from webdrivermanager_cn.core import config
+from webdrivermanager_cn.core.driver import DriverManager
+from webdrivermanager_cn.core.os_manager import OSManager, OSType
+from webdrivermanager_cn.core.version_manager import GetClientVersion, ClientType
 
 
 class ChromeDriver(DriverManager):

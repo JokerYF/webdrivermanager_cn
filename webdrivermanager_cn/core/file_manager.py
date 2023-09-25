@@ -5,7 +5,7 @@ import os.path
 import tarfile
 import zipfile
 
-from webdrivermanagercn.core.os_manager import OSManager, OSType
+from webdrivermanager_cn.core.os_manager import OSManager, OSType
 
 
 class FileManager:
