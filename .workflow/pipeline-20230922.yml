@@ -15,7 +15,8 @@ stages:
     displayName: wheel 文件构建并发布
     strategy: naturally
     trigger: auto
-    executor: []
+    executor:
+      - Joker_JH
     steps:
       - step: build@python
         name: build_python
