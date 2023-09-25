@@ -118,9 +118,11 @@ class GetClientVersion(GetUrl):
                 ClientType.Firefox: r"/Applications/Firefox.app/Contents/MacOS/firefox --version"
             },
             OSType.WIN: {
-                ClientType.Chrome: 'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version'
+                ClientType.Chrome: 'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version',
             },
-            OSType.LINUX: {},
+            OSType.LINUX: {
+                ClientType.Chrome: 'google-chrome --version',
+            },
         }
         return cmd_map[os_type][client], CLIENT_PATTERN[client]
 
