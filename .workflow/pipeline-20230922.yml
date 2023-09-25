@@ -47,7 +47,7 @@ stages:
         caches: []
         notify: []
         strategy:
-          retry: '0'
+          retry: '2'
   - name: stage-a87afbd4
     displayName: 成果物产出
     strategy: naturally
