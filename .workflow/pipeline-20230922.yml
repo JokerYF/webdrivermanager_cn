@@ -37,8 +37,6 @@ stages:
           - '# 编译为wheel包'
           - python setup.py bdist_wheel
           - ''
-          - '# 上传到pipy测试环境'
-          - python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u __token__ -p ${pypi_test_account_token}
           - ''
         artifacts:
           - name: BUILD_ARTIFACT
@@ -59,6 +57,35 @@ stages:
         displayName: 上传制品
         dependArtifact: BUILD_ARTIFACT
         artifactName: SourceCode
+        notify: []
+        strategy:
+          retry: '0'
+  - name: stage-e9ff7938
+    displayName: 发布到pypi_test
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@python
+        name: build_python
+        displayName: Python 构建
+        pythonVersion: '3.9'
+        commands:
+          - pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+          - '# 可以使用pip下载依赖'
+          - '# pip install --user -r requirements.txt'
+          - python --version
+          - ''
+          - pip install twine
+          - ''
+          - '# 上传到pipy测试环境'
+          - python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u __token__ -p ${pypi_test_account_token}
+          - ''
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - ./
+        caches: []
         notify: []
         strategy:
           retry: '0'
