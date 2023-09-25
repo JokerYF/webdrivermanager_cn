@@ -81,6 +81,10 @@ class OSManager:
             return None
 
     @property
+    def is_aarch64(self):
+        return platform.machine() == 'aarch64'
+
+    @property
     def get_framework(self):
         """
         获取操作系统架构

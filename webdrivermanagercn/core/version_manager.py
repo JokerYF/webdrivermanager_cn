@@ -21,6 +21,7 @@ class ClientType:
 
 CLIENT_PATTERN = {
     ClientType.Chrome: r"\d+\.\d+\.\d+.\d+",
+    ClientType.Firefox: r"\d+\.\d+\.\d+",
 }
 
 
@@ -67,7 +68,7 @@ class GetUrl:
         """
         return [i['name'].replace('/', '') for i in requests.get(self.get_host).json()]
 
-    def get_correct_version(self):
+    def _get_chrome_correct_version(self):
         """
         根据传入的版本号，判断是否存在，如果不存在，则返回与它最近的小一版本
         :return:
@@ -114,6 +115,7 @@ class GetClientVersion(GetUrl):
         cmd_map = {
             OSType.MAC: {
                 ClientType.Chrome: "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
+                ClientType.Firefox: r"/Applications/Firefox.app/Contents/MacOS/firefox --version"
             },
             OSType.WIN: {
                 ClientType.Chrome: 'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version'
@@ -150,4 +152,15 @@ class GetClientVersion(GetUrl):
         """
         if not self._version:
             self._version = self.__read_version_from_cmd(*self.cmd_dict(client))
-        return self.get_correct_version()
+        if client == ClientType.Chrome:
+            return self._get_chrome_correct_version()
+        return self._version
+
+    def get_geckodriver_version(self):
+        if self._version:
+            return self._version
+        url = f'{config.GeckodriverApi}/latest'
+        response = requests.get(
+            url=url
+        )
+        return response.json()['tag_name']

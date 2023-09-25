@@ -107,7 +107,13 @@ class UnpackManager:
         :return:
         """
         file_name = os.path.basename(self.__path)
-        return os.path.join(os.path.dirname(self.__path), file_name.split('.')[0])
+        if self.is_zip_file:
+            file_name = file_name.replace('.zip', '')
+        elif self.is_tar_file:
+            file_name = file_name.replace('.tar.gz', '')
+        else:
+            file_name = file_name.split('.')[0]
+        return os.path.join(os.path.dirname(self.__path), file_name)
 
     @property
     def __unpack_obj(self):

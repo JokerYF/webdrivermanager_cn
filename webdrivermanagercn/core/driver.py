@@ -72,6 +72,24 @@ class DriverManager(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError("该方法需要重写")
 
+    @abc.abstractmethod
+    def get_driver_name(self) -> str:
+        """
+        获取driver压缩包名称
+        抽象接口方法，继承时需要重写
+        :return:
+        """
+        raise NotImplementedError("该方法需要重写")
+
+    @abc.abstractmethod
+    def get_os_info(self):
+        """
+        获取操作系统信息
+        抽象接口方法，继承时需要重写
+        :return:
+        """
+        raise NotImplementedError("该方法需要重写")
+
     def download(self) -> str:
         """
         文件下载、解压

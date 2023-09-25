@@ -10,6 +10,11 @@ class ChromeDriver(DriverManager):
             version = GetClientVersion().get_version(ClientType.Chrome)
         super().__init__(driver_name='chromedriver', version=version, root_dir=path)
 
+    def get_driver_name(self):
+        if GetClientVersion(self.version).is_new_version:
+            return f"{self.get_os_info()}/chromedriver-{self.get_os_info()}.zip"
+        return f"chromedriver_{self.get_os_info()}.zip".replace('-', '_')
+
     def download_url(self):
         """
         获取driver的下载url
@@ -17,12 +22,10 @@ class ChromeDriver(DriverManager):
         """
         if self.version_parse.major <= 114:
             host = config.ChromeDriverUrl
-            params = f"chromedriver_{self.get_os_info()}.zip".replace('-', '_')
         else:
             host = config.ChromeDriverUrlNew
-            params = f"{self.get_os_info()}/chromedriver-{self.get_os_info()}.zip"
 
-        url = f'{host}{self.version}/{params}'
+        url = f'{host}/{self.version}/{self.get_driver_name()}'
         return url
 
     def get_os_info(self, os_type=None, mac_format=True):
