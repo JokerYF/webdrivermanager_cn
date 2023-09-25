@@ -2,7 +2,7 @@ version: '1.0'
 name: pipeline-20230924
 displayName: 发布到pypi
 triggers:
-  trigger: auto
+  trigger: manual
   push:
     tags:
       prefix:
