@@ -7,6 +7,11 @@ triggers:
     branches:
       prefix:
         - master
+    paths:
+      precise:
+        - setup.py
+      include:
+        - webdrivermanager_cn/*
 variables:
   global:
     - pypi_test_account_token
