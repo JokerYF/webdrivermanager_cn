@@ -72,11 +72,18 @@ stages:
         pythonVersion: '3.9'
         commands:
           - pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+          - ''
           - '# 可以使用pip下载依赖'
-          - '# pip install --user -r requirements.txt'
           - python --version
           - ''
-          - pip install twine
+          - '# 安装项目依赖'
+          - pip install --user -r requirements.txt
+          - ''
+          - '# 安装指定打包模块'
+          - pip install setuptools wheel twine
+          - ''
+          - '# 编译为wheel包'
+          - python setup.py bdist_wheel
           - ''
           - '# 上传到pipy测试环境'
           - python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/* -u __token__ -p ${pypi_test_account_token}
@@ -86,6 +93,19 @@ stages:
             path:
               - ./
         caches: []
-        notify: []
+        notify:
+          - certificate: 334a41c0-3d9b-013c-b51a-0efef618f381
+            events:
+              - success
+              - fail
+            content:
+              - repository
+              - pipeline
+              - stage
+              - task
+              - operator
+              - branch
+              - detail
+            type: weixin
         strategy:
-          retry: '0'
+          retry: '3'
