@@ -6,7 +6,7 @@ triggers:
   push:
     branches:
       prefix:
-        - master
+        - dev
     paths:
       precise:
         - setup.py
