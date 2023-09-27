@@ -22,7 +22,7 @@ class DownloadManager:
         response.raise_for_status()
         os.makedirs(down_path, exist_ok=True)
         file_path = os.path.join(down_path, self.get_filename_by_url(url))
-        with open(file_path, 'wb') as f:
+        with open(file_path, "wb") as f:
             f.write(response.content)
         return file_path
 
@@ -33,5 +33,5 @@ class DownloadManager:
         :param url:
         :return:
         """
-        url_paser = url.split('/')
+        url_paser = url.split("/")
         return url_paser[-1]

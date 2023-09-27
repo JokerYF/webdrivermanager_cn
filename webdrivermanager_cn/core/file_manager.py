@@ -64,6 +64,8 @@ class FileManager:
         :return:
         """
         suffix = ''
+        if self.__driver_name == "edgedriver":
+            self.__driver_name = "msedgedriver"
         if OSManager().get_os_name == OSType.WIN:
             suffix = '.exe'
         driver_name = self.__driver_name + suffix

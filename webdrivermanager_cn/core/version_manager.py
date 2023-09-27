@@ -22,6 +22,7 @@ class ClientType:
 CLIENT_PATTERN = {
     ClientType.Chrome: r"\d+\.\d+\.\d+.\d+",
     ClientType.Firefox: r"\d+\.\d+\.\d+",
+    ClientType.Edge: r"\d+\.\d+\.\d+.\d+",
 }
 
 
@@ -31,7 +32,7 @@ class GetUrl:
     """
 
     def __init__(self):
-        self._version = ''
+        self._version = ""
 
     @property
     def _version_obj(self):
@@ -66,7 +67,7 @@ class GetUrl:
         解析driver url，获取所有driver版本
         :return:
         """
-        return [i['name'].replace('/', '') for i in requests.get(self.get_host).json()]
+        return [i["name"].replace("/", "") for i in requests.get(self.get_host).json()]
 
     def _get_chrome_correct_version(self):
         """
@@ -100,7 +101,7 @@ class GetClientVersion(GetUrl):
     获取当前环境下浏览器版本
     """
 
-    def __init__(self, version=''):
+    def __init__(self, version=""):
         super().__init__()
         self._version = version
 
@@ -115,13 +116,14 @@ class GetClientVersion(GetUrl):
         cmd_map = {
             OSType.MAC: {
                 ClientType.Chrome: "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
-                ClientType.Firefox: r"/Applications/Firefox.app/Contents/MacOS/firefox --version"
+                ClientType.Firefox: r"/Applications/Firefox.app/Contents/MacOS/firefox --version",
+                ClientType.Edge: r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version'
             },
             OSType.WIN: {
                 ClientType.Chrome: 'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version',
             },
             OSType.LINUX: {
-                ClientType.Chrome: 'google-chrome --version',
+                ClientType.Chrome: "google-chrome --version",
             },
         }
         return cmd_map[os_type][client], CLIENT_PATTERN[client]
@@ -135,10 +137,10 @@ class GetClientVersion(GetUrl):
         :return:
         """
         with subprocess.Popen(
-                cmd,
-                stdout=subprocess.PIPE,
-                stdin=subprocess.DEVNULL,
-                shell=True,
+            cmd,
+            stdout=subprocess.PIPE,
+            stdin=subprocess.DEVNULL,
+            shell=True,
         ) as stream:
             stdout = stream.communicate()[0].decode()
             version = re.search(pattern, stdout)
@@ -161,8 +163,6 @@ class GetClientVersion(GetUrl):
     def get_geckodriver_version(self):
         if self._version:
             return self._version
-        url = f'{config.GeckodriverApi}/latest'
-        response = requests.get(
-            url=url
-        )
-        return response.json()['tag_name']
+        url = f"{config.GeckodriverApi}/latest"
+        response = requests.get(url=url)
+        return response.json()["tag_name"]

@@ -11,6 +11,7 @@ from requests import HTTPError
 from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.driver_cache import DriverCacheManager
 from webdrivermanager_cn.core.file_manager import FileManager
+from webdrivermanager_cn.core.os_manager import OSManager
 
 
 class DriverManager(metaclass=abc.ABCMeta):
@@ -27,6 +28,7 @@ class DriverManager(metaclass=abc.ABCMeta):
         """
         self.driver_name = driver_name
         self.version = version
+        self.os_info = OSManager()
         self.__cache_manager = DriverCacheManager(root_dir=root_dir)
         self.__driver_path = os.path.join(
             self.__cache_manager.root_dir, self.driver_name, self.version

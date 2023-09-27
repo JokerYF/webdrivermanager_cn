@@ -62,7 +62,7 @@ class OSManager:
         :param os_sys_type:
         :return:
         """
-        if "_m1" in os_sys_type:
+        if "_m1" in os_sys_type or "_m2" in os_sys_type:
             return True
         return platform.processor() != "i386"
 
