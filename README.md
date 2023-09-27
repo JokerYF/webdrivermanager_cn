@@ -1,7 +1,7 @@
 # WerDriverManagerCn
 
 > 基于[阿里源](https://www.npmmirror.com/)
-> 开发，灵感来源：[webdriver_manager](https://github.com/SergeyPirogov/webdriver_manager)，向作者致敬!
+> 开发，灵感来源：[webdriver_manager](https://github.com/SergeyPirogov/webdriver_manager)，向原作者致敬！
 
 ## 开发背景
 
@@ -31,6 +31,8 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 | Edge    |    ❎    |   ❎   |      ❎      |
 
 ## 使用方法
+
+安装：`pip install webdrivermanager_cn`
 
 为简化使用方法，和替换成本，决定沿用`webdriver_manager`的使用风格：
 如：
