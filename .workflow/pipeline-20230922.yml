@@ -8,8 +8,6 @@ triggers:
       prefix:
         - master
     paths:
-      precise:
-        - setup.py
       include:
         - webdrivermanager_cn/*
 variables:
