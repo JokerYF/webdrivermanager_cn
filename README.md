@@ -1,12 +1,12 @@
 # WerDriverManagerCn
 
 > 基于[阿里源](https://www.npmmirror.com/)
-> 开发，灵感来源：[webdriver_manager](https://github.com/SergeyPirogov/webdriver_manager)，向原作者致敬！
+> 开发，灵感来源：[webdriver_manager](https://githHub.com/SergeyPirogov/webdriver_manager)，向原作者致敬！
 
 ## 开发背景
 
 作者是测开一枚，一直在公司默默无闻的做着自动化测试，偶然公司同事安利`webdriver_manager`
-这个模块可以有效解决Chrome频繁更新导致ChromeDriver无法使用的问题，可以直接更换国内源，解决默认为github源而导致下载慢或者失败的问题。
+这个模块可以有效解决Chrome频繁更新导致ChromeDriver无法使用的问题，可以直接更换国内源，解决默认为GitHub源而导致下载慢或者失败的问题。
 
 自动化项目引入这个模块后，效果很好，稳定性也很好，且一直相安无事。直到2023年中的某一天，这个平静的情况被打破了。。。
 
@@ -16,25 +16,35 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 
 ## 解决问题
 
-本模块可以看作是`webdriver_manager`模块的国内平替，为那些公司无法通过魔法手段连接github(比如作者公司T^T)
+本模块可以看作是`webdriver_manager`模块的国内平替，为那些公司无法通过魔法手段连接GitHub(比如作者公司T^T)
 ，和需要持续更新WebDriver的自动化测试同学们提供服务。
 
 ## 已实现功能
 
 > 后续都会实现，如果有需求请及时提Issue
 
-| Client  | Windows | MacOS |    Linux    |
-|---------|:-------:|:-----:|:-----------:|
-| Chrome  |    ✅    |   ✅   | ✅<br/>(未验证) |
-| Firefox |    ✅    |   ✅   | ✅<br/>(未验证) |
-| IE      |    ❎    |   ❎   |      ❎      |
-| Edge    |    ❎    |   ❎   |      ❎      |
+| Client  |   Windows   |    MacOS    |    Linux    |
+|---------|:-----------:|:-----------:|:-----------:|
+| Chrome  |      ✅      |      ✅      | ✅<br/>(未验证) |
+| Firefox |      ✅      |      ✅      | ✅<br/>(未验证) |
+| IE      |      ❎      |      ❎      |      ❎      |
+| Edge    | ✅<br/>(未验证) | ✅<br/>(未验证) | ✅<br/>(未验证) |
 
 ## 使用方法
 
-安装：`pip install webdrivermanager_cn`
+### 安装
 
-为简化使用方法，和替换成本，决定沿用`webdriver_manager`的使用风格：
+- 在线安装：`pip install webdrivermanager_cn`
+
+- 在线升级：`pip install --upgrade webdrivermanager_cn`
+
+- 本地安装：
+  - 下载[发行版本](https://gitee.com/Joker_JH/webdrivermanagercn/releases)
+    后，本地安装即可：`pip install path/webdrivermanager_cn-X.X.X-py3-none-any.whl`
+
+### 导入使用
+
+为简化使用方法，降低替换成本，决定沿用`webdriver_manager`的使用风格：
 如：
 
 - ChromeDriver
@@ -51,6 +61,14 @@ driver_path = ChromeDriverManager().install()
 from webdrivermanager_cn.geckodriver import GeckodriverManager
 
 driver_path = GeckodriverManager().install()
+```
+
+- edge
+
+```python
+from webdrivermanager_cn.microsoft import EdgeWebDriverManager
+
+driver_path = EdgeWebDriverManager().install()
 ```
 
 ## 其他
