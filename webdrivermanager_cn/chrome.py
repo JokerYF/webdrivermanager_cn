@@ -23,7 +23,3 @@ class ChromeDriverManager(ChromeDriver):
         :return:
         """
         return super().install()
-
-
-if __name__ == '__main__':
-    print(ChromeDriverManager().install())

@@ -31,14 +31,15 @@ class ChromeDriver(DriverManager):
         url = f'{host}/{self.driver_version}/{self.get_driver_name()}'
         return url
 
-    def __get_latest_release(self):
-        try:
-            version_parser = vs.parse(self._chromedriver_version).major
-        except:
-            version_parser = 'STABLE'
-        params = f'LATEST_RELEASE_{version_parser}'
-        url = f'{config.ChromeDriver}/{params}'
+    def __get_latest_release_version(self):
+        if self._chromedriver_version == 'latest':
+            version = 'STABLE'
+        else:
+            version_parser = vs.parse(self._chromedriver_version)
+            version = f'{version_parser.major}.{version_parser.minor}.{version_parser.micro}'
+        url = f'{config.ChromeDriver}/LATEST_RELEASE_{version}'
         response = requests.get(url)
+        response.raise_for_status()
         return response.text
 
     @property
@@ -49,7 +50,7 @@ class ChromeDriver(DriverManager):
         """
         if self._chromedriver_version == 'latest' or self._chromedriver_version:
             try:
-                return self.__get_latest_release()
+                return self.__get_latest_release_version()
             except HTTPError:
                 pass
         return GetClientVersion().get_chrome_correct_version()
