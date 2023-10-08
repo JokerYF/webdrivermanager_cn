@@ -33,5 +33,5 @@ class DownloadManager:
         :param url:
         :return:
         """
-        url_paser = url.split("/")
-        return url_paser[-1]
+        url_parser = url.split("/")
+        return url_parser[-1]

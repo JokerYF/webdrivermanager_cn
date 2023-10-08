@@ -6,8 +6,10 @@ from webdrivermanager_cn.core.version_manager import GetClientVersion, ClientTyp
 
 class ChromeDriver(DriverManager):
     def __init__(self, version=None, path=None):
+        get_version = GetClientVersion()
         if not version:
-            version = GetClientVersion().get_version(ClientType.Chrome)
+            version = get_version.get_version(ClientType.Chrome)
+        version = get_version.get_chrome_correct_version(version)
         super().__init__(driver_name='chromedriver', version=version, root_dir=path)
 
     def get_driver_name(self):
