@@ -1,0 +1,33 @@
+version: '1.0'
+name: pipeline-20231008
+displayName: 打包wheel包
+triggers:
+  trigger: manual
+  push:
+    branches:
+      prefix:
+        - master
+stages:
+  - name: stage-64edfec2
+    displayName: 执行打包
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@python
+        name: build_python
+        displayName: Python 构建
+        pythonVersion: '3.7'
+        commands:
+          - pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+          - '# 可以使用pip下载依赖'
+          - '# pip install --user -r requirements.txt'
+          - python --version
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - ./
+        caches: []
+        notify: []
+        strategy:
+          retry: '0'
