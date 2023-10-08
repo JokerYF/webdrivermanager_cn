@@ -18,26 +18,35 @@ class ChromeDriver(DriverManager):
             return f"{self.get_os_info()}/chromedriver-{self.get_os_info()}.zip"
         return f"chromedriver_{self.get_os_info()}.zip".replace('-', '_')
 
+    @property
+    def __is_new_version(self):
+        try:
+            return vs.parse(self._chromedriver_version).major >= 114
+        except:
+            return True
+
     def download_url(self):
         """
         获取driver的下载url
         :return:
         """
-        if self.version_parse.major <= 114:
-            host = config.ChromeDriverUrl
-        else:
+        if self.__is_new_version:
             host = config.ChromeDriverUrlNew
-
+        else:
+            host = config.ChromeDriverUrl
         url = f'{host}/{self.driver_version}/{self.get_driver_name()}'
         return url
 
     def __get_latest_release_version(self):
+        host = config.ChromeDriver
         if self._chromedriver_version == 'latest':
             version = 'STABLE'
         else:
             version_parser = vs.parse(self._chromedriver_version)
             version = f'{version_parser.major}.{version_parser.minor}.{version_parser.micro}'
-        url = f'{config.ChromeDriver}/LATEST_RELEASE_{version}'
+            if not self.__is_new_version:
+                host = config.ChromeDriverUrl
+        url = f'{host}/LATEST_RELEASE_{version}'
         response = requests.get(url)
         response.raise_for_status()
         return response.text
@@ -48,11 +57,13 @@ class ChromeDriver(DriverManager):
         优先通过ChromeDriver官方url获取最新版本，如果失败，则获取本地chrome版本后模糊匹配
         :return:
         """
-        if self._chromedriver_version == 'latest' or self._chromedriver_version:
+        if self._chromedriver_version:
             try:
                 return self.__get_latest_release_version()
             except HTTPError:
                 pass
+        if self._chromedriver_version and self._chromedriver_version != 'latest':
+            return self._chromedriver_version
         return GetClientVersion().get_chrome_correct_version()
 
     def get_os_info(self, os_type=None, mac_format=True):
