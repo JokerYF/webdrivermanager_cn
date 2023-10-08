@@ -4,6 +4,7 @@ from requests import HTTPError
 
 from webdrivermanager_cn.core import config
 from webdrivermanager_cn.core.driver import DriverManager
+from webdrivermanager_cn.core.log_manager import wdm_logger
 from webdrivermanager_cn.core.os_manager import OSManager, OSType
 from webdrivermanager_cn.core.version_manager import GetClientVersion
 
@@ -19,25 +20,31 @@ class ChromeDriver(DriverManager):
         return f"chromedriver_{self.get_os_info()}.zip".replace('-', '_')
 
     @property
-    def __is_new_version(self):
+    def __is_new_version(self) -> bool:
+        """
+        判断是否为新Chrome版本
+        :return:
+        """
         try:
-            return vs.parse(self._chromedriver_version).major >= 114
+            return vs.parse(self._chromedriver_version).major >= 115
         except:
             return True
 
     def download_url(self):
-        """
-        获取driver的下载url
-        :return:
-        """
         if self.__is_new_version:
             host = config.ChromeDriverUrlNew
         else:
             host = config.ChromeDriverUrl
         url = f'{host}/{self.driver_version}/{self.get_driver_name()}'
+        wdm_logger().debug(f'拼接下载url: {url}')
         return url
 
+    @property
     def __get_latest_release_version(self):
+        """
+        通过GitHub获取ChromeDriver最新版本号
+        :return:
+        """
         host = config.ChromeDriver
         if self._chromedriver_version == 'latest':
             version = 'STABLE'
@@ -46,8 +53,11 @@ class ChromeDriver(DriverManager):
             version = f'{version_parser.major}.{version_parser.minor}.{version_parser.micro}'
             if not self.__is_new_version:
                 host = config.ChromeDriverUrl
-        url = f'{host}/LATEST_RELEASE_{version}'
+        url_params = f'LATEST_RELEASE_{version}'
+        wdm_logger().debug(f'获取 ChromeDriver {url_params}')
+        url = f'{host}/{url_params}'
         response = requests.get(url)
+        wdm_logger().debug(f'{url} - {response.status_code}')
         response.raise_for_status()
         return response.text
 
@@ -59,7 +69,7 @@ class ChromeDriver(DriverManager):
         """
         if self._chromedriver_version:
             try:
-                return self.__get_latest_release_version()
+                return self.__get_latest_release_version
             except HTTPError:
                 pass
         if self._chromedriver_version and self._chromedriver_version != 'latest':
@@ -67,17 +77,9 @@ class ChromeDriver(DriverManager):
         return GetClientVersion().get_chrome_correct_version()
 
     def get_os_info(self, os_type=None, mac_format=True):
-        """
-        格式化操作系统类型
-        用于拼接下载url相关信息
-        :param os_type:
-        :param mac_format:
-        :return:
-        """
-        os_info = OSManager()
-
         if os_type:
             return os_type
+        os_info = OSManager()
         _os_type = f"{os_info.get_os_type}{os_info.get_framework}"
         if os_info.get_os_name == OSType.MAC:
             if mac_format:
@@ -89,4 +91,5 @@ class ChromeDriver(DriverManager):
         elif os_info.get_os_name == OSType.WIN:
             if not GetClientVersion(self.driver_version).is_new_version:
                 return 'win32'
+        wdm_logger().debug(f'操作系统信息: {self.driver_name} - {_os_type}')
         return _os_type

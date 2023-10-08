@@ -8,6 +8,7 @@ import requests
 from packaging import version as vs
 
 from webdrivermanager_cn.core import config
+from webdrivermanager_cn.core.log_manager import wdm_logger
 from webdrivermanager_cn.core.os_manager import OSManager, OSType
 
 
@@ -85,6 +86,7 @@ class GetUrl:
         :param version_list:
         :return: driver_version
         """
+        wdm_logger().debug(f'ChromeDriver指定版本: {target_version}')
         if target_version not in version_list:
             lesser_version = None
             for version in version_list:
@@ -92,7 +94,9 @@ class GetUrl:
                     lesser_version = version
                 else:
                     break
+            wdm_logger().debug(f'当前无该指定版本，最符合的版本为: {lesser_version}')
             return lesser_version
+        wdm_logger().debug('当前版本源上存在')
         return target_version
 
 
@@ -136,6 +140,7 @@ class GetClientVersion(GetUrl):
         :param pattern:
         :return:
         """
+        wdm_logger().debug(f'执行命令: {cmd}')
         with subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
@@ -156,6 +161,7 @@ class GetClientVersion(GetUrl):
         """
         if not self._version:
             self._version = self.__read_version_from_cmd(*self.cmd_dict(client))
+            wdm_logger().info(f'获取本地浏览器版本: {client} - {self._version}')
         return self._version
 
     def get_chrome_correct_version(self):
@@ -167,6 +173,10 @@ class GetClientVersion(GetUrl):
         return self._get_chrome_correct_version()
 
     def get_geckodriver_version(self):
+        """
+        获取Firefox driver版本信息
+        :return:
+        """
         if self._version:
             return self._version
         url = f"{config.GeckodriverApi}/latest"

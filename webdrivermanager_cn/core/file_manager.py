@@ -5,6 +5,7 @@ import os.path
 import tarfile
 import zipfile
 
+from webdrivermanager_cn.core.log_manager import wdm_logger
 from webdrivermanager_cn.core.os_manager import OSManager, OSType
 
 
@@ -46,6 +47,7 @@ class FileManager:
         :return:
         """
         self.__unpack_path = self.__unpack_obj.unpack()
+        wdm_logger().debug(f'文件解压路径: {self.__unpack_path}')
 
     def unpack_list(self):
         """

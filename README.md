@@ -39,8 +39,8 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 - 在线升级：`pip install --upgrade webdrivermanager_cn`
 
 - 本地安装：
-  - 下载[发行版本](https://gitee.com/Joker_JH/webdrivermanagercn/releases)
-    后，本地安装即可：`pip install path/webdrivermanager_cn-X.X.X-py3-none-any.whl`
+    - 下载[发行版本](https://gitee.com/Joker_JH/webdrivermanagercn/releases)
+      后，本地安装即可：`pip install path/webdrivermanager_cn-X.X.X-py3-none-any.whl`
 
 ### 导入使用
 

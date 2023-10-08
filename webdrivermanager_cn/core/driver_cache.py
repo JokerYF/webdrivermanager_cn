@@ -21,6 +21,7 @@ class DriverCacheManager:
             root_dir = os.path.expanduser('~')
         self.root_dir = os.path.join(root_dir, '.webdriver')
         self.__json_path = os.path.join(self.root_dir, 'driver_cache.json')
+        # wdm_logger().info(f'{"=" * 10} WebDriverManagerCn {"=" * 10}')
 
     @property
     def __json_exist(self):

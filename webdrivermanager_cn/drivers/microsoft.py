@@ -24,6 +24,11 @@ class EdgeDriverManager(DriverManager):
         return f"{config.EdgeDriverUrl}/{self.version}/{self.get_driver_name()}"
 
     def get_version(self, version=None):
+        """
+        获取edge driver版本
+        :param version:
+        :return:
+        """
         if version:
             return version
 
@@ -39,8 +44,3 @@ class EdgeDriverManager(DriverManager):
         latest_url = f"{config.EdgeDriverUrl}/LATEST_RELEASE_{client_version_parser._version_obj.major}_{suffix.upper()}"
         response = requests.get(latest_url)
         return response.text.strip()
-
-
-# https://msedgedriver.azureedge.net/117.0.2045.40/edgedriver_mac64_m1.zip
-# https://msedgedriver.azureedge.net/117.0.2045.40/edgewebdriver_mac64_m1.zip
-# https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver/117.0.2045.40/edgewebdriver_mac64_m1.zip

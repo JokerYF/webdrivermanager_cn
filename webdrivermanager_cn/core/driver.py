@@ -11,12 +11,14 @@ from requests import HTTPError
 from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.driver_cache import DriverCacheManager
 from webdrivermanager_cn.core.file_manager import FileManager
+from webdrivermanager_cn.core.log_manager import wdm_logger
 from webdrivermanager_cn.core.os_manager import OSManager
 
 
 class DriverManager(metaclass=abc.ABCMeta):
     """
-    Driver基类
+    Driver抽象类
+    不能实例化，只能继承并重写抽象方法
     """
 
     def __init__(self, driver_name, version, root_dir):
@@ -33,6 +35,7 @@ class DriverManager(metaclass=abc.ABCMeta):
         self.__driver_path = os.path.join(
             self.__cache_manager.root_dir, self.driver_name, self.driver_version
         )
+        wdm_logger().info(f'获取WebDriver: {self.driver_name} - {self.driver_version}')
 
     @property
     def version_parse(self):
@@ -69,7 +72,6 @@ class DriverManager(metaclass=abc.ABCMeta):
     def download_url(self) -> str:
         """
         获取文件下载url
-        抽象接口方法，继承时需要重写
         :return:
         """
         raise NotImplementedError("该方法需要重写")
@@ -78,7 +80,6 @@ class DriverManager(metaclass=abc.ABCMeta):
     def get_driver_name(self) -> str:
         """
         获取driver压缩包名称
-        抽象接口方法，继承时需要重写
         :return:
         """
         raise NotImplementedError("该方法需要重写")
@@ -87,7 +88,6 @@ class DriverManager(metaclass=abc.ABCMeta):
     def get_os_info(self):
         """
         获取操作系统信息
-        抽象接口方法，继承时需要重写
         :return:
         """
         raise NotImplementedError("该方法需要重写")
@@ -113,10 +113,12 @@ class DriverManager(metaclass=abc.ABCMeta):
         """
         driver_path = self.get_cache()
         if not driver_path:
+            wdm_logger().info('缓存不存在，开始下载...')
             try:
                 driver_path = self.download()
             except HTTPError:
-                raise Exception(f"无版本: {self.driver_name} - {self.driver_version}")
+                raise Exception(f"当前WebDriver: {self.driver_name} 无该版本: {self.driver_version}")
             self.__set_cache(driver_path)
+        wdm_logger().info(f'Driver路径: {driver_path}')
         os.chmod(driver_path, 0o755)
         return driver_path
