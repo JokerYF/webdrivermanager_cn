@@ -15,11 +15,11 @@ class Geckodriver(DriverManager):
         super().__init__(driver_name='geckodriver', version=version, root_dir=path)
 
     def download_url(self):
-        return f'{config.GeckodriverUrl}/{self.version}/{self.get_driver_name()}'
+        return f'{config.GeckodriverUrl}/{self.driver_version}/{self.get_driver_name()}'
 
     def get_driver_name(self) -> str:
         pack_type = 'zip' if self.__os_manager == OSType.WIN else 'tar.gz'
-        return f'{self.driver_name}-{self.version}-{self.get_os_info()}.{pack_type}'
+        return f'{self.driver_name}-{self.driver_version}-{self.get_os_info()}.{pack_type}'
 
     def get_os_info(self):
         _os_type_suffix = self.__os_manager.get_os_architecture

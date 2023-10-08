@@ -1,6 +1,7 @@
 # ChromeDriver 源地址
 ChromeDriverUrl = 'https://registry.npmmirror.com/-/binary/chromedriver'
 ChromeDriverUrlNew = 'https://registry.npmmirror.com/-/binary/chrome-for-testing'
+ChromeDriver = 'https://googlechromelabs.github.io/chrome-for-testing'
 
 # Firefox 驱动源地址
 GeckodriverUrl = 'https://registry.npmmirror.com/-/binary/geckodriver'

@@ -9,7 +9,7 @@ class ChromeDriverManager(ChromeDriver):
     ChromeDriver管理器
     """
 
-    def __init__(self, version=None, path=None):
+    def __init__(self, version='latest', path=None):
         """
         ChromeDriver管理器
         :param version:
@@ -23,3 +23,7 @@ class ChromeDriverManager(ChromeDriver):
         :return:
         """
         return super().install()
+
+
+if __name__ == '__main__':
+    print(ChromeDriverManager().install())

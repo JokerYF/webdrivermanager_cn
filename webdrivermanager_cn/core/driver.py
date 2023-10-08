@@ -27,11 +27,11 @@ class DriverManager(metaclass=abc.ABCMeta):
         :param root_dir: 缓存文件地址
         """
         self.driver_name = driver_name
-        self.version = version
+        self.driver_version = version
         self.os_info = OSManager()
         self.__cache_manager = DriverCacheManager(root_dir=root_dir)
         self.__driver_path = os.path.join(
-            self.__cache_manager.root_dir, self.driver_name, self.version
+            self.__cache_manager.root_dir, self.driver_name, self.driver_version
         )
 
     @property
@@ -40,7 +40,7 @@ class DriverManager(metaclass=abc.ABCMeta):
         版本号解析器
         :return:
         """
-        return vs.parse(self.version)
+        return vs.parse(self.driver_version)
 
     def get_cache(self):
         """
@@ -49,7 +49,7 @@ class DriverManager(metaclass=abc.ABCMeta):
         :return: path or None
         """
         return self.__cache_manager.get_cache(
-            driver_name=self.driver_name, version=self.version
+            driver_name=self.driver_name, version=self.driver_version
         )
 
     def __set_cache(self, path):
@@ -62,7 +62,7 @@ class DriverManager(metaclass=abc.ABCMeta):
             driver_name=self.driver_name,
             update=f"{datetime.datetime.today()}",
             path=path,
-            version=self.version,
+            version=self.driver_version,
         )
 
     @abc.abstractmethod
@@ -116,7 +116,7 @@ class DriverManager(metaclass=abc.ABCMeta):
             try:
                 driver_path = self.download()
             except HTTPError:
-                raise Exception(f"无版本: {self.driver_name} - {self.version}")
+                raise Exception(f"无版本: {self.driver_name} - {self.driver_version}")
             self.__set_cache(driver_path)
         os.chmod(driver_path, 0o755)
         return driver_path

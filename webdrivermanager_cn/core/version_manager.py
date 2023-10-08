@@ -83,7 +83,7 @@ class GetUrl:
         如果当前版本在版本列表中，则直接返回列表，否则返回当前版本小的一个版本
         :param target_version:
         :param version_list:
-        :return: version
+        :return: driver_version
         """
         if target_version not in version_list:
             lesser_version = None
@@ -115,15 +115,15 @@ class GetClientVersion(GetUrl):
         os_type = OSManager().get_os_name
         cmd_map = {
             OSType.MAC: {
-                ClientType.Chrome: "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
-                ClientType.Firefox: r"/Applications/Firefox.app/Contents/MacOS/firefox --version",
-                ClientType.Edge: r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version'
+                ClientType.Chrome: "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --driver_version",
+                ClientType.Firefox: r"/Applications/Firefox.app/Contents/MacOS/firefox --driver_version",
+                ClientType.Edge: r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --driver_version'
             },
             OSType.WIN: {
-                ClientType.Chrome: 'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version',
+                ClientType.Chrome: 'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v driver_version',
             },
             OSType.LINUX: {
-                ClientType.Chrome: "google-chrome --version",
+                ClientType.Chrome: "google-chrome --driver_version",
             },
         }
         return cmd_map[os_type][client], CLIENT_PATTERN[client]
@@ -158,14 +158,12 @@ class GetClientVersion(GetUrl):
             self._version = self.__read_version_from_cmd(*self.cmd_dict(client))
         return self._version
 
-    def get_chrome_correct_version(self, version):
+    def get_chrome_correct_version(self):
         """
-        获取chrome版本对应的chromedriver版本
-        如果传入的chrome版本没有对应的chromedriver版本，则模糊向下匹配一个版本
-        :param version:
+        获取chrome版本对应的chromedriver版本，如果没有对应的chromedriver版本，则模糊向下匹配一个版本
         :return:
         """
-        self._version = version
+        self.get_version(ClientType.Chrome)
         return self._get_chrome_correct_version()
 
     def get_geckodriver_version(self):
