@@ -11,7 +11,7 @@ from requests import HTTPError
 from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.driver_cache import DriverCacheManager
 from webdrivermanager_cn.core.file_manager import FileManager
-from webdrivermanager_cn.core.log_manager import wdm_logger
+from webdrivermanager_cn.core.log_manager import wdm_logger, set_logger_init
 from webdrivermanager_cn.core.os_manager import OSManager
 
 
@@ -28,6 +28,9 @@ class DriverManager(metaclass=abc.ABCMeta):
         :param version: Driver版本
         :param root_dir: 缓存文件地址
         """
+        set_logger_init()
+        wdm_logger().info(f'{"*" * 10} WebDriverManagerCn {"*" * 10}')
+
         self.driver_name = driver_name
         self.driver_version = version
         self.os_info = OSManager()

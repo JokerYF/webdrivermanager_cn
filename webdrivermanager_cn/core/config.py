@@ -21,6 +21,8 @@ EdgeDriverUrl = 'https://msedgedriver.azureedge.net'
 # ------------------
 
 def str2bool(value):
+    if isinstance(value, bool):
+        return value
     return value.lower() in ['true', '1']
 
 
@@ -33,10 +35,8 @@ def init_log():
     :return:
     """
     try:
-        print(123123, os.getenv('WDM_LOG'))
         return str2bool(os.getenv('WDM_LOG', False))
-    except Exception as e:
-        print(123, e)
+    except:
         return False
 
 
