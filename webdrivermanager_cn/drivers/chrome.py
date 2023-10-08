@@ -33,7 +33,7 @@ class ChromeDriver(DriverManager):
 
     def __get_latest_release(self):
         try:
-            version_parser = vs.parse(self._chromedriver_version)
+            version_parser = vs.parse(self._chromedriver_version).major
         except:
             version_parser = 'STABLE'
         params = f'LATEST_RELEASE_{version_parser}'
