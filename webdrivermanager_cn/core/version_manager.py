@@ -69,12 +69,12 @@ class GetUrl:
         """
         return [i["name"].replace("/", "") for i in requests.get(self.get_host).json()]
 
-    def _get_chrome_correct_version(self, version):
+    def _get_chrome_correct_version(self):
         """
         根据传入的版本号，判断是否存在，如果不存在，则返回与它最近的小一版本
         :return:
         """
-        return self.__compare_versions(version, self._version_list)
+        return self.__compare_versions(self._version, self._version_list)
 
     @staticmethod
     def __compare_versions(target_version, version_list):
@@ -165,7 +165,8 @@ class GetClientVersion(GetUrl):
         :param version:
         :return:
         """
-        return self._get_chrome_correct_version(version)
+        self._version = version
+        return self._get_chrome_correct_version()
 
     def get_geckodriver_version(self):
         if self._version:
