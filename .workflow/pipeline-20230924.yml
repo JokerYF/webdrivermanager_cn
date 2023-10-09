@@ -4,9 +4,9 @@ displayName: 发布到pypi
 triggers:
   trigger: manual
   push:
-    tags:
+    branches:
       prefix:
-        - v
+        - master
 variables:
   global:
     - pypi_account_token

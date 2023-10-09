@@ -4,9 +4,9 @@ displayName: 发布到pypi_test
 triggers:
   trigger: auto
   push:
-    branches:
+    tags:
       prefix:
-        - master
+        - v
     paths:
       include:
         - webdrivermanager_cn/*
