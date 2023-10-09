@@ -3,6 +3,7 @@ import logging
 from webdrivermanager_cn.core.config import init_log, init_log_level
 
 __logger = logging.getLogger('WDM')
+__logger_init_flag = False
 
 
 def wdm_logger():
@@ -18,8 +19,14 @@ def set_logger(logger: logging.Logger):
 
 
 def set_logger_init():
-    if __logger.name != 'WDM' or not init_log():
+    global __logger_init_flag
+
+    if (__logger_init_flag
+            or __logger.name != 'WDM'
+            or not init_log()):
         return
+
+    __logger_init_flag = True
 
     # log 等级
     __logger.setLevel(init_log_level())
@@ -30,5 +37,3 @@ def set_logger_init():
     stream = logging.StreamHandler()
     stream.setFormatter(formatter)
     __logger.addHandler(stream)
-
-

@@ -5,7 +5,7 @@ from requests import HTTPError
 from webdrivermanager_cn.core import config
 from webdrivermanager_cn.core.driver import DriverManager
 from webdrivermanager_cn.core.log_manager import wdm_logger
-from webdrivermanager_cn.core.os_manager import OSManager, OSType
+from webdrivermanager_cn.core.os_manager import OSType
 from webdrivermanager_cn.core.version_manager import GetClientVersion
 
 
@@ -14,9 +14,10 @@ class ChromeDriver(DriverManager):
         self._chromedriver_version = version
         super().__init__(driver_name='chromedriver', version=self._version, root_dir=path)
 
+    @property
     def get_driver_name(self):
         if GetClientVersion(self.driver_version).is_new_version:
-            return f"{self.get_os_info()}/chromedriver-{self.get_os_info()}.zip"
+            return f"chromedriver-{self.get_os_info()}.zip"
         return f"chromedriver_{self.get_os_info()}.zip".replace('-', '_')
 
     @property
@@ -32,10 +33,10 @@ class ChromeDriver(DriverManager):
 
     def download_url(self):
         if self.__is_new_version:
-            host = config.ChromeDriverUrlNew
+            host = f'{config.ChromeDriverUrlNew}/{self.get_os_info()}'
         else:
             host = config.ChromeDriverUrl
-        url = f'{host}/{self.driver_version}/{self.get_driver_name()}'
+        url = f'{host}/{self.driver_version}/{self.get_driver_name}'
         wdm_logger().debug(f'拼接下载url: {url}')
         return url
 
@@ -76,19 +77,16 @@ class ChromeDriver(DriverManager):
             return self._chromedriver_version
         return GetClientVersion().get_chrome_correct_version()
 
-    def get_os_info(self, os_type=None, mac_format=True):
-        if os_type:
-            return os_type
-        os_info = OSManager()
-        _os_type = f"{os_info.get_os_type}{os_info.get_framework}"
-        if os_info.get_os_name == OSType.MAC:
+    def get_os_info(self, mac_format=True):
+        _os_type = f"{self.os_info.get_os_type}{self.os_info.get_framework}"
+        if self.os_info.get_os_name == OSType.MAC:
             if mac_format:
-                mac_suffix = os_info.get_mac_framework
+                mac_suffix = self.os_info.get_mac_framework
                 if mac_suffix and mac_suffix in _os_type:
                     return "mac-arm64"
                 else:
                     return "mac-x64"
-        elif os_info.get_os_name == OSType.WIN:
+        elif self.os_info.get_os_name == OSType.WIN:
             if not GetClientVersion(self.driver_version).is_new_version:
                 return 'win32'
         wdm_logger().debug(f'操作系统信息: {self.driver_name} - {_os_type}')
