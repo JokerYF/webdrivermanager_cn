@@ -5,11 +5,8 @@ triggers:
   trigger: auto
   push:
     tags:
-      prefix:
-        - v
-    paths:
       include:
-        - webdrivermanager_cn/*
+        - v\d\.\d\.\d
 variables:
   global:
     - pypi_test_account_token
