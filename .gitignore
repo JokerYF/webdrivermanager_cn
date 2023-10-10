@@ -3,3 +3,4 @@ wdm.log
 .webdriver
 __pycache__
 test
+.vscode

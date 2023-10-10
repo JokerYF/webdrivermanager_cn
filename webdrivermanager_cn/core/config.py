@@ -2,6 +2,7 @@
 # Driver 源相关
 # ------------------
 # ChromeDriver 源地址
+import logging
 import os
 
 ChromeDriverUrl = 'https://registry.npmmirror.com/-/binary/chromedriver'
@@ -45,10 +46,10 @@ def init_log_level():
     初始化默认WDM日志等级
     当 init_log 函数返回值为True时生效
     执行以下代码修改
-    os.environ['WDM_LOG_LEVEL'] = '20'
+    os.environ['WDM_LOG_LEVEL'] = f'{logging.INFO}'
     :return:
     """
-    default = 20
+    default = logging.INFO
     try:
         return int(os.getenv('WDM_LOG_LEVEL', default))
     except:

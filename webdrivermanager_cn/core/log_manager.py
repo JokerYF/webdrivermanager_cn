@@ -21,9 +21,12 @@ def set_logger(logger: logging.Logger):
 def set_logger_init():
     global __logger_init_flag
 
-    if (__logger_init_flag
-            or __logger.name != 'WDM'
-            or not init_log()):
+    # 如果当前logger不是wdm，或者不需要输出log的话，直接返回
+    if __logger.name != 'WDM' or not init_log():
+        return
+
+    # 如果已经初始化过默认logger的属性，直接返回
+    if __logger_init_flag:
         return
 
     __logger_init_flag = True

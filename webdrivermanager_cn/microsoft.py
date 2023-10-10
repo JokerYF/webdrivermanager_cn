@@ -10,6 +10,3 @@ class EdgeWebDriverManager:
 
     def install(self):
         return self.__driver.install()
-
-
-

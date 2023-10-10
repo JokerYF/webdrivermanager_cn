@@ -4,7 +4,7 @@ ChromeDriver
 from webdrivermanager_cn.drivers.chrome import ChromeDriver
 
 
-class ChromeDriverManager(ChromeDriver):
+class ChromeDriverManager:
     """
     ChromeDriver管理器
     """
@@ -15,11 +15,11 @@ class ChromeDriverManager(ChromeDriver):
         :param version:
         :param path:
         """
-        super().__init__(version=version, path=path)
+        self.chromedriver = ChromeDriver(version=version, path=path)
 
     def install(self):
         """
         下载chromedriver，并返回本地路径
         :return:
         """
-        return super().install()
+        return self.chromedriver.install()
