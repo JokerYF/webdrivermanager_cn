@@ -50,18 +50,22 @@ class DriverCacheManager:
 
         driver_name = kwargs['driver_name']
         version = kwargs['version']
-        update = kwargs['update']
-        path = kwargs['path']
 
         if driver_name not in data.keys():
             data[driver_name] = {}
-        data[driver_name][self.format_key(driver_name, version)] = {
-            'version': version,
-            'update': update,
-            'path': path,
-        }
+        driver_data = data[driver_name][self.format_key(driver_name, version)]
+        for k, v in kwargs.items():
+            driver_data[k] = v
+
         with open(self.__json_path, 'w+', encoding='utf-8') as f:
             json.dump(data, f, indent=4)
+
+    def set_value_by_key(self, driver_name, version, **kwargs):
+        self.__write_cache(
+            driver_name=driver_name,
+            version=version,
+            **kwargs
+        )
 
     @staticmethod
     def format_key(driver_name, version) -> str:
@@ -88,18 +92,18 @@ class DriverCacheManager:
         except KeyError:
             return None
 
-    def set_cache(self, driver_name, version, update, path):
+    def set_cache(self, driver_name, version, download_time, path):
         """
         写入缓存信息
         :param driver_name:
         :param version:
-        :param update:
+        :param download_time:
         :param path:
         :return:
         """
         self.__write_cache(
             driver_name=driver_name,
             version=version,
-            update=update,
-            path=path
+            download_time=download_time,
+            path=path,
         )

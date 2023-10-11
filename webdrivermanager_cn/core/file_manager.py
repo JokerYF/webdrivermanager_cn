@@ -60,6 +60,7 @@ class FileManager:
                 file_list.append(os.path.join(root, file_name))
         return file_list
 
+    @property
     def driver_path(self):
         """
         获取 webdriver 路径

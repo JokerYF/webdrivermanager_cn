@@ -66,9 +66,20 @@ class DriverManager(metaclass=abc.ABCMeta):
         """
         self.__cache_manager.set_cache(
             driver_name=self.driver_name,
-            update=f"{datetime.datetime.today()}",
+            download_time=f"{datetime.datetime.today()}",
             path=path,
             version=self.driver_version,
+        )
+
+    def __update_read_time(self):
+        """
+        更新最后一次读取时间
+        :return:
+        """
+        self.__cache_manager.set_value_by_key(
+            driver_name=self.driver_name,
+            version=self.driver_version,
+            last_read_time=f"{datetime.datetime.today()}"  # 记录最后一次读取时间，并按照这个时间清理WebDriver
         )
 
     @abc.abstractmethod
@@ -104,7 +115,7 @@ class DriverManager(metaclass=abc.ABCMeta):
         download_path = DownloadManager().download_file(url, self.__driver_path)
         file = FileManager(download_path, self.driver_name)
         file.unpack()
-        return file.driver_path()
+        return file.driver_path
 
     def install(self) -> str:
         """
@@ -122,6 +133,14 @@ class DriverManager(metaclass=abc.ABCMeta):
             except HTTPError:
                 raise Exception(f"当前WebDriver: {self.driver_name} 无该版本: {self.driver_version}")
             self.__set_cache(driver_path)
+        self.__update_read_time()
         wdm_logger().info(f'Driver路径: {driver_path}')
         os.chmod(driver_path, 0o755)
         return driver_path
+
+    def clear_webdriver(self):
+        """
+        清除符合条件的WebDriver文件
+        :return:
+        """
+        ...
