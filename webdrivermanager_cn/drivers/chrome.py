@@ -33,10 +33,9 @@ class ChromeDriver(DriverManager):
 
     def download_url(self):
         if self.__is_new_version:
-            host = f'{config.ChromeDriverUrlNew}/{self.get_os_info()}'
+            url = f'{config.ChromeDriverUrlNew}/{self.driver_version}/{self.get_os_info()}/{self.get_driver_name}'
         else:
-            host = config.ChromeDriverUrl
-        url = f'{host}/{self.driver_version}/{self.get_driver_name}'
+            url = f'{config.ChromeDriverUrl}/{self.driver_version}/{self.get_driver_name}'
         wdm_logger().debug(f'拼接下载url: {url}')
         return url
 
