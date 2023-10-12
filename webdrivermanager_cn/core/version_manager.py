@@ -120,7 +120,7 @@ class GetClientVersion(GetUrl):
         cmd_map = {
             OSType.MAC: {
                 ClientType.Chrome: "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
-                ClientType.Firefox: r"/Applications/Firefox.app/Contents/MacOS/firefox --driver_version",
+                ClientType.Firefox: r"/Applications/Firefox.app/Contents/MacOS/firefox --version",
                 ClientType.Edge: r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version'
             },
             OSType.WIN: {
