@@ -36,7 +36,9 @@ class DriverManager(metaclass=abc.ABCMeta):
         self.os_info = OSManager()
         self.__cache_manager = DriverCacheManager(root_dir=root_dir)
         self.__driver_path = os.path.join(
-            self.__cache_manager.root_dir, self.driver_name, self.driver_version
+            self.__cache_manager.root_dir,
+            self.driver_name,
+            self.driver_version
         )
         wdm_logger().info(f'获取WebDriver: {self.driver_name} - {self.driver_version}')
 
@@ -48,14 +50,15 @@ class DriverManager(metaclass=abc.ABCMeta):
         """
         return vs.parse(self.driver_version)
 
-    def get_cache(self):
+    def get_driver_path_by_cache(self):
         """
-        获取cache信息
-        根据driver名称，版本号为key获取对应的driver路径
+        获取 cache 中对应 WebDriver 的路径
         :return: path or None
         """
         return self.__cache_manager.get_cache(
-            driver_name=self.driver_name, version=self.driver_version
+            driver_name=self.driver_name,
+            version=self.driver_version,
+            key='path',
         )
 
     def __set_cache(self, path):
@@ -66,9 +69,9 @@ class DriverManager(metaclass=abc.ABCMeta):
         """
         self.__cache_manager.set_cache(
             driver_name=self.driver_name,
+            version=self.driver_version,
             download_time=f"{datetime.datetime.today()}",
             path=path,
-            version=self.driver_version,
         )
 
     def __update_read_time(self):
@@ -76,7 +79,7 @@ class DriverManager(metaclass=abc.ABCMeta):
         更新最后一次读取时间
         :return:
         """
-        self.__cache_manager.set_value_by_key(
+        self.__cache_manager.set_cache(
             driver_name=self.driver_name,
             version=self.driver_version,
             last_read_time=f"{datetime.datetime.today()}"  # 记录最后一次读取时间，并按照这个时间清理WebDriver
@@ -125,7 +128,7 @@ class DriverManager(metaclass=abc.ABCMeta):
         :raise: Exception，如果下载版本不存在，则会报错
         :return: abs path
         """
-        driver_path = self.get_cache()
+        driver_path = self.get_driver_path_by_cache()
         if not driver_path:
             wdm_logger().info('缓存不存在，开始下载...')
             try:
@@ -134,7 +137,7 @@ class DriverManager(metaclass=abc.ABCMeta):
                 raise Exception(f"当前WebDriver: {self.driver_name} 无该版本: {self.driver_version}")
             self.__set_cache(driver_path)
         self.__update_read_time()
-        wdm_logger().info(f'Driver路径: {driver_path}')
+        wdm_logger().info(f'WebDriver路径: {driver_path}')
         os.chmod(driver_path, 0o755)
         return driver_path
 

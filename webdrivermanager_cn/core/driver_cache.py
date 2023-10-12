@@ -30,6 +30,7 @@ class DriverCacheManager:
         """
         return os.path.exists(self.__json_path)
 
+    @property
     def __read_cache(self) -> dict:
         """
         读取缓存文件
@@ -46,7 +47,7 @@ class DriverCacheManager:
         :param kwargs:
         :return:
         """
-        data = self.__read_cache()
+        data = self.__read_cache
 
         driver_name = kwargs['driver_name']
         version = kwargs['version']
@@ -55,17 +56,12 @@ class DriverCacheManager:
             data[driver_name] = {}
         driver_data = data[driver_name][self.format_key(driver_name, version)]
         for k, v in kwargs.items():
+            if k in ['driver_name', 'version']:  # WebDriver cache 信息内不记录这两个字段
+                continue
             driver_data[k] = v
 
         with open(self.__json_path, 'w+', encoding='utf-8') as f:
             json.dump(data, f, indent=4)
-
-    def set_value_by_key(self, driver_name, version, **kwargs):
-        self.__write_cache(
-            driver_name=driver_name,
-            version=version,
-            **kwargs
-        )
 
     @staticmethod
     def format_key(driver_name, version) -> str:
@@ -77,33 +73,32 @@ class DriverCacheManager:
         """
         return f'{driver_name}_{OSManager().get_os_name}_{version}'
 
-    def get_cache(self, driver_name, version):
+    def get_cache(self, driver_name, version, key):
         """
-        获取缓存中的 driver path
-        如果缓存存在，返回 path 路径；不存在，返回 None
+        获取缓存中的 driver 信息
+        如果缓存存在，返回 key 对应的 value；不存在，返回 None
         :param driver_name:
         :param version:
+        :param key:
         :return:
         """
         if not self.__json_exist:
             return None
         try:
-            return self.__read_cache()[driver_name][self.format_key(driver_name, version)]['path']
+            driver_key = self.format_key(driver_name, version)
+            return self.__read_cache[driver_name][driver_key][key]
         except KeyError:
             return None
 
-    def set_cache(self, driver_name, version, download_time, path):
+    def set_cache(self, driver_name, version, **kwargs):
         """
         写入缓存信息
         :param driver_name:
         :param version:
-        :param download_time:
-        :param path:
         :return:
         """
         self.__write_cache(
             driver_name=driver_name,
             version=version,
-            download_time=download_time,
-            path=path,
+            **kwargs
         )
