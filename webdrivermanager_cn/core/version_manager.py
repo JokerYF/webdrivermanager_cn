@@ -23,7 +23,7 @@ class ClientType:
 CLIENT_PATTERN = {
     ClientType.Chrome: r"\d+\.\d+\.\d+\.\d+",
     ClientType.Firefox: r"\d+\.\d+\.\d+",
-    ClientType.Edge: r"\d+\.\d+\.\d+.\d+",
+    ClientType.Edge: r"\d+\.\d+\.\d+\.\d+",
 }
 
 
@@ -121,16 +121,23 @@ class GetClientVersion(GetUrl):
             OSType.MAC: {
                 ClientType.Chrome: "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
                 ClientType.Firefox: r"/Applications/Firefox.app/Contents/MacOS/firefox --version",
-                ClientType.Edge: r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version'
+                ClientType.Edge: r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version',
             },
             OSType.WIN: {
                 ClientType.Chrome: 'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version',
+                ClientType.Firefox: r'reg query "HKEY_CURRENT_USER\Software\Mozilla\Mozilla Firefox" /v CurrentVersion',
+                ClientType.Edge: r'reg query "HKEY_CURRENT_USER\Software\Microsoft\Edge\BLBeacon" /v version',
             },
             OSType.LINUX: {
                 ClientType.Chrome: "google-chrome --version",
+                ClientType.Firefox: "firefox --version",
+                ClientType.Edge: "microsoft-edge --version",
             },
         }
-        return cmd_map[os_type][client], CLIENT_PATTERN[client]
+        cmd = cmd_map[os_type][client]
+        client_pattern = CLIENT_PATTERN[client]
+        wdm_logger().debug(f'执行命令: {cmd}, 解析方式: {client_pattern}')
+        return cmd, client_pattern
 
     @staticmethod
     def __read_version_from_cmd(cmd, pattern):
@@ -140,16 +147,16 @@ class GetClientVersion(GetUrl):
         :param pattern:
         :return:
         """
-        wdm_logger().debug(f'执行命令: {cmd}')
         with subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stdin=subprocess.DEVNULL,
-            shell=True,
+                cmd,
+                stdout=subprocess.PIPE,
+                stdin=subprocess.DEVNULL,
+                shell=True,
         ) as stream:
             stdout = stream.communicate()[0].decode()
             version = re.search(pattern, stdout)
             version = version.group(0) if version else None
+        wdm_logger().debug('获取到的版本号: %s', version)
         return version
 
     def get_version(self, client):
