@@ -67,13 +67,13 @@ class ChromeDriver(DriverManager):
         优先通过ChromeDriver官方url获取最新版本，如果失败，则获取本地chrome版本后模糊匹配
         :return:
         """
-        if self._chromedriver_version:
+        if self._chromedriver_version and self._chromedriver_version != 'latest':
+            return self._chromedriver_version
+        elif self._chromedriver_version == 'latest':
             try:
                 return self.__get_latest_release_version
             except HTTPError:
                 pass
-        if self._chromedriver_version and self._chromedriver_version != 'latest':
-            return self._chromedriver_version
         return GetClientVersion().get_chrome_correct_version()
 
     def get_os_info(self, mac_format=True):
