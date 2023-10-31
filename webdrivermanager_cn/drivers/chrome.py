@@ -77,7 +77,10 @@ class ChromeDriver(DriverManager):
             except HTTPError:
                 pass
         version = GetClientVersion().get_version(ClientType.Chrome)
-        return self.__get_latest_release_version(version)
+        try:
+            return self.__get_latest_release_version(version)
+        except HTTPError:
+            return GetClientVersion().get_chrome_correct_version()
 
     def get_os_info(self, mac_format=True):
         _os_type = f"{self.os_info.get_os_type}{self.os_info.get_framework}"
