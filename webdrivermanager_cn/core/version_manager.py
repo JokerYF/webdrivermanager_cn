@@ -110,16 +110,23 @@ class GetClientVersion(GetUrl):
         super().__init__()
         self._version = version
 
-    @staticmethod
-    def cmd_dict(client):
+    @property
+    def reg(self):
         """
-        根据不同操作系统、不同客户端，返回获取版本号的命令、正则表达式
-        :param client:
+        获取reg命令路径
         :return:
         """
         reg = rf'{os.getenv("SystemRoot")}\System32\reg.exe'  # 拼接reg命令完整路径，避免报错
         if not os.path.exists(reg):
             raise FileNotFoundError(f'当前Windows环境没有该命令: {reg}')
+        return reg
+
+    def cmd_dict(self, client):
+        """
+        根据不同操作系统、不同客户端，返回获取版本号的命令、正则表达式
+        :param client:
+        :return:
+        """
 
         os_type = OSManager().get_os_name
         cmd_map = {
@@ -129,9 +136,9 @@ class GetClientVersion(GetUrl):
                 ClientType.Edge: r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version',
             },
             OSType.WIN: {
-                ClientType.Chrome: fr'{reg} query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version',
-                ClientType.Firefox: fr'{reg} query "HKEY_CURRENT_USER\Software\Mozilla\Mozilla Firefox" /v CurrentVersion',
-                ClientType.Edge: fr'{reg} query "HKEY_CURRENT_USER\Software\Microsoft\Edge\BLBeacon" /v version',
+                ClientType.Chrome: fr'{self.reg} query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version',
+                ClientType.Firefox: fr'{self.reg} query "HKEY_CURRENT_USER\Software\Mozilla\Mozilla Firefox" /v CurrentVersion',
+                ClientType.Edge: fr'{self.reg} query "HKEY_CURRENT_USER\Software\Microsoft\Edge\BLBeacon" /v version',
             },
             OSType.LINUX: {
                 ClientType.Chrome: "google-chrome --version",
