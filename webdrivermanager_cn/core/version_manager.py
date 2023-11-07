@@ -1,6 +1,7 @@
 """
 搜索版本，如果版本不存在，则找比当前小一版本
 """
+import os
 import re
 import subprocess
 
@@ -116,17 +117,21 @@ class GetClientVersion(GetUrl):
         :param client:
         :return:
         """
+        reg = rf'{os.getenv("SystemRoot")}\System32\reg.exe'  # 拼接reg命令完整路径，避免报错
+        if not os.path.exists(reg):
+            raise FileNotFoundError(f'当前Windows环境没有该命令: {reg}')
+
         os_type = OSManager().get_os_name
         cmd_map = {
             OSType.MAC: {
-                ClientType.Chrome: "/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
+                ClientType.Chrome: r"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
                 ClientType.Firefox: r"/Applications/Firefox.app/Contents/MacOS/firefox --version",
                 ClientType.Edge: r'/Applications/Microsoft\ Edge.app/Contents/MacOS/Microsoft\ Edge --version',
             },
             OSType.WIN: {
-                ClientType.Chrome: 'reg query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version',
-                ClientType.Firefox: r'reg query "HKEY_CURRENT_USER\Software\Mozilla\Mozilla Firefox" /v CurrentVersion',
-                ClientType.Edge: r'reg query "HKEY_CURRENT_USER\Software\Microsoft\Edge\BLBeacon" /v version',
+                ClientType.Chrome: fr'{reg} query "HKEY_CURRENT_USER\Software\Google\Chrome\BLBeacon" /v version',
+                ClientType.Firefox: fr'{reg} query "HKEY_CURRENT_USER\Software\Mozilla\Mozilla Firefox" /v CurrentVersion',
+                ClientType.Edge: fr'{reg} query "HKEY_CURRENT_USER\Software\Microsoft\Edge\BLBeacon" /v version',
             },
             OSType.LINUX: {
                 ClientType.Chrome: "google-chrome --version",
