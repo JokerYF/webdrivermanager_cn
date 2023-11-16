@@ -6,7 +6,7 @@ from webdrivermanager_cn.core import config
 from webdrivermanager_cn.core.driver import DriverManager
 from webdrivermanager_cn.core.log_manager import wdm_logger
 from webdrivermanager_cn.core.os_manager import OSType
-from webdrivermanager_cn.core.version_manager import GetClientVersion
+from webdrivermanager_cn.core.version_manager import GetClientVersion, ClientType
 
 
 class ChromeDriver(DriverManager):
@@ -39,17 +39,19 @@ class ChromeDriver(DriverManager):
         wdm_logger().debug(f'拼接下载url: {url}')
         return url
 
-    @property
-    def __get_latest_release_version(self):
+    def __get_latest_release_version(self, version=None):
         """
         通过GitHub获取ChromeDriver最新版本号
         :return:
         """
         host = config.ChromeDriver
-        if self._chromedriver_version == 'latest':
+        if not version:
+            version = self._chromedriver_version
+
+        if version == 'latest':
             version = 'STABLE'
         else:
-            version_parser = vs.parse(self._chromedriver_version)
+            version_parser = vs.parse(version)
             version = f'{version_parser.major}.{version_parser.minor}.{version_parser.micro}'
             if not self.__is_new_version:
                 host = config.ChromeDriverUrl
@@ -67,14 +69,18 @@ class ChromeDriver(DriverManager):
         优先通过ChromeDriver官方url获取最新版本，如果失败，则获取本地chrome版本后模糊匹配
         :return:
         """
-        if self._chromedriver_version:
-            try:
-                return self.__get_latest_release_version
-            except HTTPError:
-                pass
         if self._chromedriver_version and self._chromedriver_version != 'latest':
             return self._chromedriver_version
-        return GetClientVersion().get_chrome_correct_version()
+        elif self._chromedriver_version == 'latest':
+            try:
+                return self.__get_latest_release_version()
+            except HTTPError:
+                pass
+        version = GetClientVersion().get_version(ClientType.Chrome)
+        try:
+            return self.__get_latest_release_version(version)
+        except HTTPError:
+            return GetClientVersion().get_chrome_correct_version()
 
     def get_os_info(self, mac_format=True):
         _os_type = f"{self.os_info.get_os_type}{self.os_info.get_framework}"
