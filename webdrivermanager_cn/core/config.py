@@ -54,3 +54,18 @@ def init_log_level():
         return int(os.getenv('WDM_LOG_LEVEL', default))
     except:
         return default
+
+
+def clear_wdm_cache_time():
+    """
+    清理超过时间的 WebDriver
+    默认为5天
+    执行以下代码修改
+    os.environ['WDM_CACHE_TIME'] = 5
+    :return:
+    """
+    default = 5
+    try:
+        return int(os.getenv('WDM_CACHE_TIME', default))
+    except:
+        return default
