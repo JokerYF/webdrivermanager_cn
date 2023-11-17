@@ -110,7 +110,8 @@ class DriverCacheManager:
         time_interval = 60 * 60 * 24 * clear_wdm_cache_time()
         for driver, info in self.__read_cache[driver_name].items():
             read_time = info.get('last_read_time', None)
-            read_time = datetime.strptime(read_time, '%Y-%m-%d %H:%M:%S.%f')
+            if read_time:
+                read_time = datetime.strptime(read_time, '%Y-%m-%d %H:%M:%S.%f')
             if (read_time is None
                     or datetime.today().timestamp() - read_time.timestamp() >= time_interval):
                 path_list.append(info['version'])
