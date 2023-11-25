@@ -18,7 +18,7 @@ class Geckodriver(DriverManager):
 
     @property
     def get_driver_name(self) -> str:
-        pack_type = 'zip' if self.os_info == OSType.WIN else 'tar.gz'
+        pack_type = 'zip' if self.os_info.get_os_name == OSType.WIN else 'tar.gz'
         return f'{self.driver_name}-{self.driver_version}-{self.get_os_info}.{pack_type}'
 
     @property

@@ -27,11 +27,11 @@ class OSManager:
         :return:
         """
         pl = sys.platform
-        if pl == "linux" or pl == "linux2":
+        if pl in ['linux', 'linux2']:
             return OSType.LINUX
         elif pl == "darwin":
             return OSType.MAC
-        elif pl == "win32" or pl == "cygwin":
+        elif pl in ['win32', 'cygwin']:
             return OSType.WIN
 
     @property

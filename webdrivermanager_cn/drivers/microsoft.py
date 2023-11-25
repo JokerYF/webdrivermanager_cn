@@ -9,7 +9,7 @@ from webdrivermanager_cn.core.version_manager import GetClientVersion, ClientTyp
 class EdgeDriverManager(DriverManager):
     def __init__(self, version=None, path=None):
         super().__init__(driver_name="edgedriver", version="", root_dir=path)
-        self.version = version if version else self.get_version()
+        self.driver_version = version if version else self.get_version()
 
     def get_driver_name(self) -> str:
         return f"{self.driver_name}_{self.get_os_info()}.zip"
@@ -21,7 +21,7 @@ class EdgeDriverManager(DriverManager):
         return _os_info
 
     def download_url(self) -> str:
-        return f"{config.EdgeDriverUrl}/{self.version}/{self.get_driver_name()}"
+        return f"{config.EdgeDriverUrl}/{self.driver_version}/{self.get_driver_name()}"
 
     def get_version(self, version=None):
         """
