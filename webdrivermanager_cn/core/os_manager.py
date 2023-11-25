@@ -33,6 +33,7 @@ class OSManager:
             return OSType.MAC
         elif pl in ['win32', 'cygwin']:
             return OSType.WIN
+        raise OSError(f'WDM未适配当前OS系统: {pl}')
 
     @property
     def get_os_architecture(self):
