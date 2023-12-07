@@ -1,8 +1,8 @@
-from chrome import ChromeDriverManager
-from geckodriver import GeckodriverManager
-from microsoft import EdgeWebDriverManager
+from webdrivermanager_cn.chrome import ChromeDriverManager
+from webdrivermanager_cn.geckodriver import GeckodriverManager
+from webdrivermanager_cn.microsoft import EdgeWebDriverManager
 
-VERSION = '1.2.0'
+VERSION = '1.2.1'
 
 __all__ = [
     'VERSION',
