@@ -6,7 +6,7 @@ from webdrivermanager_cn.core.os_manager import OSType
 from webdrivermanager_cn.core.version_manager import GetClientVersion, ClientType
 
 
-class EdgeDriverManager(DriverManager):
+class EdgeDriver(DriverManager):
     def __init__(self, version=None, path=None):
         super().__init__(driver_name="edgedriver", version="", root_dir=path)
         self.driver_version = version if version else self.get_version()
