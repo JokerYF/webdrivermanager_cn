@@ -42,5 +42,5 @@ class EdgeDriver(DriverManager):
         else:
             suffix = OSType.LINUX
         latest_url = f"{config.EdgeDriverUrl}/LATEST_RELEASE_{client_version_parser._version_obj.major}_{suffix.upper()}"
-        response = requests.get(latest_url)
+        response = requests.get(latest_url, timeout=15)
         return response.text.strip()

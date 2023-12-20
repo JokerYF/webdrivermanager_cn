@@ -69,7 +69,7 @@ class GetUrl:
         解析driver url，获取所有driver版本
         :return:
         """
-        return [i["name"].replace("/", "") for i in requests.get(self.get_host).json()]
+        return [i["name"].replace("/", "") for i in requests.get(self.get_host, timeout=15).json()]
 
     def _get_chrome_correct_version(self):
         """
@@ -199,5 +199,5 @@ class GetClientVersion(GetUrl):
         if self._version:
             return self._version
         url = f"{config.GeckodriverApi}/latest"
-        response = requests.get(url=url)
+        response = requests.get(url=url, timeout=15)
         return response.json()["tag_name"]

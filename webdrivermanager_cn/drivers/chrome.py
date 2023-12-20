@@ -58,7 +58,7 @@ class ChromeDriver(DriverManager):
         url_params = f'LATEST_RELEASE_{version}'
         wdm_logger().debug(f'获取 ChromeDriver {url_params}')
         url = f'{host}/{url_params}'
-        response = requests.get(url)
+        response = requests.get(url, timeout=15)
         wdm_logger().debug(f'{url} - {response.status_code}')
         response.raise_for_status()
         return response.text
