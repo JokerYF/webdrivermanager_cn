@@ -42,13 +42,13 @@ class DriverManager(metaclass=abc.ABCMeta):
         )
         wdm_logger().info(f'获取WebDriver: {self.driver_name} - {self.driver_version}')
 
-    @property
-    def version_parse(self):
+    @staticmethod
+    def version_parse(version):
         """
         版本号解析器
         :return:
         """
-        return vs.parse(self.driver_version)
+        return vs.parse(version)
 
     def get_driver_path_by_cache(self):
         """
