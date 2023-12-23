@@ -14,7 +14,7 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 
 ## 解决问题
 
-本模块可以看作是 `webdriver_manager` 模块的国内平替，为那些公司无法通过魔法手段连接GitHub(比如作者公司T^T)
+本模块可以看作是 `webdriver_manager` 模块的国内平替，为那些公司无法通过魔法手段连接GitHub(比如作者公司T_T)
 ，和需要持续更新WebDriver的自动化测试同学们提供服务。
 
 ## 已实现功能
@@ -67,6 +67,19 @@ from webdrivermanager_cn.microsoft import EdgeWebDriverManager
 
 driver_path = EdgeWebDriverManager().install()
 ```
+
+## 全局变量
+wdmcn也像wdm一样，内置了一些全局变量，后续会根据需求继续添加，具体请看`config.py`，这里简单列举一下。
+
+- 日志功能
+
+  - 日志功能默认关闭，可以通过`os.environ['WDM_LOG'] = 'true'`打开，默认为false
+  - 日志等级，可以通过`os.environ['WDM_LOG_LEVEL'] = f'{logging.INFO}'`修改，默认等级为INFO
+  - 自定义logger，可以通过导入`set_logger()`方法，将您自己的logger添加进来，则日志输出就会使用您的logger记录
+
+- 定期清理旧的webdriver
+
+  - 如果您使用的wdmcn时间很长以后，webdriver会随着chrome等浏览器版本的迭代越来越多，现在可以默认删除无用的webdriver，可以使用`os.environ['WDM_CACHE_TIME'] = 5`设置，默认会清理5天前的webdriver，以减少磁盘占用。
 
 ## 其他
 
