@@ -1,5 +1,4 @@
 import requests
-from packaging import version as vs
 from requests import HTTPError
 
 from webdrivermanager_cn.core import config
@@ -27,7 +26,7 @@ class ChromeDriver(DriverManager):
         :return:
         """
         try:
-            return vs.parse(self._chromedriver_version).major >= 115
+            return self.version_parse(self._version).major >= 115
         except:
             return True
 
@@ -51,14 +50,14 @@ class ChromeDriver(DriverManager):
         if version == 'latest':
             version = 'STABLE'
         else:
-            version_parser = vs.parse(version)
+            version_parser = self.version_parse(version)
             version = f'{version_parser.major}.{version_parser.minor}.{version_parser.micro}'
             if not self.__is_new_version:
                 host = config.ChromeDriverUrl
         url_params = f'LATEST_RELEASE_{version}'
         wdm_logger().debug(f'获取 ChromeDriver {url_params}')
         url = f'{host}/{url_params}'
-        response = requests.get(url)
+        response = requests.get(url, timeout=15)
         wdm_logger().debug(f'{url} - {response.status_code}')
         response.raise_for_status()
         return response.text

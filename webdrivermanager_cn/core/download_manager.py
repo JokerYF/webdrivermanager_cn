@@ -21,7 +21,7 @@ class DownloadManager:
         :return:
         """
         wdm_logger().debug(f'开始执行下载: {url}')
-        response = requests.get(url)
+        response = requests.get(url, timeout=15)
         wdm_logger().debug(f'url: {url} - {response.status_code}')
         response.raise_for_status()
         wdm_logger().debug(f'本地下载路径: {down_path}')

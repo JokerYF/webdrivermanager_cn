@@ -6,7 +6,7 @@ from webdrivermanager_cn.core.os_manager import OSType
 from webdrivermanager_cn.core.version_manager import GetClientVersion, ClientType
 
 
-class EdgeDriverManager(DriverManager):
+class EdgeDriver(DriverManager):
     def __init__(self, version=None, path=None):
         super().__init__(driver_name="edgedriver", version="", root_dir=path)
         self.driver_version = version if version else self.get_version()
@@ -42,5 +42,5 @@ class EdgeDriverManager(DriverManager):
         else:
             suffix = OSType.LINUX
         latest_url = f"{config.EdgeDriverUrl}/LATEST_RELEASE_{client_version_parser._version_obj.major}_{suffix.upper()}"
-        response = requests.get(latest_url)
+        response = requests.get(latest_url, timeout=15)
         return response.text.strip()

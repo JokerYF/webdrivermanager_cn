@@ -1,9 +1,9 @@
-from webdrivermanager_cn.drivers.microsoft import EdgeDriverManager
+from webdrivermanager_cn.drivers.microsoft import EdgeDriver
 
 
 class EdgeWebDriverManager:
     def __init__(self, version=None, path=None):
-        self.__driver = EdgeDriverManager(
+        self.__driver = EdgeDriver(
             version=version,
             path=path,
         )
