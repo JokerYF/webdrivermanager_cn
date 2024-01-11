@@ -13,6 +13,7 @@ from webdrivermanager_cn.core.driver_cache import DriverCacheManager
 from webdrivermanager_cn.core.file_manager import FileManager
 from webdrivermanager_cn.core.log_manager import wdm_logger, set_logger_init
 from webdrivermanager_cn.core.os_manager import OSManager
+from webdrivermanager_cn.core.version_manager import ClientType, WEB_DRIVER_NAME, GetClientVersion
 
 
 class DriverManager(metaclass=abc.ABCMeta):
@@ -21,18 +22,21 @@ class DriverManager(metaclass=abc.ABCMeta):
     不能实例化，只能继承并重写抽象方法
     """
 
-    def __init__(self, driver_name, version, root_dir):
+    def __init__(self, client_type: ClientType, version, root_dir):
         """
         Driver基类
-        :param driver_name: Driver名称
+        :param client_type: Driver名称
         :param version: Driver版本
         :param root_dir: 缓存文件地址
         """
         set_logger_init()
+        wdm_logger().debug('')
         wdm_logger().info(f'{"*" * 10} WebDriverManagerCn {"*" * 10}')
 
-        self.driver_name = driver_name
+        self.driver_type = client_type
+        self.driver_name = WEB_DRIVER_NAME[self.driver_type]
         self.driver_version = version
+        self.local_client_version = GetClientVersion().get_version(self.driver_type)
         self.os_info = OSManager()
         self.__cache_manager = DriverCacheManager(root_dir=root_dir)
         self.__driver_path = os.path.join(
@@ -57,8 +61,19 @@ class DriverManager(metaclass=abc.ABCMeta):
         """
         return self.__cache_manager.get_cache(
             driver_name=self.driver_name,
-            version=self.driver_version,
+            client_version=self.driver_version,
             key='path',
+        )
+
+    def get_driver_last_read_time(self):
+        """
+        获取 cache 中对应 WebDriver 的最后一次读取时间
+        :return:
+        """
+        return self.__cache_manager.get_cache(
+            driver_name=self.driver_name,
+            client_version=self.driver_version,
+            key='last_read_time',
         )
 
     def __set_cache(self, path):
@@ -69,6 +84,7 @@ class DriverManager(metaclass=abc.ABCMeta):
         """
         self.__cache_manager.set_cache(
             driver_name=self.driver_name,
+            client_version=self.local_client_version,
             version=self.driver_version,
             download_time=f"{datetime.datetime.today()}",
             path=path,
@@ -125,7 +141,7 @@ class DriverManager(metaclass=abc.ABCMeta):
             except RequestException:
                 raise Exception(f"当前WebDriver: {self.driver_name} 无该版本: {self.driver_version}")
             self.__set_cache(driver_path)
-        wdm_logger().info(f'WebDriver路径: {driver_path}')
+        wdm_logger().info(f'WebDriver路径: {driver_path} , 上次读取时间为: {self.get_driver_last_read_time()}')
         os.chmod(driver_path, 0o755)
 
         # 写入读取时间，并清理超期 WebDriver

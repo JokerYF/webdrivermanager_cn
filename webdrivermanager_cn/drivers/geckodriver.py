@@ -11,7 +11,7 @@ class Geckodriver(DriverManager):
     def __init__(self, version=None, path=None):
         if not version:
             version = GetClientVersion().get_geckodriver_version()
-        super().__init__(driver_name='geckodriver', version=version, root_dir=path)
+        super().__init__(client_type='geckodriver', version=version, root_dir=path)
 
     def download_url(self):
         return f'{config.GeckodriverUrl}/{self.driver_version}/{self.get_driver_name}'

@@ -58,8 +58,8 @@ class DriverCacheManager:
         data = self.__read_cache
 
         driver_name = kwargs['driver_name']
-        version = kwargs['version']
-        key = self.format_key(driver_name, version)
+        client_version = kwargs['client_version']
+        key = self.format_key(driver_name, client_version)
 
         if driver_name not in data.keys():
             data[driver_name] = {}
@@ -74,28 +74,28 @@ class DriverCacheManager:
         self.__dump_cache(data)
 
     @staticmethod
-    def format_key(driver_name, version) -> str:
+    def format_key(driver_name, client_version) -> str:
         """
         格式化缓存 key 名称
         :param driver_name:
-        :param version:
+        :param client_version:
         :return:
         """
-        return f'{driver_name}_{OSManager().get_os_name}_{version}'
+        return f'{driver_name}_{OSManager().get_os_name}_{client_version}'
 
-    def get_cache(self, driver_name, version, key):
+    def get_cache(self, driver_name, client_version, key):
         """
         获取缓存中的 driver 信息
         如果缓存存在，返回 key 对应的 value；不存在，返回 None
         :param driver_name:
-        :param version:
+        :param client_version:
         :param key:
         :return:
         """
         if not self.__json_exist:
             return None
         try:
-            driver_key = self.format_key(driver_name, version)
+            driver_key = self.format_key(driver_name, client_version)
             return self.__read_cache[driver_name][driver_key][key]
         except KeyError:
             return None
@@ -115,17 +115,22 @@ class DriverCacheManager:
             if (read_time is None
                     or datetime.today().timestamp() - read_time.timestamp() >= time_interval):
                 path_list.append(info['version'])
+                wdm_logger().debug(f'{driver_name} 已过期 {read_time}, 即将清理!')
+                continue
+            wdm_logger().debug(f'{driver_name} 尚未过期 {read_time}')
         return path_list
 
-    def set_cache(self, driver_name, version, **kwargs):
+    def set_cache(self, driver_name, client_version, version, **kwargs):
         """
         写入缓存信息
         :param driver_name:
+        :param client_version:
         :param version:
         :return:
         """
         self.__write_cache(
             driver_name=driver_name,
+            client_version=client_version,
             version=version,
             **kwargs
         )
@@ -137,11 +142,13 @@ class DriverCacheManager:
         :param version:
         :return:
         """
+        times = datetime.today()
         self.set_cache(
             driver_name=driver_name,
             version=version,
-            last_read_time=f"{datetime.today()}"  # 记录最后一次读取时间，并按照这个时间清理WebDriver
+            last_read_time=f"{times}"  # 记录最后一次读取时间，并按照这个时间清理WebDriver
         )
+        wdm_logger().debug(f'更新 {driver_name} - {version} 读取时间: {times}')
 
     def clear_cache_path(self, driver_name):
         """
@@ -158,7 +165,7 @@ class DriverCacheManager:
                 shutil.rmtree(clear_path)
             else:
                 wdm_logger().warning(f'缓存目录无该路径: {clear_path}')
-            cache_data[driver_name].pop(self.format_key(driver_name=driver_name, version=version))
+            cache_data[driver_name].pop(self.format_key(driver_name=driver_name, client_version=version))
             wdm_logger().info(f'清理过期WebDriver: {clear_path}')
 
         self.__dump_cache(cache_data)
