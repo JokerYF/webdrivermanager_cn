@@ -1,5 +1,7 @@
 import setuptools
 
+from webdrivermanager_cn import VERSION
+
 with open("README.md", encoding="utf-8") as readme_file:
     readme = readme_file.read()
 
@@ -8,7 +10,7 @@ setuptools.setup(
     python_requires=">=3.7",
     long_description=readme,
     long_description_content_type="text/markdown",
-    version="0.3.1",
+    version=VERSION,
     author="御风",
     author_email="eternallyyf@163.com",
     url="https://gitee.com/Joker_JH/webdrivermanagercn",

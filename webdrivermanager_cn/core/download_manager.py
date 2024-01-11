@@ -5,6 +5,8 @@ import os
 
 import requests as requests
 
+from webdrivermanager_cn.core.log_manager import wdm_logger
+
 
 class DownloadManager:
     """
@@ -18,11 +20,14 @@ class DownloadManager:
         :param down_path:
         :return:
         """
-        response = requests.get(url)
+        wdm_logger().debug(f'开始执行下载: {url}')
+        response = requests.get(url, timeout=15)
+        wdm_logger().debug(f'url: {url} - {response.status_code}')
         response.raise_for_status()
+        wdm_logger().debug(f'本地下载路径: {down_path}')
         os.makedirs(down_path, exist_ok=True)
         file_path = os.path.join(down_path, self.get_filename_by_url(url))
-        with open(file_path, 'wb') as f:
+        with open(file_path, "wb") as f:
             f.write(response.content)
         return file_path
 
@@ -33,5 +38,5 @@ class DownloadManager:
         :param url:
         :return:
         """
-        url_paser = url.split('/')
-        return url_paser[-1]
+        url_parser = url.split("/")
+        return url_parser[-1]

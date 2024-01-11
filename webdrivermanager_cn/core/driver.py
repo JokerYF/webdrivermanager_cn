@@ -6,48 +6,74 @@ import datetime
 import os.path
 
 from packaging import version as vs
-from requests import HTTPError
+from requests import RequestException
 
 from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.driver_cache import DriverCacheManager
 from webdrivermanager_cn.core.file_manager import FileManager
+from webdrivermanager_cn.core.log_manager import wdm_logger, set_logger_init
+from webdrivermanager_cn.core.os_manager import OSManager
+from webdrivermanager_cn.core.version_manager import ClientType, WEB_DRIVER_NAME, GetClientVersion
 
 
 class DriverManager(metaclass=abc.ABCMeta):
     """
-    Driver基类
+    Driver抽象类
+    不能实例化，只能继承并重写抽象方法
     """
 
-    def __init__(self, driver_name, version, root_dir):
+    def __init__(self, client_type: ClientType, version, root_dir):
         """
         Driver基类
-        :param driver_name: Driver名称
+        :param client_type: Driver名称
         :param version: Driver版本
         :param root_dir: 缓存文件地址
         """
-        self.driver_name = driver_name
-        self.version = version
+        set_logger_init()
+        wdm_logger().debug('')
+        wdm_logger().info(f'{"*" * 10} WebDriverManagerCn {"*" * 10}')
+
+        self.driver_type = client_type
+        self.driver_name = WEB_DRIVER_NAME[self.driver_type]
+        self.driver_version = version
+        self.local_client_version = GetClientVersion().get_version(self.driver_type)
+        self.os_info = OSManager()
         self.__cache_manager = DriverCacheManager(root_dir=root_dir)
         self.__driver_path = os.path.join(
-            self.__cache_manager.root_dir, self.driver_name, self.version
+            self.__cache_manager.root_dir,
+            self.driver_name,
+            self.driver_version
         )
+        wdm_logger().info(f'获取WebDriver: {self.driver_name} - {self.driver_version}')
 
-    @property
-    def version_parse(self):
+    @staticmethod
+    def version_parse(version):
         """
         版本号解析器
         :return:
         """
-        return vs.parse(self.version)
+        return vs.parse(version)
 
-    def get_cache(self):
+    def get_driver_path_by_cache(self):
         """
-        获取cache信息
-        根据driver名称，版本号为key获取对应的driver路径
+        获取 cache 中对应 WebDriver 的路径
         :return: path or None
         """
         return self.__cache_manager.get_cache(
-            driver_name=self.driver_name, version=self.version
+            driver_name=self.driver_name,
+            client_version=self.driver_version,
+            key='path',
+        )
+
+    def get_driver_last_read_time(self):
+        """
+        获取 cache 中对应 WebDriver 的最后一次读取时间
+        :return:
+        """
+        return self.__cache_manager.get_cache(
+            driver_name=self.driver_name,
+            client_version=self.driver_version,
+            key='last_read_time',
         )
 
     def __set_cache(self, path):
@@ -58,16 +84,16 @@ class DriverManager(metaclass=abc.ABCMeta):
         """
         self.__cache_manager.set_cache(
             driver_name=self.driver_name,
-            update=f"{datetime.datetime.today()}",
+            client_version=self.local_client_version,
+            version=self.driver_version,
+            download_time=f"{datetime.datetime.today()}",
             path=path,
-            version=self.version,
         )
 
     @abc.abstractmethod
     def download_url(self) -> str:
         """
         获取文件下载url
-        抽象接口方法，继承时需要重写
         :return:
         """
         raise NotImplementedError("该方法需要重写")
@@ -76,7 +102,6 @@ class DriverManager(metaclass=abc.ABCMeta):
     def get_driver_name(self) -> str:
         """
         获取driver压缩包名称
-        抽象接口方法，继承时需要重写
         :return:
         """
         raise NotImplementedError("该方法需要重写")
@@ -85,7 +110,6 @@ class DriverManager(metaclass=abc.ABCMeta):
     def get_os_info(self):
         """
         获取操作系统信息
-        抽象接口方法，继承时需要重写
         :return:
         """
         raise NotImplementedError("该方法需要重写")
@@ -99,7 +123,7 @@ class DriverManager(metaclass=abc.ABCMeta):
         download_path = DownloadManager().download_file(url, self.__driver_path)
         file = FileManager(download_path, self.driver_name)
         file.unpack()
-        return file.driver_path()
+        return file.driver_path
 
     def install(self) -> str:
         """
@@ -109,12 +133,19 @@ class DriverManager(metaclass=abc.ABCMeta):
         :raise: Exception，如果下载版本不存在，则会报错
         :return: abs path
         """
-        driver_path = self.get_cache()
+        driver_path = self.get_driver_path_by_cache()
         if not driver_path:
+            wdm_logger().info('缓存不存在，开始下载...')
             try:
                 driver_path = self.download()
-            except HTTPError:
-                raise Exception(f"无版本: {self.driver_name} - {self.version}")
+            except RequestException:
+                raise Exception(f"当前WebDriver: {self.driver_name} 无该版本: {self.driver_version}")
             self.__set_cache(driver_path)
+        wdm_logger().info(f'WebDriver路径: {driver_path} , 上次读取时间为: {self.get_driver_last_read_time()}')
         os.chmod(driver_path, 0o755)
+
+        # 写入读取时间，并清理超期 WebDriver
+        self.__cache_manager.set_read_cache_data(self.driver_name, self.driver_version)
+        self.__cache_manager.clear_cache_path(self.driver_name)
+
         return driver_path

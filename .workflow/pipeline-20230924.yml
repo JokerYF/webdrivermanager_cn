@@ -2,11 +2,11 @@ version: '1.0'
 name: pipeline-20230924
 displayName: 发布到pypi
 triggers:
-  trigger: manual
+  trigger: auto
   push:
     tags:
-      prefix:
-        - v
+      include:
+        - v\d\.\d\.\d
 variables:
   global:
     - pypi_account_token
@@ -46,4 +46,4 @@ stages:
         caches: []
         notify: []
         strategy:
-          retry: '0'
+          retry: '3'

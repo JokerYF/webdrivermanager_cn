@@ -5,6 +5,7 @@ import os.path
 import tarfile
 import zipfile
 
+from webdrivermanager_cn.core.log_manager import wdm_logger
 from webdrivermanager_cn.core.os_manager import OSManager, OSType
 
 
@@ -46,6 +47,7 @@ class FileManager:
         :return:
         """
         self.__unpack_path = self.__unpack_obj.unpack()
+        wdm_logger().debug(f'文件解压路径: {self.__unpack_path}')
 
     def unpack_list(self):
         """
@@ -58,12 +60,15 @@ class FileManager:
                 file_list.append(os.path.join(root, file_name))
         return file_list
 
+    @property
     def driver_path(self):
         """
         获取 webdriver 路径
         :return:
         """
         suffix = ''
+        if self.__driver_name == "edgedriver":
+            self.__driver_name = "msedgedriver"
         if OSManager().get_os_name == OSType.WIN:
             suffix = '.exe'
         driver_name = self.__driver_name + suffix
@@ -146,7 +151,7 @@ class TarFile:
     def extractall(self, to_dir):
         try:
             tar = tarfile.open(self.__file_path, mode="r:gz")
-        except tarfile.ReadError:
+        except tarfile.TarError:
             tar = tarfile.open(self.__file_path, mode="r:bz2")
         tar.extractall(to_dir)
         tar.close()
