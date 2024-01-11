@@ -6,7 +6,7 @@ import datetime
 import os.path
 
 from packaging import version as vs
-from requests import HTTPError, RequestException
+from requests import RequestException
 
 from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.driver_cache import DriverCacheManager
