@@ -21,12 +21,6 @@ class ClientType:
     Safari = "safari"
 
 
-WEB_DRIVER_NAME = {
-    "google-chrome": 'chromedriver',
-    "edge": 'edgedriver',
-    'firefox': 'geckodriver',
-}
-
 CLIENT_PATTERN = {
     ClientType.Chrome: r"\d+\.\d+\.\d+\.\d+",
     ClientType.Firefox: r"\d+\.\d+\.\d+",
