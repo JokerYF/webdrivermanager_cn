@@ -205,3 +205,7 @@ class GetClientVersion(GetUrl):
         url = f"{config.GeckodriverApi}/latest"
         response = requests.get(url=url, timeout=15)
         return response.json()["tag_name"]
+
+
+if __name__ == '__main__':
+    print(GetClientVersion().get_chrome_correct_version())
