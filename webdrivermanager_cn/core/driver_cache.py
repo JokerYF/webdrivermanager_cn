@@ -106,16 +106,21 @@ class DriverCacheManager:
         :param driver_name:
         :return:
         """
-        path_list = []
+        _clear_version = []
         time_interval = 60 * 60 * 24 * clear_wdm_cache_time()
         for driver, info in self.__read_cache[driver_name].items():
+            _version = info['version']
+
             read_time = info.get('last_read_time', None)
             if read_time:
                 read_time = datetime.strptime(read_time, '%Y-%m-%d %H:%M:%S.%f')
             if (read_time is None
                     or datetime.today().timestamp() - read_time.timestamp() >= time_interval):
-                path_list.append(info['version'])
-        return path_list
+                _clear_version.append(_version)
+                wdm_logger().debug(f'{driver_name} - {_version} 已过期 {read_time}, 即将清理!')
+                continue
+            wdm_logger().debug(f'{driver_name} - {_version} 尚未过期 {read_time}')
+        return _clear_version
 
     def set_cache(self, driver_name, version, **kwargs):
         """
@@ -130,18 +135,16 @@ class DriverCacheManager:
             **kwargs
         )
 
-    def set_read_cache_data(self, driver_name, version):
+    def set_read_cache_date(self, driver_name, version):
         """
         写入当前读取 WebDriver 的时间
         :param driver_name:
         :param version:
         :return:
         """
-        self.set_cache(
-            driver_name=driver_name,
-            version=version,
-            last_read_time=f"{datetime.today()}"  # 记录最后一次读取时间，并按照这个时间清理WebDriver
-        )
+        times = datetime.today()
+        self.set_cache(driver_name=driver_name, version=version, last_read_time=f"{times}")
+        wdm_logger().debug(f'更新 {driver_name} - {version} 读取时间: {times}')
 
     def clear_cache_path(self, driver_name):
         """
@@ -149,10 +152,10 @@ class DriverCacheManager:
         :param driver_name:
         :return:
         """
-        path_list = self.get_cache_path_by_read_time(driver_name)
+        _clear_version = self.get_cache_path_by_read_time(driver_name)
         cache_data = self.__read_cache
 
-        for version in path_list:
+        for version in _clear_version:
             clear_path = os.path.join(self.root_dir, driver_name, version)
             if os.path.exists(clear_path):
                 shutil.rmtree(clear_path)
