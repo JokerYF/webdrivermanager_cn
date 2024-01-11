@@ -6,7 +6,7 @@ import datetime
 import os.path
 
 from packaging import version as vs
-from requests import HTTPError
+from requests import HTTPError, RequestException
 
 from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.driver_cache import DriverCacheManager
@@ -122,7 +122,7 @@ class DriverManager(metaclass=abc.ABCMeta):
             wdm_logger().info('缓存不存在，开始下载...')
             try:
                 driver_path = self.download()
-            except HTTPError:
+            except RequestException:
                 raise Exception(f"当前WebDriver: {self.driver_name} 无该版本: {self.driver_version}")
             self.__set_cache(driver_path)
         wdm_logger().info(f'WebDriver路径: {driver_path}')

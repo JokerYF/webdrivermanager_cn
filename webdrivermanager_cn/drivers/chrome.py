@@ -1,5 +1,5 @@
 import requests
-from requests import HTTPError
+from requests import RequestException
 
 from webdrivermanager_cn.core import config
 from webdrivermanager_cn.core.driver import DriverManager
@@ -72,12 +72,12 @@ class ChromeDriver(DriverManager):
         elif self._chromedriver_version == 'latest':
             try:
                 return self.__get_latest_release_version()
-            except HTTPError:
+            except RequestException:
                 pass
         version = GetClientVersion().get_version(ClientType.Chrome)
         try:
             return self.__get_latest_release_version(version)
-        except HTTPError:
+        except RequestException:
             return GetClientVersion().get_chrome_correct_version()
 
     def get_os_info(self, mac_format=True):

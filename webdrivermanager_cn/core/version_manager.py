@@ -58,10 +58,7 @@ class GetUrl:
         根据判断获取chromedriver的url
         :return:
         """
-        if self.is_new_version:
-            return config.ChromeDriverUrlNew
-        else:
-            return config.ChromeDriverUrl
+        return config.ChromeDriverUrlNew if self.is_new_version else config.EdgeDriverUrl
 
     @property
     def _version_list(self):

@@ -151,7 +151,7 @@ class TarFile:
     def extractall(self, to_dir):
         try:
             tar = tarfile.open(self.__file_path, mode="r:gz")
-        except tarfile.ReadError:
+        except tarfile.TarError:
             tar = tarfile.open(self.__file_path, mode="r:bz2")
         tar.extractall(to_dir)
         tar.close()
