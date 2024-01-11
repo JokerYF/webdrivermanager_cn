@@ -19,19 +19,18 @@ class ChromeDriver(DriverManager):
             return f"chromedriver-{self.get_os_info()}.zip"
         return f"chromedriver_{self.get_os_info()}.zip".replace('-', '_')
 
-    @property
-    def __is_new_version(self) -> bool:
+    def __is_new_version(self, version) -> bool:
         """
         判断是否为新Chrome版本
         :return:
         """
         try:
-            return self.version_parse(self._version).major >= 115
+            return self.version_parse(version).major >= 115
         except:
             return True
 
     def download_url(self):
-        if self.__is_new_version:
+        if self.__is_new_version(self._version):
             url = f'{config.ChromeDriverUrlNew}/{self.driver_version}/{self.get_os_info()}/{self.get_driver_name}'
         else:
             url = f'{config.ChromeDriverUrl}/{self.driver_version}/{self.get_driver_name}'
@@ -52,7 +51,7 @@ class ChromeDriver(DriverManager):
         else:
             version_parser = self.version_parse(version)
             version = f'{version_parser.major}.{version_parser.minor}.{version_parser.micro}'
-            if not self.__is_new_version:
+            if not self.__is_new_version(version):
                 host = config.ChromeDriverUrl
         url_params = f'LATEST_RELEASE_{version}'
         wdm_logger().debug(f'获取 ChromeDriver {url_params}')
