@@ -73,7 +73,8 @@ class GetUrl:
         根据传入的版本号，判断是否存在，如果不存在，则返回与它最近的小一版本
         :return:
         """
-        return self.__compare_versions(self._version, self._version_list)
+        # return self.__compare_versions(self._version, self._version_list)
+        return self.compare_versions_new()
 
     @staticmethod
     def __compare_versions(target_version, version_list):
@@ -96,6 +97,12 @@ class GetUrl:
             return lesser_version
         wdm_logger().debug('当前版本源上存在')
         return target_version
+
+    def compare_versions_new(self):
+        _chrome_version = f'{self._version_obj.major}.{self._version_obj.minor}.{self._version_obj.micro}'
+        _chrome_version_list = [i for i in self._version_list if _chrome_version in i]
+        _chrome_version_list = sorted(_chrome_version_list, key=lambda x: tuple(map(int, x.split('.'))))
+        return _chrome_version_list[-1]
 
 
 class GetClientVersion(GetUrl):
@@ -198,3 +205,7 @@ class GetClientVersion(GetUrl):
         url = f"{config.GeckodriverApi}/latest"
         response = requests.get(url=url, timeout=15)
         return response.json()["tag_name"]
+
+
+if __name__ == '__main__':
+    print(GetClientVersion().get_chrome_correct_version())
