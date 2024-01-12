@@ -58,7 +58,7 @@ class GetUrl:
         根据判断获取chromedriver的url
         :return:
         """
-        return config.ChromeDriverUrlNew if self.is_new_version else config.EdgeDriverUrl
+        return config.ChromeDriverUrlNew if self.is_new_version else config.ChromeDriverUrl
 
     @property
     def _version_list(self):
@@ -66,41 +66,16 @@ class GetUrl:
         解析driver url，获取所有driver版本
         :return:
         """
-        return [i["name"].replace("/", "") for i in requests.get(self.get_host, timeout=15).json()]
+        response_data = requests.get(self.get_host, timeout=15).json()
+        return [i["name"].replace("/", "") for i in response_data if 'LATEST' not in i]
 
     def _get_chrome_correct_version(self):
         """
-        根据传入的版本号，判断是否存在，如果不存在，则返回与它最近的小一版本
+        根据Chrome版本，返回源上找到合适的ChromeDriver版本
         :return:
         """
-        # return self.__compare_versions(self._version, self._version_list)
-        return self.compare_versions_new()
-
-    @staticmethod
-    def __compare_versions(target_version, version_list):
-        """
-        根据目标version检查并获取版本
-        如果当前版本在版本列表中，则直接返回列表，否则返回当前版本小的一个版本
-        :param target_version:
-        :param version_list:
-        :return: driver_version
-        """
-        wdm_logger().debug(f'ChromeDriver指定版本: {target_version}')
-        if target_version not in version_list:
-            lesser_version = None
-            for version in version_list:
-                if version < target_version:
-                    lesser_version = version
-                else:
-                    break
-            wdm_logger().debug(f'当前无该指定版本，最符合的版本为: {lesser_version}')
-            return lesser_version
-        wdm_logger().debug('当前版本源上存在')
-        return target_version
-
-    def compare_versions_new(self):
         _chrome_version = f'{self._version_obj.major}.{self._version_obj.minor}.{self._version_obj.micro}'
-        _chrome_version_list = [i for i in self._version_list if _chrome_version in i]
+        _chrome_version_list = [i for i in self._version_list if _chrome_version in i and 'LATEST' not in i]
         _chrome_version_list = sorted(_chrome_version_list, key=lambda x: tuple(map(int, x.split('.'))))
         return _chrome_version_list[-1]
 
@@ -113,6 +88,7 @@ class GetClientVersion(GetUrl):
     def __init__(self, version=""):
         super().__init__()
         self._version = version
+        self.__os_name = OSManager().get_os_name
 
     @property
     def reg(self):
@@ -120,10 +96,11 @@ class GetClientVersion(GetUrl):
         获取reg命令路径
         :return:
         """
-        reg = rf'{os.getenv("SystemRoot")}\System32\reg.exe'  # 拼接reg命令完整路径，避免报错
-        if not os.path.exists(reg):
-            raise FileNotFoundError(f'当前Windows环境没有该命令: {reg}')
-        return reg
+        if self.__os_name == OSType.WIN:
+            reg = rf'{os.getenv("SystemRoot")}\System32\reg.exe'  # 拼接reg命令完整路径，避免报错
+            if not os.path.exists(reg):
+                raise FileNotFoundError(f'当前Windows环境没有该命令: {reg}')
+            return reg
 
     def cmd_dict(self, client):
         """
@@ -131,8 +108,7 @@ class GetClientVersion(GetUrl):
         :param client:
         :return:
         """
-
-        os_type = OSManager().get_os_name
+        wdm_logger().debug(f'当前OS: {self.__os_name}')
         cmd_map = {
             OSType.MAC: {
                 ClientType.Chrome: r"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
@@ -150,7 +126,7 @@ class GetClientVersion(GetUrl):
                 ClientType.Edge: "microsoft-edge --version",
             },
         }
-        cmd = cmd_map[os_type][client]
+        cmd = cmd_map[self.__os_name][client]
         client_pattern = CLIENT_PATTERN[client]
         wdm_logger().debug(f'执行命令: {cmd}, 解析方式: {client_pattern}')
         return cmd, client_pattern
@@ -172,7 +148,6 @@ class GetClientVersion(GetUrl):
             stdout = stream.communicate()[0].decode()
             version = re.search(pattern, stdout)
             version = version.group(0) if version else None
-        wdm_logger().debug('获取到的版本号: %s', version)
         return version
 
     def get_version(self, client):

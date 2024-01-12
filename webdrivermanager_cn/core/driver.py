@@ -61,18 +61,26 @@ class DriverManager(metaclass=abc.ABCMeta):
             key='path',
         )
 
+    @property
+    def get_last_read_by_cache(self):
+        """
+        获取 cache 中对应 WebDriver 的路径
+        :return: path or None
+        """
+        return self.__cache_manager.get_cache(
+            driver_name=self.driver_name,
+            version=self.driver_version,
+            key='last_read_time',
+        )
+
     def __set_cache(self, path):
         """
         写入cache信息
         :param path: 解压后的driver全路径
         :return: None
         """
-        self.__cache_manager.set_cache(
-            driver_name=self.driver_name,
-            version=self.driver_version,
-            download_time=f"{datetime.datetime.today()}",
-            path=path,
-        )
+        self.__cache_manager.set_cache(driver_name=self.driver_name, version=self.driver_version,
+                                       download_time=f"{datetime.datetime.today()}", path=path)
 
     @abc.abstractmethod
     def download_url(self) -> str:
@@ -125,11 +133,11 @@ class DriverManager(metaclass=abc.ABCMeta):
             except RequestException:
                 raise Exception(f"当前WebDriver: {self.driver_name} 无该版本: {self.driver_version}")
             self.__set_cache(driver_path)
-        wdm_logger().info(f'WebDriver路径: {driver_path}')
+        wdm_logger().info(f'WebDriver路径: {driver_path} - 上次读取时间 {self.get_last_read_by_cache}')
         os.chmod(driver_path, 0o755)
 
         # 写入读取时间，并清理超期 WebDriver
-        self.__cache_manager.set_read_cache_data(self.driver_name, self.driver_version)
+        self.__cache_manager.set_read_cache_date(self.driver_name, self.driver_version)
         self.__cache_manager.clear_cache_path(self.driver_name)
 
         return driver_path
