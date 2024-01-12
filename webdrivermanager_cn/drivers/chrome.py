@@ -56,5 +56,4 @@ class ChromeDriver(DriverManager):
         elif self.os_info.get_os_name == OSType.WIN:
             if not GetClientVersion(self.driver_version).is_new_version:
                 return 'win32'
-        wdm_logger().debug(f'操作系统信息: {self.driver_name} - {_os_type}')
         return _os_type

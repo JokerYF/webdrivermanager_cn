@@ -58,7 +58,7 @@ class GetUrl:
         根据判断获取chromedriver的url
         :return:
         """
-        return config.ChromeDriverUrlNew if self.is_new_version else config.EdgeDriverUrl
+        return config.ChromeDriverUrlNew if self.is_new_version else config.ChromeDriverUrl
 
     @property
     def _version_list(self):
@@ -66,7 +66,8 @@ class GetUrl:
         解析driver url，获取所有driver版本
         :return:
         """
-        return [i["name"].replace("/", "") for i in requests.get(self.get_host, timeout=15).json()]
+        response_data = requests.get(self.get_host, timeout=15).json()
+        return [i["name"].replace("/", "") for i in response_data if 'LATEST' not in i]
 
     def _get_chrome_correct_version(self):
         """
@@ -74,7 +75,7 @@ class GetUrl:
         :return:
         """
         _chrome_version = f'{self._version_obj.major}.{self._version_obj.minor}.{self._version_obj.micro}'
-        _chrome_version_list = [i for i in self._version_list if _chrome_version in i]
+        _chrome_version_list = [i for i in self._version_list if _chrome_version in i and 'LATEST' not in i]
         _chrome_version_list = sorted(_chrome_version_list, key=lambda x: tuple(map(int, x.split('.'))))
         return _chrome_version_list[-1]
 
