@@ -112,8 +112,7 @@ class DriverCacheManager:
             _version = info['version']
 
             read_time = info.get('last_read_time', None)
-            if read_time:
-                read_time = datetime.strptime(read_time, '%Y-%m-%d %H:%M:%S.%f')
+            read_time = datetime.strptime(read_time, '%Y-%m-%d %H:%M:%S.%f') if read_time else None
             if (read_time is None
                     or datetime.today().timestamp() - read_time.timestamp() >= time_interval):
                 _clear_version.append(_version)
