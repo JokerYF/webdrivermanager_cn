@@ -153,7 +153,6 @@ class DriverCacheManager:
         :return:
         """
         _clear_version = self.get_cache_path_by_read_time(driver_name)
-        cache_data = self.__read_cache
 
         for version in _clear_version:
             clear_path = os.path.join(self.root_dir, driver_name, version)
@@ -161,7 +160,9 @@ class DriverCacheManager:
                 shutil.rmtree(clear_path)
             else:
                 wdm_logger().warning(f'缓存目录无该路径: {clear_path}')
-            cache_data[driver_name].pop(self.format_key(driver_name=driver_name, version=version))
-            wdm_logger().info(f'清理过期WebDriver: {clear_path}')
 
-        self.__dump_cache(cache_data)
+            cache_data = self.__read_cache
+            cache_data[driver_name].pop(self.format_key(driver_name=driver_name, version=version))
+            self.__dump_cache(cache_data)
+
+            wdm_logger().info(f'清理过期WebDriver: {clear_path}')
