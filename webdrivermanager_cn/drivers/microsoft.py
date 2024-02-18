@@ -41,6 +41,6 @@ class EdgeDriver(DriverManager):
             suffix = "macos"
         else:
             suffix = OSType.LINUX
-        latest_url = f"{config.EdgeDriverUrl}/LATEST_RELEASE_{client_version_parser._version_obj.major}_{suffix.upper()}"
+        latest_url = f"{config.EdgeDriverUrl}/LATEST_RELEASE_{client_version_parser.version_obj.major}_{suffix.upper()}"
         response = requests.get(latest_url, timeout=15)
         return response.text.strip()

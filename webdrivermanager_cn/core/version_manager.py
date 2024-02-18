@@ -37,7 +37,7 @@ class GetUrl:
         self._version = ""
 
     @property
-    def _version_obj(self):
+    def version_obj(self):
         """
         获取版本解析对象
         :return:
@@ -50,7 +50,7 @@ class GetUrl:
         判断是否为新版本（chrome）
         :return:
         """
-        return self._version_obj.major >= 115
+        return self.version_obj.major >= 115
 
     @property
     def get_host(self):
@@ -74,7 +74,7 @@ class GetUrl:
         根据Chrome版本，返回源上找到合适的ChromeDriver版本
         :return:
         """
-        _chrome_version = f'{self._version_obj.major}.{self._version_obj.minor}.{self._version_obj.micro}'
+        _chrome_version = f'{self.version_obj.major}.{self.version_obj.minor}.{self.version_obj.micro}'
         _chrome_version_list = [i for i in self._version_list if _chrome_version in i and 'LATEST' not in i]
         _chrome_version_list = sorted(_chrome_version_list, key=lambda x: tuple(map(int, x.split('.'))))
         return _chrome_version_list[-1]
