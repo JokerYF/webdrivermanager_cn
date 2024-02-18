@@ -36,7 +36,7 @@ class ChromeDriver(DriverManager):
     @property
     def _version(self):
         """
-        优先通过ChromeDriver官方url获取最新版本，如果失败，则获取本地chrome版本后模糊匹配
+        获取当前系统内chrome的版本，并模糊匹配当前版本最高版本的ChromeDriver，否则返回指定的ChromeDriver版本
         :return:
         """
         if self._chromedriver_version in ['latest', None]:
