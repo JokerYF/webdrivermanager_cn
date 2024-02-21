@@ -30,14 +30,10 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 
 ## 使用方法
 
-### 安装
+### 安装升级
 
-- 在线安装（推荐）：
-    - 安装命令：`pip install webdrivermanager_cn`
-    - 在线升级：`pip install -U webdrivermanager_cn`
-
-- 本地安装（不推荐）：
-    - 下载[发行版本](https://gitee.com/Joker_JH/webdrivermanagercn/releases)后，本地安装即可：`pip install path/webdrivermanager_cn-X.X.X-py3-none-any.whl`
+- 安装命令：`pip install webdrivermanager_cn`
+- 在线升级：`pip install -U webdrivermanager_cn`
 
 ### 导入使用
 
