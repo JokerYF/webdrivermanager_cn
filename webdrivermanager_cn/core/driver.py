@@ -8,8 +8,8 @@ import os.path
 from packaging import version as vs
 from requests import RequestException
 
+from webdrivermanager_cn.core.cache_manager import DriverCacheManager
 from webdrivermanager_cn.core.download_manager import DownloadManager
-from webdrivermanager_cn.core.driver_cache import DriverCacheManager
 from webdrivermanager_cn.core.file_manager import FileManager
 from webdrivermanager_cn.core.log_manager import wdm_logger, set_logger_init
 from webdrivermanager_cn.core.os_manager import OSManager
