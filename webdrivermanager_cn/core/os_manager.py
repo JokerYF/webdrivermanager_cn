@@ -78,8 +78,6 @@ class OSManager:
             return "_m1"
         elif machine_type == "aarch64":
             return "_m2"
-        else:
-            return None
 
     @property
     def is_aarch64(self):
