@@ -91,6 +91,4 @@ class OSManager:
         """
         if self.get_os_name == OSType.MAC:
             return self.get_mac_framework
-        elif self.get_os_name == OSType.LINUX:
-            ...
         return ''
