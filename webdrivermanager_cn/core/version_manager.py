@@ -170,6 +170,17 @@ class GetClientVersion(GetUrl):
         self.get_version(ClientType.Chrome)
         return self._get_chrome_correct_version()
 
+    @staticmethod
+    def get_chrome_latest_version(flag='Stable'):
+        """
+        获取最新版本的ChromeDriver版本
+        :param flag: Stable、Beta、Dev、Canary
+        :return:
+        """
+        assert flag not in ['Stable', 'Beta', 'Dev', 'Canary'], '参数异常！'
+        response = requests.get(config.ChromeDriverApiNew)
+        return response.json()['channels'][flag]['version']
+
     def get_geckodriver_version(self):
         """
         获取Firefox driver版本信息

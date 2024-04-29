@@ -39,7 +39,9 @@ class ChromeDriver(DriverManager):
         获取当前系统内chrome的版本，并模糊匹配当前版本最高版本的ChromeDriver，否则返回指定的ChromeDriver版本
         :return:
         """
-        if self._chromedriver_version in ['latest', None]:
+        if self._chromedriver_version == 'latest':
+            return GetClientVersion().get_chrome_latest_version()
+        elif self._chromedriver_version == 'current':
             return GetClientVersion().get_chrome_correct_version()
         return self._chromedriver_version
 
