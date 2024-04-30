@@ -181,13 +181,16 @@ class GetClientVersion(GetUrl):
         response = requests.get(config.ChromeDriverApiNew)
         return response.json()['channels'][flag]['version']
 
+    @property
     def get_geckodriver_version(self):
         """
         获取Firefox driver版本信息
         :return:
         """
-        if self._version:
-            return self._version
-        url = f"{config.GeckodriverApi}/latest"
-        response = requests.get(url=url, timeout=15)
-        return response.json()["tag_name"]
+        # if self._version:
+        #     return self._version
+        # url = f"{config.GeckodriverApi}/latest"
+        # response = requests.get(url=url, timeout=15)
+        # return response.json()["tag_name"]
+        response = requests.get(url=config.GeckodriverApiNew, timeout=15)
+        return response.json()["latest"]
