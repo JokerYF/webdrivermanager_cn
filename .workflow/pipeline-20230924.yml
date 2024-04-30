@@ -46,4 +46,4 @@ stages:
         caches: []
         notify: []
         strategy:
-          retry: '3'
+          retry: '1'
