@@ -177,7 +177,7 @@ class GetClientVersion(GetUrl):
         :param flag: Stable、Beta、Dev、Canary
         :return:
         """
-        assert flag not in ['Stable', 'Beta', 'Dev', 'Canary'], '参数异常！'
+        assert flag in ['Stable', 'Beta', 'Dev', 'Canary'], '参数异常！'
         response = requests.get(config.ChromeDriverApiNew)
         return response.json()['channels'][flag]['version']
 

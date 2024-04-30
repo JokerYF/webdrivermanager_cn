@@ -13,7 +13,7 @@ class ChromeDriver(DriverManager):
     @property
     def get_driver_name(self):
         _name = f"chromedriver-{self.get_os_info()}.zip"
-        return _name if GetClientVersion(self.driver_version).is_new_version else _name.replace('-', '_')
+        return _name if self.__is_new_version(self._chromedriver_version) else _name.replace('-', '_')
 
     def __is_new_version(self, version) -> bool:
         """
