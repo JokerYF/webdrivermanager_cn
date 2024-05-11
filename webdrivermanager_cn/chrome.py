@@ -13,8 +13,7 @@ class ChromeDriverManager:
         """
         ChromeDriver管理器
         :param version:
-            latest: 最新的ChromeDriver版本号
-            current: 根据当前Chrome版本号，自动获取对应的ChromeDriver版本号
+            latest: 自动获取当前安装的Chrome版本最新的ChromeDriver版本号，如果获取失败则拉取最新的发行版本号
             xxx.xxx.xxx.xxx: 指定的具体ChromeDriver版本号
         :param path:
         """

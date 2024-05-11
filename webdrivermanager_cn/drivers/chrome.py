@@ -40,9 +40,11 @@ class ChromeDriver(DriverManager):
         :return:
         """
         if self._chromedriver_version == 'latest':
-            return GetClientVersion().get_chrome_latest_version()
-        elif self._chromedriver_version == 'current':
-            return GetClientVersion().get_chrome_correct_version()
+            try:
+                version = GetClientVersion().get_chrome_correct_version()
+            except:
+                version = ''
+            return version if version else GetClientVersion().get_chrome_latest_version()
         return self._chromedriver_version
 
     def get_os_info(self, mac_format=True):
