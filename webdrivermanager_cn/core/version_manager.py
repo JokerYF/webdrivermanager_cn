@@ -187,10 +187,5 @@ class GetClientVersion(GetUrl):
         获取Firefox driver版本信息
         :return:
         """
-        # if self._version:
-        #     return self._version
-        # url = f"{config.GeckodriverApi}/latest"
-        # response = requests.get(url=url, timeout=15)
-        # return response.json()["tag_name"]
         response = requests.get(url=config.GeckodriverApiNew, timeout=15)
         return response.json()["latest"]
