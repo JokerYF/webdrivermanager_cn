@@ -1,10 +1,12 @@
 # WerDriverManagerCn
 
-> 基于 [阿里源](https://www.npmmirror.com/) 开发，灵感来源：[webdriver_manager](https://githHub.com/SergeyPirogov/webdriver_manager)，向原作者致敬！
+> 基于 [阿里源](https://www.npmmirror.com/)
+> 开发，灵感来源：[webdriver_manager](https://githHub.com/SergeyPirogov/webdriver_manager)，向原作者致敬！
 
 ## 开发背景
 
-作者是测开一枚，一直在公司默默无闻的做着自动化测试，偶然公司同事安利 `webdriver_manager` 这个模块可以有效解决Chrome频繁更新导致ChromeDriver无法使用的问题，可以直接更换国内源，解决默认为GitHub源而导致下载慢或者失败的问题。
+作者是测开一枚，一直在公司默默无闻的做着自动化测试，偶然公司同事安利 `webdriver_manager`
+这个模块可以有效解决Chrome频繁更新导致ChromeDriver无法使用的问题，可以直接更换国内源，解决默认为GitHub源而导致下载慢或者失败的问题。
 
 自动化项目引入这个模块后，效果很好，稳定性也很好，且一直相安无事。直到2023年中的某一天，这个平静的情况被打破了。。。
 
@@ -23,10 +25,10 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 
 | Client  | Windows | MacOS |    Linux    |
 |:-------:|:-------:|:-----:|:-----------:|
-| Chrome  |    ✅    |   ✅   | ✅<br/>(未验证) |
+| Chrome  |    ✅    |   ✅   |      ✅      |
 | Firefox |    ✅    |   ✅   | ✅<br/>(未验证) |
 |   IE    |    ❎    |   ❎   |      ❎      |
-|  Edge   |    ✅    |   ✅   | ✅<br/>(未验证) |
+|  Edge   |    ✅    |   ✅   |      ✅      |
 
 ## 使用方法
 
@@ -65,6 +67,7 @@ driver_path = EdgeWebDriverManager().install()
 ```
 
 ## 全局变量
+
 wdmcn也像wdm一样，内置了一些全局变量，后续会根据需求继续添加，具体请看`config.py`，这里简单列举一下。
 
 - 日志功能
@@ -75,7 +78,9 @@ wdmcn也像wdm一样，内置了一些全局变量，后续会根据需求继续
 
 - 定期清理旧的webdriver
 
-  - 如果您使用的wdmcn时间很长以后，webdriver会随着chrome等浏览器版本的迭代越来越多，现在可以默认删除无用的webdriver，可以使用`os.environ['WDM_CACHE_TIME'] = 5`设置，默认会清理5天前的webdriver，以减少磁盘占用。
+  -
+  如果您使用的wdmcn时间很长以后，webdriver会随着chrome等浏览器版本的迭代越来越多，现在可以默认删除无用的webdriver，可以使用`os.environ['WDM_CACHE_TIME'] = 5`
+  设置，默认会清理5天前的webdriver，以减少磁盘占用。
 
 ## 其他
 
