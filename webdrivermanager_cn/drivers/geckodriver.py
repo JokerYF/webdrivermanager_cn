@@ -35,8 +35,6 @@ class Geckodriver(DriverManager):
             _os_type_suffix = '-aarch64'
         elif _os_type == OSType.MAC:
             _os_type_suffix = ''
-
-        if _os_type == OSType.MAC:
             _os_type = 'macos'
 
         return f'{_os_type}{_os_type_suffix}'
