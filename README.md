@@ -78,8 +78,7 @@ wdmcn也像wdm一样，内置了一些全局变量，后续会根据需求继续
 
 - 定期清理旧的webdriver
 
-  -
-  如果您使用的wdmcn时间很长以后，webdriver会随着chrome等浏览器版本的迭代越来越多，现在可以默认删除无用的webdriver，可以使用`os.environ['WDM_CACHE_TIME'] = 5`
+  - 如果您使用的wdmcn时间很长以后，webdriver会随着chrome等浏览器版本的迭代越来越多，现在可以默认删除无用的webdriver，可以使用`os.environ['WDM_CACHE_TIME'] = 5`
   设置，默认会清理5天前的webdriver，以减少磁盘占用。
 
 ## 其他
