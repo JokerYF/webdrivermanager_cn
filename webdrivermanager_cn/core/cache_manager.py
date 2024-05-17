@@ -140,8 +140,9 @@ class DriverCacheManager:
         :return:
         """
         times = get_time('%Y%m%d')
-        self.set_cache(driver_name=driver_name, version=version, last_read_time=f"{times}")
-        wdm_logger().debug(f'更新 {driver_name} - {version} 读取时间: {times}')
+        if self.get_cache(driver_name=driver_name, version=version, key='last_read_time') != times:
+            self.set_cache(driver_name=driver_name, version=version, last_read_time=f"{times}")
+            wdm_logger().debug(f'更新 {driver_name} - {version} 读取时间: {times}')
 
     def clear_cache_path(self, driver_name):
         """
