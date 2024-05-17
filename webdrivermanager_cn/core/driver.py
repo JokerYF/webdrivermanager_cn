@@ -2,7 +2,6 @@
 Driver抽象类
 """
 import abc
-import datetime
 import os.path
 
 from packaging import version as vs
@@ -13,6 +12,7 @@ from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.file_manager import FileManager
 from webdrivermanager_cn.core.log_manager import wdm_logger, set_logger_init
 from webdrivermanager_cn.core.os_manager import OSManager
+from webdrivermanager_cn.core.time_ import get_time
 
 
 class DriverManager(metaclass=abc.ABCMeta):
@@ -80,7 +80,7 @@ class DriverManager(metaclass=abc.ABCMeta):
         :return: None
         """
         self.__cache_manager.set_cache(driver_name=self.driver_name, version=self.driver_version,
-                                       download_time=f"{datetime.datetime.today()}", path=path)
+                                       download_time=f"{get_time('%Y%m%d')}", path=path)
 
     @abc.abstractmethod
     def download_url(self) -> str:
@@ -130,8 +130,8 @@ class DriverManager(metaclass=abc.ABCMeta):
             wdm_logger().info('缓存不存在，开始下载...')
             try:
                 driver_path = self.download()
-            except RequestException:
-                raise Exception(f"当前WebDriver: {self.driver_name} 无该版本: {self.driver_version}")
+            except RequestException as e:
+                raise Exception(f"下载WebDriver: {self.driver_name}-{self.driver_version} 失败！-- {e}")
             self.__set_cache(driver_path)
         wdm_logger().info(f'WebDriver路径: {driver_path} - 上次读取时间 {self.get_last_read_by_cache}')
         os.chmod(driver_path, 0o755)
