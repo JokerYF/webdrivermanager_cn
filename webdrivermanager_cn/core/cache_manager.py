@@ -4,11 +4,11 @@ Driver 缓存记录
 import json
 import os
 import shutil
-from datetime import datetime
 
 from webdrivermanager_cn.core.config import clear_wdm_cache_time
 from webdrivermanager_cn.core.log_manager import wdm_logger
 from webdrivermanager_cn.core.os_manager import OSManager
+from webdrivermanager_cn.core.time_ import get_time
 
 
 class DriverCacheManager:
@@ -107,14 +107,12 @@ class DriverCacheManager:
         :return:
         """
         _clear_version = []
-        time_interval = 60 * 60 * 24 * clear_wdm_cache_time()
+        time_interval = clear_wdm_cache_time()
         for driver, info in self.__read_cache[driver_name].items():
             _version = info['version']
 
-            read_time = info.get('last_read_time', None)
-            read_time = datetime.strptime(read_time, '%Y-%m-%d %H:%M:%S.%f') if read_time else None
-            if (read_time is None
-                    or datetime.today().timestamp() - read_time.timestamp() >= time_interval):
+            read_time = info.get('last_read_time', 0)
+            if not read_time or int(get_time('%Y%m%d')) - int(read_time) >= time_interval:
                 _clear_version.append(_version)
                 wdm_logger().debug(f'{driver_name} - {_version} 已过期 {read_time}, 即将清理!')
                 continue
@@ -141,9 +139,10 @@ class DriverCacheManager:
         :param version:
         :return:
         """
-        times = datetime.today()
-        self.set_cache(driver_name=driver_name, version=version, last_read_time=f"{times}")
-        wdm_logger().debug(f'更新 {driver_name} - {version} 读取时间: {times}')
+        times = get_time('%Y%m%d')
+        if self.get_cache(driver_name=driver_name, version=version, key='last_read_time') != times:
+            self.set_cache(driver_name=driver_name, version=version, last_read_time=f"{times}")
+            wdm_logger().debug(f'更新 {driver_name} - {version} 读取时间: {times}')
 
     def clear_cache_path(self, driver_name):
         """
