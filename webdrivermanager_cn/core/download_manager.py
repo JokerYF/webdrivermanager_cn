@@ -5,7 +5,17 @@ import os
 
 import requests as requests
 
+from webdrivermanager_cn.core.request import Request
+from webdrivermanager_cn.version import VERSION
 from webdrivermanager_cn.core.log_manager import wdm_logger
+
+
+def headers(**kwargs):
+    _headers = {
+        'User-Agent': f'python-requests/{requests.__version__} webdrivermanagercn/{VERSION}'
+    }
+    _headers.update(kwargs)
+    return _headers
 
 
 class DownloadManager:
@@ -21,9 +31,10 @@ class DownloadManager:
         :return:
         """
         wdm_logger().debug(f'开始执行下载: {url}')
-        response = requests.get(url, timeout=15)
+        response = Request().get(url, timeout=15, headers=headers())
         wdm_logger().debug(f'url: {url} - {response.status_code}')
         response.raise_for_status()
+        response.close()
         wdm_logger().debug(f'本地下载路径: {down_path}')
         os.makedirs(down_path, exist_ok=True)
         file_path = os.path.join(down_path, self.get_filename_by_url(url))

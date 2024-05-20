@@ -66,7 +66,9 @@ class GetUrl:
         解析driver url，获取所有driver版本
         :return:
         """
-        response_data = requests.get(self.get_host, timeout=15).json()
+        response = requests.get(self.get_host, timeout=15)
+        response.close()
+        response_data = response.json()
         return [i["name"].replace("/", "") for i in response_data if 'LATEST' not in i]
 
     def _get_chrome_correct_version(self):
@@ -179,6 +181,7 @@ class GetClientVersion(GetUrl):
         """
         assert flag in ['Stable', 'Beta', 'Dev', 'Canary'], '参数异常！'
         response = requests.get(config.ChromeDriverApiNew)
+        response.close()
         return response.json()['channels'][flag]['version']
 
     @property
@@ -188,4 +191,5 @@ class GetClientVersion(GetUrl):
         :return:
         """
         response = requests.get(url=config.GeckodriverApiNew, timeout=15)
+        response.close()
         return response.json()["latest"]
