@@ -99,7 +99,7 @@ def request_timeout():
     请求超时时间
     默认为 10 秒
     执行以下代码修改
-    os.environ['WDM_TIMEOUT'] = 10
+    os.environ['WDM_TIMEOUT'] = '10'
     :return:
     """
     default = 10
