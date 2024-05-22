@@ -23,12 +23,12 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 
 > 后续都会实现，如果有需求请及时提Issue
 
-| Client  | Windows | MacOS |    Linux    |
-|:-------:|:-------:|:-----:|:-----------:|
-| Chrome  |    ✅    |   ✅   |      ✅      |
-| Firefox |    ✅    |   ✅   | ✅<br/>(未验证) |
-|   IE    |    ❎    |   ❎   |      ❎      |
-|  Edge   |    ✅    |   ✅   |      ✅      |
+| Client  | Windows | MacOS |    Linux     |
+|:-------:|:-------:|:-----:|:------------:|
+| Chrome  |    ✅    |   ✅   |      ✅       |
+| Firefox |    ✅    |   ✅   |      ✅       |
+|   IE    |    ❎    |   ❎   |      ❎       |
+|  Edge   |    ✅    |   ✅   | ✅ <br/>(未验证) |
 
 ## 使用方法
 
@@ -72,14 +72,15 @@ wdmcn也像wdm一样，内置了一些全局变量，后续会根据需求继续
 
 - 日志功能
 
-  - 日志功能默认关闭，可以通过`os.environ['WDM_LOG'] = 'true'`打开，默认为false
-  - 日志等级，可以通过`os.environ['WDM_LOG_LEVEL'] = f'{logging.INFO}'`修改，默认等级为INFO
-  - 自定义logger，可以通过导入`set_logger()`方法，将您自己的logger添加进来，则日志输出就会使用您的logger记录
+    - 日志功能默认关闭，可以通过`os.environ['WDM_LOG'] = 'true'`打开，默认为false
+    - 日志等级，可以通过`os.environ['WDM_LOG_LEVEL'] = f'{logging.INFO}'`修改，默认等级为INFO
+    - 自定义logger，可以通过导入`set_logger()`方法，将您自己的logger添加进来，则日志输出就会使用您的logger记录
 
 - 定期清理旧的webdriver
 
-  - 如果您使用的wdmcn时间很长以后，webdriver会随着chrome等浏览器版本的迭代越来越多，现在可以默认删除无用的webdriver，可以使用`os.environ['WDM_CACHE_TIME'] = 5`
-  设置，默认会清理5天前的webdriver，以减少磁盘占用。
+    -
+    如果您使用的wdmcn时间很长以后，webdriver会随着chrome等浏览器版本的迭代越来越多，现在可以默认删除无用的webdriver，可以使用`os.environ['WDM_CACHE_TIME'] = 5`
+    设置，默认会清理5天前的webdriver，以减少磁盘占用。
 
 ## 其他
 
