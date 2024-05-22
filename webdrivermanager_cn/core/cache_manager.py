@@ -100,7 +100,7 @@ class DriverCacheManager:
         except KeyError:
             return None
 
-    def get_cache_path_by_read_time(self, driver_name):
+    def get_clear_version_by_read_time(self, driver_name):
         """
         获取超过清理时间的 WebDriver 版本
         :param driver_name:
@@ -110,9 +110,11 @@ class DriverCacheManager:
         time_interval = clear_wdm_cache_time()
         for driver, info in self.__read_cache[driver_name].items():
             _version = info['version']
-
-            read_time = info.get('last_read_time', 0)
-            if not read_time or int(get_time('%Y%m%d')) - int(read_time) >= time_interval:
+            try:
+                read_time = int(info['last_read_time'])
+            except:
+                read_time = 0
+            if not read_time or int(get_time('%Y%m%d')) - read_time >= time_interval:
                 _clear_version.append(_version)
                 wdm_logger().debug(f'{driver_name} - {_version} 已过期 {read_time}, 即将清理!')
                 continue
@@ -150,7 +152,7 @@ class DriverCacheManager:
         :param driver_name:
         :return:
         """
-        _clear_version = self.get_cache_path_by_read_time(driver_name)
+        _clear_version = self.get_clear_version_by_read_time(driver_name)
 
         for version in _clear_version:
             clear_path = os.path.join(self.root_dir, driver_name, version)
