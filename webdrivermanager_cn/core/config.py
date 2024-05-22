@@ -4,6 +4,8 @@
 import logging
 import os
 
+from urllib3 import disable_warnings
+
 # ChromeDriver 源地址
 ChromeDriverUrl = 'https://registry.npmmirror.com/-/binary/chromedriver'
 ChromeDriverUrlNew = 'https://registry.npmmirror.com/-/binary/chrome-for-testing'
@@ -32,7 +34,7 @@ def str2bool(value):
 def init_log():
     """
     是否初始化WDM默认logger
-    默认为False
+    默认为 False
     执行以下代码为开启
     os.environ['WDM_LOG'] = 'true'
     :return:
@@ -46,7 +48,7 @@ def init_log():
 def init_log_level():
     """
     初始化默认WDM日志等级
-    当 init_log 函数返回值为True时生效
+    当 init_log 函数返回值为 True 时生效
     执行以下代码修改
     os.environ['WDM_LOG_LEVEL'] = f'{logging.INFO}'
     :return:
@@ -61,7 +63,7 @@ def init_log_level():
 def clear_wdm_cache_time():
     """
     清理超过时间的 WebDriver
-    默认为5天
+    默认为 5 天
     执行以下代码修改
     os.environ['WDM_CACHE_TIME'] = 5
     :return:
@@ -69,5 +71,39 @@ def clear_wdm_cache_time():
     default = 5
     try:
         return int(os.getenv('WDM_CACHE_TIME', default))
+    except:
+        return default
+
+
+def verify_not():
+    """
+    禁用SSL认证（代理）
+    默认为 False
+    执行以下代码修改
+    os.environ['WDM_VERIFY'] = 'true'
+    :return:
+    """
+    default = False
+    try:
+        return str2bool(os.getenv('WDM_VERIFY', default))
+    except:
+        return default
+
+
+if not verify_not():
+    disable_warnings()
+
+
+def request_timeout():
+    """
+    请求超时时间
+    默认为 10 秒
+    执行以下代码修改
+    os.environ['WDM_TIMEOUT'] = 10
+    :return:
+    """
+    default = 10
+    try:
+        return int(os.getenv('WDM_TIMEOUT', default))
     except:
         return default

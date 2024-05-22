@@ -1,6 +1,8 @@
 import requests
 
 from webdrivermanager_cn.core import config
+from webdrivermanager_cn.core.config import verify_not, request_timeout
+from webdrivermanager_cn.core.download_manager import headers
 from webdrivermanager_cn.core.driver import DriverManager
 from webdrivermanager_cn.core.os_manager import OSType
 from webdrivermanager_cn.core.version_manager import GetClientVersion, ClientType
@@ -42,6 +44,6 @@ class EdgeDriver(DriverManager):
         else:
             suffix = OSType.LINUX
         latest_url = f"{config.EdgeDriverUrl}/LATEST_RELEASE_{client_version_parser.version_obj.major}_{suffix.upper()}"
-        response = requests.get(latest_url, timeout=15)
+        response = requests.get(latest_url, timeout=request_timeout(), headers=headers(), verify=verify_not())
         response.close()
         return response.text.strip()

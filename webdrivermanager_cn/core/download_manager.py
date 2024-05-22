@@ -5,7 +5,7 @@ import os
 
 import requests as requests
 
-from webdrivermanager_cn.core.request import Request
+from webdrivermanager_cn.core.config import verify_not, request_timeout
 from webdrivermanager_cn.version import VERSION
 from webdrivermanager_cn.core.log_manager import wdm_logger
 
@@ -31,7 +31,7 @@ class DownloadManager:
         :return:
         """
         wdm_logger().debug(f'开始执行下载: {url}')
-        response = Request().get(url, timeout=15, headers=headers())
+        response = requests.get(url, timeout=request_timeout(), headers=headers(), verify=verify_not())
         wdm_logger().debug(f'url: {url} - {response.status_code}')
         response.raise_for_status()
         response.close()
