@@ -1,7 +1,5 @@
 import logging
 
-from webdrivermanager_cn.core.config import init_log, init_log_level
-
 LOGGER = logging.getLogger('WDM')
 LOGGER_INIT_FLAG = False
 
@@ -26,6 +24,8 @@ class LogMixin:
 
     @staticmethod
     def set_logger_init():
+        from webdrivermanager_cn.core.config import init_log, init_log_level
+
         global LOGGER_INIT_FLAG
         global LOGGER
 

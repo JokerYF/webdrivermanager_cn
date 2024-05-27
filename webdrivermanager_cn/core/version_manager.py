@@ -182,7 +182,8 @@ class GetClientVersion(GetUrl, LogMixin):
         :return:
         """
         assert flag in ['Stable', 'Beta', 'Dev', 'Canary'], '参数异常！'
-        response = requests.get(config.ChromeDriverApiNew, timeout=request_timeout(), headers=headers(), verify=verify_not())
+        response = requests.get(config.ChromeDriverApiNew, timeout=request_timeout(), headers=headers(),
+                                verify=verify_not())
         response.close()
         return response.json()['channels'][flag]['version']
 
@@ -192,6 +193,7 @@ class GetClientVersion(GetUrl, LogMixin):
         获取Firefox driver版本信息
         :return:
         """
-        response = requests.get(url=config.GeckodriverApiNew, timeout=request_timeout(), headers=headers(), verify=verify_not())
+        response = requests.get(url=config.GeckodriverApiNew, timeout=request_timeout(), headers=headers(),
+                                verify=verify_not())
         response.close()
         return response.json()["latest"]

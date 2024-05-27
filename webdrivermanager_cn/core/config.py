@@ -2,9 +2,10 @@
 # Driver 源相关
 # ------------------
 import logging
-import os
 
 from urllib3 import disable_warnings
+
+from webdrivermanager_cn.core.mixin import EnvMixin
 
 # ChromeDriver 源地址
 ChromeDriverUrl = 'https://registry.npmmirror.com/-/binary/chromedriver'
@@ -31,6 +32,9 @@ def str2bool(value):
     return value.lower() in ['true', '1']
 
 
+__env = EnvMixin()
+
+
 def init_log():
     """
     是否初始化WDM默认logger
@@ -40,7 +44,7 @@ def init_log():
     :return:
     """
     try:
-        return str2bool(os.getenv('WDM_LOG', False))
+        return str2bool(__env.get('WDM_LOG', False))
     except:
         return False
 
@@ -55,7 +59,7 @@ def init_log_level():
     """
     default = logging.INFO
     try:
-        return int(os.getenv('WDM_LOG_LEVEL', default))
+        return int(__env.get('WDM_LOG_LEVEL', default))
     except:
         return default
 
@@ -70,7 +74,7 @@ def clear_wdm_cache_time():
     """
     default = 5
     try:
-        return int(os.getenv('WDM_CACHE_TIME', default))
+        return int(__env.get('WDM_CACHE_TIME', default))
     except:
         return default
 
@@ -85,7 +89,7 @@ def verify_not():
     """
     default = False
     try:
-        return str2bool(os.getenv('WDM_VERIFY', default))
+        return str2bool(__env.get('WDM_VERIFY', default))
     except:
         return default
 
@@ -104,6 +108,6 @@ def request_timeout():
     """
     default = 10
     try:
-        return int(os.getenv('WDM_TIMEOUT', default))
+        return int(__env.get('WDM_TIMEOUT', default))
     except:
         return default

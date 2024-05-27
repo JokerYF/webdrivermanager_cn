@@ -32,9 +32,9 @@ class DownloadManager(LogMixin):
         """
         self.log.debug(f'开始执行下载: {url}')
         response = requests.get(url, timeout=request_timeout(), headers=headers(), verify=verify_not())
+        response.close()
         self.log.debug(f'url: {url} - {response.status_code}')
         response.raise_for_status()
-        response.close()
         self.log.debug(f'本地下载路径: {down_path}')
         os.makedirs(down_path, exist_ok=True)
         file_path = os.path.join(down_path, self.get_filename_by_url(url))
