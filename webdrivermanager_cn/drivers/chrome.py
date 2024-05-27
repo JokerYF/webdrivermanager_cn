@@ -1,6 +1,5 @@
 from webdrivermanager_cn.core import config
 from webdrivermanager_cn.core.driver import DriverManager
-from webdrivermanager_cn.core.log_manager import wdm_logger
 from webdrivermanager_cn.core.os_manager import OSType
 from webdrivermanager_cn.core.version_manager import GetClientVersion
 
@@ -30,7 +29,7 @@ class ChromeDriver(DriverManager):
             url = f'{config.ChromeDriverUrlNew}/{self.driver_version}/{self.get_os_info()}/{self.get_driver_name}'
         else:
             url = f'{config.ChromeDriverUrl}/{self.driver_version}/{self.get_driver_name}'
-        wdm_logger().debug(f'拼接下载url: {url}')
+        self.log.debug(f'拼接下载url: {url}')
         return url
 
     @property
