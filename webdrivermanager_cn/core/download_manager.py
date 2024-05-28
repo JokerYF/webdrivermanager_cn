@@ -26,7 +26,6 @@ class DownloadManager(LogMixin):
         file_path = os.path.join(down_path, self.get_filename_by_url(url))
         with open(file_path, "wb") as f:
             f.write(response.content)
-        self.log.info(f'下载完成: {file_path}')
         return file_path
 
     @staticmethod

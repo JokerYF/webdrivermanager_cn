@@ -10,12 +10,12 @@ from requests import RequestException
 from webdrivermanager_cn.core.cache_manager import DriverCacheManager
 from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.file_manager import FileManager
-from webdrivermanager_cn.core.log_manager import LogMixin
+from webdrivermanager_cn.core.mixin import EnvMixin
 from webdrivermanager_cn.core.os_manager import OSManager
 from webdrivermanager_cn.core.time_ import get_time
 
 
-class DriverManager(LogMixin, metaclass=abc.ABCMeta):
+class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
     """
     Driver抽象类
     不能实例化，只能继承并重写抽象方法
@@ -55,23 +55,42 @@ class DriverManager(LogMixin, metaclass=abc.ABCMeta):
         获取 cache 中对应 WebDriver 的路径
         :return: path or None
         """
-        return self.__cache_manager.get_cache(
-            driver_name=self.driver_name,
-            version=self.driver_version,
-            key='path',
-        )
+
+        path = self.get_env
+
+        if not path:
+            path = self.__cache_manager.get_cache(
+                driver_name=self.driver_name,
+                version=self.driver_version,
+                key='path',
+            )
+            if path:
+                self.set_env(path)
+
+        return path
 
     @property
-    def get_last_read_by_cache(self):
-        """
-        获取 cache 中对应 WebDriver 的路径
-        :return: path or None
-        """
-        return self.__cache_manager.get_cache(
-            driver_name=self.driver_name,
-            version=self.driver_version,
-            key='last_read_time',
-        )
+    def __env_key(self):
+        return f'{self.driver_name}_{self.driver_version}'
+
+    @property
+    def get_env(self):
+        return self.get(self.__env_key)
+
+    def set_env(self, path):
+        self.set(self.__env_key, path)
+
+    # @property
+    # def get_last_read_by_cache(self):
+    #     """
+    #     获取 cache 中对应 WebDriver 的路径
+    #     :return: path or None
+    #     """
+    #     return self.__cache_manager.get_cache(
+    #         driver_name=self.driver_name,
+    #         version=self.driver_version,
+    #         key='last_read_time',
+    #     )
 
     def __set_cache(self, path):
         """
@@ -133,11 +152,13 @@ class DriverManager(LogMixin, metaclass=abc.ABCMeta):
             except RequestException as e:
                 raise Exception(f"下载WebDriver: {self.driver_name}-{self.driver_version} 失败！-- {e}")
             self.__set_cache(driver_path)
-        self.log.info(f'WebDriver路径: {driver_path} - 上次读取时间 {self.get_last_read_by_cache}')
-        os.chmod(driver_path, 0o755)
+            self.set_env(driver_path)
 
-        # 写入读取时间，并清理超期 WebDriver
-        self.__cache_manager.set_read_cache_date(self.driver_name, self.driver_version)
-        self.__cache_manager.clear_cache_path(self.driver_name)
+            # 写入读取时间，并清理超期 WebDriver
+            self.__cache_manager.set_read_cache_date(self.driver_name, self.driver_version)
+            self.__cache_manager.clear_cache_path(self.driver_name)
+
+        # self.log.info(f'WebDriver路径: {driver_path} - 上次读取时间 {self.get_last_read_by_cache}')
+        os.chmod(driver_path, 0o755)
 
         return driver_path
