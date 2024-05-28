@@ -27,8 +27,9 @@ class Session(LogMixin):
             self.__headers[k] = v
 
     def get(self, url):
+        self.log.debug(f"GET {url} - {self.__headers}")
         response = self._s.get(url, timeout=request_timeout(), verify=verify_not())
-        self.log.debug(f"GET {url} - {response.status_code} - {self.__headers}")
+        self.log.debug(f"GET {url} - {response.status_code}")
         response.raise_for_status()
         return response
 
