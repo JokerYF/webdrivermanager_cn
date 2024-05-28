@@ -46,7 +46,6 @@ class Request:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.__session.close()
-        return self
 
 
 def request_get(url):
