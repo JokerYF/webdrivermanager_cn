@@ -10,12 +10,12 @@ from requests import RequestException
 from webdrivermanager_cn.core.cache_manager import DriverCacheManager
 from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.file_manager import FileManager
-from webdrivermanager_cn.core.log_manager import wdm_logger, set_logger_init
+from webdrivermanager_cn.core.log_manager import LogMixin
 from webdrivermanager_cn.core.os_manager import OSManager
 from webdrivermanager_cn.core.time_ import get_time
 
 
-class DriverManager(metaclass=abc.ABCMeta):
+class DriverManager(LogMixin, metaclass=abc.ABCMeta):
     """
     Driver抽象类
     不能实例化，只能继承并重写抽象方法
@@ -28,8 +28,8 @@ class DriverManager(metaclass=abc.ABCMeta):
         :param version: Driver版本
         :param root_dir: 缓存文件地址
         """
-        set_logger_init()
-        wdm_logger().info(f'{"*" * 10} WebDriverManagerCn {"*" * 10}')
+        self.set_logger_init()
+        self.log.info(f'{"*" * 10} WebDriverManagerCn {"*" * 10}')
 
         self.driver_name = driver_name
         self.driver_version = version
@@ -40,7 +40,7 @@ class DriverManager(metaclass=abc.ABCMeta):
             self.driver_name,
             self.driver_version
         )
-        wdm_logger().info(f'获取WebDriver: {self.driver_name} - {self.driver_version}')
+        self.log.info(f'获取WebDriver: {self.driver_name} - {self.driver_version}')
 
     @staticmethod
     def version_parse(version):
@@ -127,13 +127,13 @@ class DriverManager(metaclass=abc.ABCMeta):
         """
         driver_path = self.get_driver_path_by_cache()
         if not driver_path:
-            wdm_logger().info('缓存不存在，开始下载...')
+            self.log.info('缓存不存在，开始下载...')
             try:
                 driver_path = self.download()
             except RequestException as e:
                 raise Exception(f"下载WebDriver: {self.driver_name}-{self.driver_version} 失败！-- {e}")
             self.__set_cache(driver_path)
-        wdm_logger().info(f'WebDriver路径: {driver_path} - 上次读取时间 {self.get_last_read_by_cache}')
+        self.log.info(f'WebDriver路径: {driver_path} - 上次读取时间 {self.get_last_read_by_cache}')
         os.chmod(driver_path, 0o755)
 
         # 写入读取时间，并清理超期 WebDriver

@@ -6,10 +6,20 @@ import os
 import requests as requests
 import urllib3
 
-from webdrivermanager_cn.core.log_manager import wdm_logger
+from webdrivermanager_cn.core.config import verify_not, request_timeout
+from webdrivermanager_cn.core.log_manager import LogMixin
+from webdrivermanager_cn.version import VERSION
 
 
-class DownloadManager:
+def headers(**kwargs):
+    _headers = {
+        'User-Agent': f'python-requests/{requests.__version__} webdrivermanagercn/{VERSION}'
+    }
+    _headers.update(kwargs)
+    return _headers
+
+
+class DownloadManager(LogMixin):
     """
     文件下载
     """
@@ -21,7 +31,12 @@ class DownloadManager:
         :param down_path:
         :return:
         """
-        wdm_logger().debug(f'开始执行下载: {url} - 本地下载路径: {down_path}')
+        self.log.debug(f'开始执行下载: {url}')
+        response = requests.get(url, timeout=request_timeout(), headers=headers(), verify=verify_not())
+        self.log.debug(f'url: {url} - {response.status_code}')
+        response.raise_for_status()
+        response.close()
+        self.log.debug(f'本地下载路径: {down_path}')
         os.makedirs(down_path, exist_ok=True)
         file_path = os.path.join(down_path, self.get_filename_by_url(url))
         self.__load_file(url, file_path)

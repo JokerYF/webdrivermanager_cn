@@ -1,6 +1,8 @@
 import requests
 
 from webdrivermanager_cn.core import config
+from webdrivermanager_cn.core.config import verify_not, request_timeout
+from webdrivermanager_cn.core.download_manager import headers
 from webdrivermanager_cn.core.driver import DriverManager
 from webdrivermanager_cn.core.os_manager import OSType
 from webdrivermanager_cn.core.version_manager import GetClientVersion, ClientType
@@ -9,7 +11,7 @@ from webdrivermanager_cn.core.version_manager import GetClientVersion, ClientTyp
 class EdgeDriver(DriverManager):
     def __init__(self, version=None, path=None):
         super().__init__(driver_name="edgedriver", version="", root_dir=path)
-        self.driver_version = version if version else self.get_version()
+        self.driver_version = self.get_version(version)  # edge 官方没有latest的url，只能根据本地版本获取
 
     def get_driver_name(self) -> str:
         return f"{self.driver_name}_{self.get_os_info()}.zip"
@@ -25,14 +27,14 @@ class EdgeDriver(DriverManager):
 
     def get_version(self, version=None):
         """
-        获取edge driver版本
+        根据传入版本，或者自动获取的Edge版本，获取匹配的webdriver版本
         :param version:
         :return:
         """
-        if version:
-            return version
-
-        client_version = GetClientVersion().get_version(ClientType.Edge)
+        if version and version != 'latest':
+            client_version = version
+        else:
+            client_version = GetClientVersion().get_version(ClientType.Edge)
         client_version_parser = GetClientVersion(client_version)
         _os_name = self.os_info.get_os_name
         if _os_name == OSType.WIN:
@@ -42,5 +44,6 @@ class EdgeDriver(DriverManager):
         else:
             suffix = OSType.LINUX
         latest_url = f"{config.EdgeDriverUrl}/LATEST_RELEASE_{client_version_parser.version_obj.major}_{suffix.upper()}"
-        response = requests.get(latest_url, timeout=15)
+        response = requests.get(latest_url, timeout=request_timeout(), headers=headers(), verify=verify_not())
+        response.close()
         return response.text.strip()

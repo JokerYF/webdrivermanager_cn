@@ -9,7 +9,9 @@ import requests
 from packaging import version as vs
 
 from webdrivermanager_cn.core import config
-from webdrivermanager_cn.core.log_manager import wdm_logger
+from webdrivermanager_cn.core.config import verify_not, request_timeout
+from webdrivermanager_cn.core.download_manager import headers
+from webdrivermanager_cn.core.log_manager import LogMixin
 from webdrivermanager_cn.core.os_manager import OSManager, OSType
 
 
@@ -66,7 +68,9 @@ class GetUrl:
         解析driver url，获取所有driver版本
         :return:
         """
-        response_data = requests.get(self.get_host, timeout=15).json()
+        response = requests.get(self.get_host, timeout=request_timeout(), headers=headers(), verify=verify_not())
+        response.close()
+        response_data = response.json()
         return [i["name"].replace("/", "") for i in response_data if 'LATEST' not in i]
 
     def _get_chrome_correct_version(self):
@@ -80,7 +84,7 @@ class GetUrl:
         return _chrome_version_list[-1]
 
 
-class GetClientVersion(GetUrl):
+class GetClientVersion(GetUrl, LogMixin):
     """
     获取当前环境下浏览器版本
     """
@@ -108,7 +112,7 @@ class GetClientVersion(GetUrl):
         :param client:
         :return:
         """
-        wdm_logger().debug(f'当前OS: {self.__os_name}')
+        self.log.debug(f'当前OS: {self.__os_name}')
         cmd_map = {
             OSType.MAC: {
                 ClientType.Chrome: r"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
@@ -128,7 +132,7 @@ class GetClientVersion(GetUrl):
         }
         cmd = cmd_map[self.__os_name][client]
         client_pattern = CLIENT_PATTERN[client]
-        wdm_logger().debug(f'执行命令: {cmd}, 解析方式: {client_pattern}')
+        self.log.debug(f'执行命令: {cmd}, 解析方式: {client_pattern}')
         return cmd, client_pattern
 
     @staticmethod
@@ -159,7 +163,7 @@ class GetClientVersion(GetUrl):
         """
         if not self._version:
             self._version = self.__read_version_from_cmd(*self.cmd_dict(client))
-            wdm_logger().info(f'获取本地浏览器版本: {client} - {self._version}')
+            self.log.info(f'获取本地浏览器版本: {client} - {self._version}')
         return self._version
 
     def get_chrome_correct_version(self):
@@ -178,7 +182,8 @@ class GetClientVersion(GetUrl):
         :return:
         """
         assert flag in ['Stable', 'Beta', 'Dev', 'Canary'], '参数异常！'
-        response = requests.get(config.ChromeDriverApiNew)
+        response = requests.get(config.ChromeDriverApiNew, timeout=request_timeout(), headers=headers(), verify=verify_not())
+        response.close()
         return response.json()['channels'][flag]['version']
 
     @property
@@ -187,5 +192,6 @@ class GetClientVersion(GetUrl):
         获取Firefox driver版本信息
         :return:
         """
-        response = requests.get(url=config.GeckodriverApiNew, timeout=15)
+        response = requests.get(url=config.GeckodriverApiNew, timeout=request_timeout(), headers=headers(), verify=verify_not())
+        response.close()
         return response.json()["latest"]

@@ -6,12 +6,12 @@ import os
 import shutil
 
 from webdrivermanager_cn.core.config import clear_wdm_cache_time
-from webdrivermanager_cn.core.log_manager import wdm_logger
+from webdrivermanager_cn.core.log_manager import LogMixin
 from webdrivermanager_cn.core.os_manager import OSManager
 from webdrivermanager_cn.core.time_ import get_time
 
 
-class DriverCacheManager:
+class DriverCacheManager(LogMixin):
     """
     Driver 缓存管理
     """
@@ -100,7 +100,7 @@ class DriverCacheManager:
         except KeyError:
             return None
 
-    def get_cache_path_by_read_time(self, driver_name):
+    def get_clear_version_by_read_time(self, driver_name):
         """
         获取超过清理时间的 WebDriver 版本
         :param driver_name:
@@ -110,13 +110,15 @@ class DriverCacheManager:
         time_interval = clear_wdm_cache_time()
         for driver, info in self.__read_cache[driver_name].items():
             _version = info['version']
-
-            read_time = info.get('last_read_time', 0)
-            if not read_time or int(get_time('%Y%m%d')) - int(read_time) >= time_interval:
+            try:
+                read_time = int(info['last_read_time'])
+            except:
+                read_time = 0
+            if not read_time or int(get_time('%Y%m%d')) - read_time >= time_interval:
                 _clear_version.append(_version)
-                wdm_logger().debug(f'{driver_name} - {_version} 已过期 {read_time}, 即将清理!')
+                self.log.debug(f'{driver_name} - {_version} 已过期 {read_time}, 即将清理!')
                 continue
-            wdm_logger().debug(f'{driver_name} - {_version} 尚未过期 {read_time}')
+            self.log.debug(f'{driver_name} - {_version} 尚未过期 {read_time}')
         return _clear_version
 
     def set_cache(self, driver_name, version, **kwargs):
@@ -142,7 +144,7 @@ class DriverCacheManager:
         times = get_time('%Y%m%d')
         if self.get_cache(driver_name=driver_name, version=version, key='last_read_time') != times:
             self.set_cache(driver_name=driver_name, version=version, last_read_time=f"{times}")
-            wdm_logger().debug(f'更新 {driver_name} - {version} 读取时间: {times}')
+            self.log.debug(f'更新 {driver_name} - {version} 读取时间: {times}')
 
     def clear_cache_path(self, driver_name):
         """
@@ -150,17 +152,17 @@ class DriverCacheManager:
         :param driver_name:
         :return:
         """
-        _clear_version = self.get_cache_path_by_read_time(driver_name)
+        _clear_version = self.get_clear_version_by_read_time(driver_name)
 
         for version in _clear_version:
             clear_path = os.path.join(self.root_dir, driver_name, version)
             if os.path.exists(clear_path):
                 shutil.rmtree(clear_path)
             else:
-                wdm_logger().warning(f'缓存目录无该路径: {clear_path}')
+                self.log.warning(f'缓存目录无该路径: {clear_path}')
 
             cache_data = self.__read_cache
             cache_data[driver_name].pop(self.format_key(driver_name=driver_name, version=version))
             self.__dump_cache(cache_data)
 
-            wdm_logger().info(f'清理过期WebDriver: {clear_path}')
+            self.log.info(f'清理过期WebDriver: {clear_path}')
