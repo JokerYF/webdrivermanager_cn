@@ -14,7 +14,7 @@ class Session(LogMixin):
         self.__headers = {
             'User-Agent': f'python/{sys.version.split(" ")[0]} '
                           f'requests/{requests.__version__} '
-                          f'webdrivermanagercn/{VERSION}'
+                          f'webdrivermanager_cn/{VERSION}'
         }
 
     @property
