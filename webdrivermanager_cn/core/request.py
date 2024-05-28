@@ -1,3 +1,5 @@
+import sys
+
 import requests
 from requests import session
 
@@ -10,7 +12,9 @@ class Session(LogMixin):
     def __init__(self):
         self._s = session()
         self.__headers = {
-            'User-Agent': f'python-requests/{requests.__version__} webdrivermanagercn/{VERSION}'
+            'User-Agent': f'python/{sys.version.split(" ")[0]} '
+                          f'requests/{requests.__version__} '
+                          f'webdrivermanagercn/{VERSION}'
         }
 
     @property
