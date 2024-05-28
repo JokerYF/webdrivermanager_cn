@@ -5,14 +5,12 @@ import os
 import re
 import subprocess
 
-import requests
 from packaging import version as vs
 
 from webdrivermanager_cn.core import config
-from webdrivermanager_cn.core.config import verify_not, request_timeout
-from webdrivermanager_cn.core.download_manager import headers
 from webdrivermanager_cn.core.log_manager import LogMixin
 from webdrivermanager_cn.core.os_manager import OSManager, OSType
+from webdrivermanager_cn.core.request import request_get
 
 
 class ClientType:
@@ -68,9 +66,7 @@ class GetUrl:
         解析driver url，获取所有driver版本
         :return:
         """
-        response = requests.get(self.get_host, timeout=request_timeout(), headers=headers(), verify=verify_not())
-        response.close()
-        response_data = response.json()
+        response_data = request_get(self.get_host).json()
         return [i["name"].replace("/", "") for i in response_data if 'LATEST' not in i]
 
     def _get_chrome_correct_version(self):
@@ -182,9 +178,7 @@ class GetClientVersion(GetUrl, LogMixin):
         :return:
         """
         assert flag in ['Stable', 'Beta', 'Dev', 'Canary'], '参数异常！'
-        response = requests.get(config.ChromeDriverApiNew, timeout=request_timeout(), headers=headers(), verify=verify_not())
-        response.close()
-        return response.json()['channels'][flag]['version']
+        return request_get(config.ChromeDriverApiNew).json()['channels'][flag]['version']
 
     @property
     def get_geckodriver_version(self):
@@ -192,6 +186,4 @@ class GetClientVersion(GetUrl, LogMixin):
         获取Firefox driver版本信息
         :return:
         """
-        response = requests.get(url=config.GeckodriverApiNew, timeout=request_timeout(), headers=headers(), verify=verify_not())
-        response.close()
-        return response.json()["latest"]
+        return request_get(config.GeckodriverApiNew).json()["latest"]
