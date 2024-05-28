@@ -21,13 +21,14 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 
 ## 已实现功能
 
-> 后续都会实现，如果有需求请及时提Issue
+> 如果有其他 WebDriver 需求请及时提Issue
+>
+> IE 浏览器已停止维护，且 selenium4.x 不支持IE浏览器，故不会加入 IE Driver 的相关逻辑了，有需要的同学可以自行访问下载：[https://learn.microsoft.com/zh-cn/microsoft-edge/webdriver-chromium/ie-mode?tabs=python](https://learn.microsoft.com/zh-cn/microsoft-edge/webdriver-chromium/ie-mode?tabs=python)
 
 | Client  | Windows | MacOS |    Linux     |
 |:-------:|:-------:|:-----:|:------------:|
 | Chrome  |    ✅    |   ✅   |      ✅       |
 | Firefox |    ✅    |   ✅   |      ✅       |
-|   IE    |    ❎    |   ❎   |      ❎       |
 |  Edge   |    ✅    |   ✅   | ✅ <br/>(未验证) |
 
 ## 使用方法
