@@ -17,6 +17,12 @@ class Session(LogMixin):
                           f'webdrivermanager_cn/{VERSION}'
         }
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
     @property
     def headers(self):
         return self.__headers
@@ -37,17 +43,6 @@ class Session(LogMixin):
         self._s.close()
 
 
-class Request:
-    def __init__(self):
-        self.__session = Session()
-
-    def __enter__(self):
-        return self.__session
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.__session.close()
-
-
 def request_get(url):
-    with Request() as r:
+    with Session() as r:
         return r.get(url)
