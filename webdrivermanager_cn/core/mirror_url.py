@@ -1,6 +1,10 @@
-class PublicMirror:
+class VersionApi:
     ChromeDriverApiNew = 'https://gitee.com/Joker_JH/DriverRelease/raw/master/ChromeDriverLastVersion.json'
     GeckodriverApiNew = 'https://gitee.com/Joker_JH/DriverRelease/raw/master/GeckodriverLastVersion.json'
+
+class PublicMirror:
+    # Edge 驱动源地址
+    EdgeDriverUrl = 'https://msedgedriver.azureedge.net'
 
 
 class AliMirror:
@@ -12,9 +16,6 @@ class AliMirror:
     # Firefox 驱动源地址
     GeckodriverUrl = 'https://registry.npmmirror.com/-/binary/geckodriver'
     GeckodriverApi = 'https://api.github.com/repos/mozilla/geckodriver/releases'
-
-    # Edge 驱动源地址
-    EdgeDriverUrl = 'https://msedgedriver.azureedge.net'
 
 
 class HuaweiMirror:
