@@ -19,7 +19,6 @@ class LogMixin:
 
     @property
     def log(self):
-        global LOGGER
         return LOGGER
 
     @staticmethod
@@ -27,7 +26,6 @@ class LogMixin:
         from webdrivermanager_cn.core.config import init_log, init_log_level
 
         global LOGGER_INIT_FLAG
-        global LOGGER
 
         # 如果当前logger不是wdm，或者不需要输出log的话，直接返回
         if LOGGER.name != 'WDM' or not init_log():
