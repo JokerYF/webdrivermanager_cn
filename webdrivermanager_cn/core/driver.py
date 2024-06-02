@@ -101,6 +101,20 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         self.__cache_manager.set_cache(driver_name=self.driver_name, version=self.driver_version,
                                        download_time=f"{get_time('%Y%m%d')}", path=path)
 
+    @staticmethod
+    def url_formatter(host: str, *url: str):
+        """
+        拼接url
+        :param host:
+        :param url:
+        :return:
+        """
+        if host.endswith('/'):
+            host = host[:-1]
+        for i in url:
+            host += f'/{i}'
+        return host
+
     @abc.abstractmethod
     def download_url(self) -> str:
         """
