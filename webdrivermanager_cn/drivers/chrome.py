@@ -6,7 +6,7 @@ from webdrivermanager_cn.core.version_manager import GetClientVersion
 
 class ChromeDriver(DriverManager):
     def __init__(self, version='latest', path=None):
-        self._chromedriver_version = version
+        self.__download_version = version
         super().__init__(driver_name='chromedriver', version=self._version, root_dir=path)
 
     @property
@@ -39,12 +39,12 @@ class ChromeDriver(DriverManager):
         获取当前系统内chrome的版本，并模糊匹配当前版本最高版本的ChromeDriver，否则返回指定的ChromeDriver版本
         :return:
         """
-        if self._chromedriver_version == 'latest':
-            try:
-                return GetClientVersion().get_chrome_correct_version()
-            except:
-                return GetClientVersion().get_chrome_latest_version()
-        return self._chromedriver_version
+        if self.__download_version not in ['latest', None]:
+            return self.__download_version
+        try:
+            return GetClientVersion().get_chrome_correct_version()
+        except:
+            return GetClientVersion().get_chrome_latest_version()
 
     def get_os_info(self, mac_format=True):
         _os_type = f"{self.os_info.get_os_type}{self.os_info.get_framework}"
