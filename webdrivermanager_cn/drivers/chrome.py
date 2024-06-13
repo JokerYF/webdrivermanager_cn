@@ -12,20 +12,21 @@ class ChromeDriver(DriverManager):
     @property
     def get_driver_name(self):
         _name = f"chromedriver-{self.get_os_info()}.zip"
-        return _name if self.__is_new_version(self._chromedriver_version) else _name.replace('-', '_')
+        return _name if self.__is_new_version else _name.replace('-', '_')
 
-    def __is_new_version(self, version) -> bool:
+    @property
+    def __is_new_version(self) -> bool:
         """
         判断是否为新Chrome版本
         :return:
         """
         try:
-            return self.version_parse(version).major >= 115
+            return self.version_parse(self.driver_version).major >= 115
         except:
             return True
 
     def download_url(self):
-        if self.__is_new_version(self._version):
+        if self.__is_new_version:
             url = f'{config.ChromeDriverUrlNew}/{self.driver_version}/{self.get_os_info()}/{self.get_driver_name}'
         else:
             url = f'{config.ChromeDriverUrl}/{self.driver_version}/{self.get_driver_name}'
