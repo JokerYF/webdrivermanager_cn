@@ -11,17 +11,20 @@ class EdgeDriver(DriverManager):
         super().__init__(driver_name="edgedriver", version="", root_dir=path)
         self.driver_version = self.version  # edge 官方没有latest的url，只能根据本地版本获取
 
+    @property
     def get_driver_name(self) -> str:
-        return f"{self.driver_name}_{self.get_os_info()}.zip"
+        return f"{self.driver_name}_{self.get_os_info}.zip"
 
+    @property
     def get_os_info(self):
         _os_info = self.os_info.get_os_type
         if self.os_info.get_mac_framework in ["_m1", "_m2"]:
             _os_info += "_m1"
         return _os_info
 
+    @property
     def download_url(self) -> str:
-        return f"{config.EdgeDriverUrl}/{self.driver_version}/{self.get_driver_name()}"
+        return f"{config.EdgeDriverUrl}/{self.driver_version}/{self.get_driver_name}"
 
     @property
     def version(self):

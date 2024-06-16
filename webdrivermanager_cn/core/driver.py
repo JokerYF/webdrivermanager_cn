@@ -101,6 +101,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         self.__cache_manager.set_cache(driver_name=self.driver_name, version=self.driver_version,
                                        download_time=f"{get_time('%Y%m%d')}", path=path)
 
+    @property
     @abc.abstractmethod
     def download_url(self) -> str:
         """
@@ -109,6 +110,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         """
         raise NotImplementedError("该方法需要重写")
 
+    @property
     @abc.abstractmethod
     def get_driver_name(self) -> str:
         """
@@ -117,6 +119,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         """
         raise NotImplementedError("该方法需要重写")
 
+    @property
     @abc.abstractmethod
     def get_os_info(self):
         """
@@ -130,8 +133,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         文件下载、解压
         :return: abs path
         """
-        url = self.download_url()
-        download_path = DownloadManager().download_file(url, self.__driver_path)
+        download_path = DownloadManager().download_file(self.download_url, self.__driver_path)
         file = FileManager(download_path, self.driver_name)
         file.unpack()
         return file.driver_path

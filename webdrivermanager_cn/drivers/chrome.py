@@ -11,7 +11,7 @@ class ChromeDriver(DriverManager):
 
     @property
     def get_driver_name(self):
-        _name = f"chromedriver-{self.get_os_info()}.zip"
+        _name = f"chromedriver-{self.get_os_info}.zip"
         return _name if self.__is_new_version else _name.replace('-', '_')
 
     @property
@@ -25,9 +25,10 @@ class ChromeDriver(DriverManager):
         except:
             return True
 
+    @property
     def download_url(self):
         if self.__is_new_version:
-            url = f'{config.ChromeDriverUrlNew}/{self.driver_version}/{self.get_os_info()}/{self.get_driver_name}'
+            url = f'{config.ChromeDriverUrlNew}/{self.driver_version}/{self.get_os_info}/{self.get_driver_name}'
         else:
             url = f'{config.ChromeDriverUrl}/{self.driver_version}/{self.get_driver_name}'
         self.log.debug(f'拼接下载url: {url}')
@@ -46,6 +47,7 @@ class ChromeDriver(DriverManager):
         except:
             return GetClientVersion().get_chrome_latest_version()
 
+    @property
     def get_os_info(self, mac_format=True):
         _os_type = f"{self.os_info.get_os_type}{self.os_info.get_framework}"
         if self.os_info.get_os_name == OSType.MAC:

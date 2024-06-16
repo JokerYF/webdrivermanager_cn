@@ -18,6 +18,7 @@ class Geckodriver(DriverManager):
             return GetClientVersion().get_geckodriver_version
         return self.__download_version
 
+    @property
     def download_url(self):
         return f'{config.GeckodriverUrl}/{self.driver_version}/{self.get_driver_name}'
 
