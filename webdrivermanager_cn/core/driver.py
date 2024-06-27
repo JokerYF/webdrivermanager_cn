@@ -28,9 +28,6 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         :param version: Driver版本
         :param root_dir: 缓存文件地址
         """
-        self.set_logger_init()
-        self.log.info(f'{"*" * 10} WebDriverManagerCn {"*" * 10}')
-
         self.driver_name = driver_name
         self.driver_version = version
         self.os_info = OSManager()

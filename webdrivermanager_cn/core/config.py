@@ -11,7 +11,8 @@ from webdrivermanager_cn.core.mixin import EnvMixin
 ChromeDriverUrl = 'https://registry.npmmirror.com/-/binary/chromedriver'
 ChromeDriverUrlNew = 'https://registry.npmmirror.com/-/binary/chrome-for-testing'
 ChromeDriver = 'https://googlechromelabs.github.io/chrome-for-testing'
-ChromeDriverApiNew = 'https://gitee.com/Joker_JH/DriverRelease/raw/master/ChromeDriverLastVersion.json'
+ChromeDriverLastVersion = 'https://gitee.com/Joker_JH/DriverRelease/raw/master/ChromeDriverLastVersion.json'
+ChromeDriverLastPatchVersion = 'https://gitee.com/Joker_JH/DriverRelease/raw/master/ChromeDriverLatestPatchVersion.json'
 
 # Firefox 驱动源地址
 GeckodriverUrl = 'https://registry.npmmirror.com/-/binary/geckodriver'

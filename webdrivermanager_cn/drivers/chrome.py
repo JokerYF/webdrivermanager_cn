@@ -40,12 +40,14 @@ class ChromeDriver(DriverManager):
         获取当前系统内chrome的版本，并模糊匹配当前版本最高版本的ChromeDriver，否则返回指定的ChromeDriver版本
         :return:
         """
+        __version_manager = GetClientVersion()
+        _version = None
         if self.__download_version not in ['latest', None]:
-            return self.__download_version
+            _version = self.__download_version
         try:
-            return GetClientVersion().get_chrome_correct_version()
+            return __version_manager.get_chrome_correct_version(_version)
         except:
-            return GetClientVersion().get_chrome_latest_version()
+            return __version_manager.get_chrome_latest_version()
 
     @property
     def get_os_info(self, mac_format=True):

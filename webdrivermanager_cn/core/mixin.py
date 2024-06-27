@@ -9,7 +9,8 @@ class EnvMixin(LogMixin):
     用于执行代码时读写环境变量，代码执行结束后释放写入的环境变量
     """
 
-    def get(self, key, default=None):
+    @staticmethod
+    def get(key, default=None):
         """
         获取环境变量
         :param key: 环境变量名
@@ -17,7 +18,6 @@ class EnvMixin(LogMixin):
         :return:
         """
         value = os.getenv(key, default)
-        self.log.debug(f"get env {key} - {value}")
         return value
 
     def set(self, key, value):

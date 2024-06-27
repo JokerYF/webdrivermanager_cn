@@ -2,6 +2,7 @@ import logging
 
 LOGGER = logging.getLogger('WDM')
 LOGGER_INIT_FLAG = False
+INIT_LOG_TITLE = False
 
 
 def set_logger(logger: logging.Logger):
@@ -19,6 +20,9 @@ class LogMixin:
 
     @property
     def log(self):
+        if LOGGER.name == 'WDM':
+            self.set_logger_init()
+        self.__init_log_title(LOGGER)
         return LOGGER
 
     @staticmethod
@@ -28,7 +32,7 @@ class LogMixin:
         global LOGGER_INIT_FLAG
 
         # 如果当前logger不是wdm，或者不需要输出log的话，直接返回
-        if LOGGER.name != 'WDM' or not init_log():
+        if not init_log() or LOGGER.name != 'WDM':
             return
 
         # 如果已经初始化过默认logger的属性，直接返回
@@ -46,3 +50,10 @@ class LogMixin:
         stream = logging.StreamHandler()
         stream.setFormatter(formatter)
         LOGGER.addHandler(stream)
+
+    @staticmethod
+    def __init_log_title(logger):
+        global INIT_LOG_TITLE
+        if not INIT_LOG_TITLE:
+            logger.info(f'{"*" * 10} WebDriverManagerCn {"*" * 10}')
+            INIT_LOG_TITLE = True
