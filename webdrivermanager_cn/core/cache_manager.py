@@ -67,10 +67,8 @@ class DriverCacheManager(LogMixin):
             data[driver_name][key] = {}
 
         driver_data = data[driver_name][key]
-        for k, v in kwargs.items():
-            if k in ['driver_name']:  # WebDriver cache 信息内不记录这些字段
-                continue
-            driver_data[k] = v
+        driver_data.update(kwargs)
+        driver_data.pop('driver_name')  # WebDriver cache 信息内不记录这些字段
         self.__dump_cache(data)
 
     @staticmethod
@@ -112,7 +110,7 @@ class DriverCacheManager(LogMixin):
             _version = info['version']
             try:
                 read_time = int(info['last_read_time'])
-            except:
+            except KeyError:
                 read_time = 0
             if not read_time or int(get_time('%Y%m%d')) - read_time >= time_interval:
                 _clear_version.append(_version)

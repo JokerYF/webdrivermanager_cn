@@ -28,9 +28,6 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         :param version: Driver版本
         :param root_dir: 缓存文件地址
         """
-        self.set_logger_init()
-        self.log.info(f'{"*" * 10} WebDriverManagerCn {"*" * 10}')
-
         self.driver_name = driver_name
         self.driver_version = version
         self.os_info = OSManager()
@@ -115,6 +112,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
             host += f'/{i}'
         return host
 
+    @property
     @abc.abstractmethod
     def download_url(self) -> str:
         """
@@ -123,6 +121,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         """
         raise NotImplementedError("该方法需要重写")
 
+    @property
     @abc.abstractmethod
     def get_driver_name(self) -> str:
         """
@@ -131,6 +130,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         """
         raise NotImplementedError("该方法需要重写")
 
+    @property
     @abc.abstractmethod
     def get_os_info(self):
         """
@@ -144,8 +144,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         文件下载、解压
         :return: abs path
         """
-        url = self.download_url()
-        download_path = DownloadManager().download_file(url, self.__driver_path)
+        download_path = DownloadManager().download_file(self.download_url, self.__driver_path)
         file = FileManager(download_path, self.driver_name)
         file.unpack()
         return file.driver_path
