@@ -49,15 +49,16 @@ class EdgeDriver(DriverManager):
 
     @property
     def version(self):
-        _url = f"{config.EdgeDriverUrl}"
         if self.__download_version in ['latest', None]:
             try:
-                client_version = GetClientVersion().get_version(ClientType.Edge)
-                _url += f'/LATEST_RELEASE_{GetClientVersion(client_version).version_obj.major}'
+                self.__download_version = GetClientVersion().get_version(ClientType.Edge)
             except:
-                _url += '/LATEST_STABLE'
-        else:
-            pass
-        self.__download_version = request_get(_url).text.strip()
+                pass
+        if not self.__download_version:
+            self.__download_version = self.__get_latest_version
         self.log.info(f'下载版本: {self.__download_version}')
         return self.__download_version
+
+    @property
+    def __get_latest_version(self):
+        return request_get(f"{config.EdgeDriverUrl}/LATEST_STABLE").text.strip()
