@@ -50,15 +50,14 @@ class ChromeDriver(DriverManager):
             return __version_manager.get_chrome_latest_version()
 
     @property
-    def get_os_info(self, mac_format=True):
+    def get_os_info(self):
         _os_type = f"{self.os_info.get_os_type}{self.os_info.get_framework}"
         if self.os_info.get_os_name == OSType.MAC:
-            if mac_format:
-                mac_suffix = self.os_info.get_mac_framework
-                if mac_suffix and mac_suffix in _os_type:
-                    return "mac-arm64"
-                else:
-                    return "mac-x64"
+            mac_suffix = self.os_info.get_mac_framework
+            if mac_suffix and mac_suffix in _os_type:
+                return "mac-arm64"
+            else:
+                return "mac-x64"
         elif self.os_info.get_os_name == OSType.WIN:
             if not GetClientVersion(self.driver_version).is_new_version:
                 return 'win32'
