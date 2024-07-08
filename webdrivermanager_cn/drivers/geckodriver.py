@@ -16,7 +16,7 @@ class Geckodriver(DriverManager):
     def _version(self):
         if self.__download_version in ['latest', None]:
             return GetClientVersion().get_geckodriver_version
-        return self.__download_version
+        return self.__download_version if self.__download_version.startswith('v') else f'v{self.__download_version}'
 
     @property
     def download_url(self):
