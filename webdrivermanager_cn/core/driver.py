@@ -21,13 +21,14 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
     不能实例化，只能继承并重写抽象方法
     """
 
-    def __init__(self, driver_name, version, root_dir):
+    def __init__(self, driver_name, download_version, version, root_dir):
         """
         Driver基类
         :param driver_name: Driver名称
         :param version: Driver版本
         :param root_dir: 缓存文件地址
         """
+        self.driver_download_version = download_version
         self.driver_name = driver_name
         self.driver_version = version
         self.os_info = OSManager()
@@ -37,7 +38,18 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
             self.driver_name,
             self.driver_version
         )
-        self.log.info(f'获取WebDriver: {self.driver_name} - {self.driver_version}')
+        self.log.info(f'获取WebDriver: {self.driver_name} - {self.download_version} --> {self.driver_version}')
+        self.__cache_manager.driver_info = {
+            'driver_name': self.driver_name,
+            'download_version': self.download_version,
+            'version': self.driver_version
+        }
+
+    @property
+    def download_version(self):
+        if self.driver_download_version and self.driver_download_version not in ['latest', None]:
+            return self.driver_download_version
+        return self.driver_version
 
     @staticmethod
     def version_parse(version):
@@ -57,8 +69,6 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
 
         if not path:
             path = self.__cache_manager.get_cache(
-                driver_name=self.driver_name,
-                version=self.driver_version,
                 key='path',
             )
             if path:

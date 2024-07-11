@@ -9,14 +9,13 @@ from webdrivermanager_cn.core.version_manager import GetClientVersion
 
 class Geckodriver(DriverManager):
     def __init__(self, version='latest', path=None):
-        self.__download_version = version
-        super().__init__(driver_name='geckodriver', version=self._version, root_dir=path)
+        super().__init__(driver_name='geckodriver', download_version=version, version=self._version, root_dir=path)
 
     @property
     def _version(self):
-        if self.__download_version in ['latest', None]:
+        if self.download_version in ['latest', None]:
             return GetClientVersion().get_geckodriver_version
-        return self.__download_version if self.__download_version.startswith('v') else f'v{self.__download_version}'
+        return self.download_version if self.download_version.startswith('v') else f'v{self.download_version}'
 
     @property
     def download_url(self):

@@ -6,8 +6,8 @@ from webdrivermanager_cn.core.version_manager import GetClientVersion
 
 class ChromeDriver(DriverManager):
     def __init__(self, version='latest', path=None):
-        self.__download_version = version
-        super().__init__(driver_name='chromedriver', version=self._version, root_dir=path)
+        super().__init__(driver_name='chromedriver', download_version=version, version=None, root_dir=path)
+        self.driver_version = self._version
 
     @property
     def get_driver_name(self):
@@ -41,9 +41,7 @@ class ChromeDriver(DriverManager):
         :return:
         """
         __version_manager = GetClientVersion()
-        _version = None
-        if self.__download_version not in ['latest', None]:
-            _version = self.__download_version
+        _version = self.download_version
         try:
             return __version_manager.get_chrome_correct_version(_version)
         except:

@@ -6,8 +6,7 @@ from webdrivermanager_cn.core.version_manager import GetClientVersion, ClientTyp
 
 class EdgeDriver(DriverManager):
     def __init__(self, version=None, path=None):
-        self.__download_version = version
-        super().__init__(driver_name="edgedriver", version=self.version, root_dir=path)
+        super().__init__(driver_name="edgedriver", download_version=version, version=self.version, root_dir=path)
         # self.driver_version = self.version
 
     @property
@@ -32,8 +31,8 @@ class EdgeDriver(DriverManager):
     #     弃用，仅保留逻辑
     #     :return:
     #     """
-    #     if self.__download_version not in ['latest', None]:
-    #         client_version = self.__download_version
+    #     if self.download_version not in ['latest', None]:
+    #         client_version = self.download_version
     #     else:
     #         client_version = GetClientVersion().get_version(ClientType.Edge)
     #     client_version_parser = GetClientVersion(client_version)
@@ -49,15 +48,15 @@ class EdgeDriver(DriverManager):
 
     @property
     def version(self):
-        if self.__download_version in ['latest', None]:
+        if self.download_version in ['latest', None]:
             try:
-                self.__download_version = GetClientVersion().get_version(ClientType.Edge)
+                self.download_version = GetClientVersion().get_version(ClientType.Edge)
             except:
                 pass
-        if not self.__download_version:
-            self.__download_version = self.__get_latest_version
-        self.log.info(f'下载版本: {self.__download_version}')
-        return self.__download_version
+        if not self.download_version:
+            self.download_version = self.__get_latest_version
+        self.log.info(f'下载版本: {self.download_version}')
+        return self.download_version
 
     @property
     def __get_latest_version(self):
