@@ -76,19 +76,20 @@ class GetUrl(LogMixin):
         """
         _chrome_version = f'{self.version_obj.major}.{self.version_obj.minor}.{self.version_obj.micro}'
 
-        # 根据json获取符合版本的版本号
-        data = request_get(config.ChromeDriverLastPatchVersion).json()
-        try:
-            return data['builds'][_chrome_version]['version']
-        except KeyError:
-            self.log.warning(
-                f'当前chrome版本: {_chrome_version}, '
-                f'没有找到合适的ChromeDriver版本 - {config.ChromeDriverLastPatchVersion}'
-            )
-            # 拉取符合版本list并获取最后一个版本号
-            _chrome_version_list = [i for i in self._version_list if _chrome_version in i and 'LATEST' not in i]
-            _chrome_version_list = sorted(_chrome_version_list, key=lambda x: tuple(map(int, x.split('.'))))
-            return _chrome_version_list[-1]
+        if self.is_new_version:
+            # 根据json获取符合版本的版本号
+            try:
+                data = request_get(config.ChromeDriverLastPatchVersion).json()
+                return data['builds'][_chrome_version]['version']
+            except KeyError:
+                self.log.warning(
+                    f'当前chrome版本: {_chrome_version}, '
+                    f'没有找到合适的ChromeDriver版本 - {config.ChromeDriverLastPatchVersion}'
+                )
+        # 拉取符合版本list并获取最后一个版本号
+        _chrome_version_list = [i for i in self._version_list if _chrome_version in i and 'LATEST' not in i]
+        _chrome_version_list = sorted(_chrome_version_list, key=lambda x: tuple(map(int, x.split('.'))))
+        return _chrome_version_list[-1]
 
 
 class GetClientVersion(GetUrl, LogMixin):
