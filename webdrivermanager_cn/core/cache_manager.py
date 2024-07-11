@@ -110,7 +110,7 @@ class DriverCacheManager(LogMixin):
             _version = info['version']
             try:
                 read_time = int(info['last_read_time'])
-            except KeyError:
+            except (KeyError, ValueError):
                 read_time = 0
             if not read_time or int(get_time('%Y%m%d')) - read_time >= time_interval:
                 _clear_version.append(_version)
