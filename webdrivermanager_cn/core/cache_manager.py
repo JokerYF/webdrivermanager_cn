@@ -155,7 +155,11 @@ class DriverCacheManager(LogMixin):
         for version in _clear_version:
             clear_path = os.path.join(self.root_dir, driver_name, version)
             if os.path.exists(clear_path):
-                shutil.rmtree(clear_path)
+                try:
+                    shutil.rmtree(clear_path)
+                except Exception as e:
+                    self.log.error(f'清理过期WebDriver: {clear_path} 失败! {e}')
+                    continue
             else:
                 self.log.warning(f'缓存目录无该路径: {clear_path}')
 
