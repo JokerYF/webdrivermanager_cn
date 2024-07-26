@@ -1,4 +1,4 @@
-from webdrivermanager_cn.core import config
+from webdrivermanager_cn.core import mirror_urls as urls
 from webdrivermanager_cn.core.driver import DriverManager
 from webdrivermanager_cn.core.request import request_get
 from webdrivermanager_cn.core.version_manager import GetClientVersion, ClientType
@@ -23,7 +23,7 @@ class EdgeDriver(DriverManager):
 
     @property
     def download_url(self) -> str:
-        return f"{config.EdgeDriverUrl}/{self.driver_version}/{self.get_driver_name}"
+        return f"{urls.EdgeDriverUrl}/{self.driver_version}/{self.get_driver_name}"
 
     # @property
     # def version_bak(self):
@@ -44,7 +44,7 @@ class EdgeDriver(DriverManager):
     #         suffix = "macos"
     #     else:
     #         suffix = OSType.LINUX
-    #     latest_url = f"{config.EdgeDriverUrl}/LATEST_RELEASE_{client_version_parser.version_obj.major}_{suffix.upper()}"
+    #     latest_url = f"{urls.EdgeDriverUrl}/LATEST_RELEASE_{client_version_parser.version_obj.major}_{suffix.upper()}"
     #     return request_get(latest_url).text.strip()
 
     @property
@@ -61,4 +61,4 @@ class EdgeDriver(DriverManager):
 
     @property
     def __get_latest_version(self):
-        return request_get(f"{config.EdgeDriverUrl}/LATEST_STABLE").text.strip()
+        return request_get(f"{urls.EdgeDriverUrl}/LATEST_STABLE").text.strip()

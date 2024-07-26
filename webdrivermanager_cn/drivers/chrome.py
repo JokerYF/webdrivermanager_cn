@@ -1,4 +1,4 @@
-from webdrivermanager_cn.core import config
+from webdrivermanager_cn.core import mirror_urls as urls
 from webdrivermanager_cn.core.driver import DriverManager
 from webdrivermanager_cn.core.os_manager import OSType
 from webdrivermanager_cn.core.version_manager import GetClientVersion
@@ -28,9 +28,9 @@ class ChromeDriver(DriverManager):
     @property
     def download_url(self):
         if self.__is_new_version:
-            url = f'{config.ChromeDriverUrlNew}/{self.driver_version}/{self.get_os_info}/{self.get_driver_name}'
+            url = f'{urls.ChromeDriverUrlNew}/{self.driver_version}/{self.get_os_info}/{self.get_driver_name}'
         else:
-            url = f'{config.ChromeDriverUrl}/{self.driver_version}/{self.get_driver_name}'
+            url = f'{urls.ChromeDriverUrl}/{self.driver_version}/{self.get_driver_name}'
         self.log.debug(f'拼接下载url: {url}')
         return url
 

@@ -7,7 +7,7 @@ import subprocess
 
 from packaging import version as vs
 
-from webdrivermanager_cn.core import config
+from webdrivermanager_cn.core import mirror_urls as urls
 from webdrivermanager_cn.core.log_manager import LogMixin
 from webdrivermanager_cn.core.os_manager import OSManager, OSType
 from webdrivermanager_cn.core.request import request_get
@@ -58,7 +58,7 @@ class GetUrl(LogMixin):
         根据判断获取chromedriver的url
         :return:
         """
-        return config.ChromeDriverUrlNew if self.is_new_version else config.ChromeDriverUrl
+        return urls.ChromeDriverUrlNew if self.is_new_version else urls.ChromeDriverUrl
 
     @property
     def _version_list(self):
@@ -79,12 +79,12 @@ class GetUrl(LogMixin):
         if self.is_new_version:
             # 根据json获取符合版本的版本号
             try:
-                data = request_get(config.ChromeDriverLastPatchVersion).json()
+                data = request_get(urls.ChromeDriverLastPatchVersion).json()
                 return data['builds'][_chrome_version]['version']
             except KeyError:
                 self.log.warning(
                     f'当前chrome版本: {_chrome_version}, '
-                    f'没有找到合适的ChromeDriver版本 - {config.ChromeDriverLastPatchVersion}'
+                    f'没有找到合适的ChromeDriver版本 - {urls.ChromeDriverLastPatchVersion}'
                 )
         # 拉取符合版本list并获取最后一个版本号
         _chrome_version_list = [i for i in self._version_list if _chrome_version in i and 'LATEST' not in i]
@@ -190,8 +190,8 @@ class GetClientVersion(GetUrl, LogMixin):
         :param flag: Stable、Beta、Dev、Canary
         :return:
         """
-        assert flag in ['Stable', 'Beta', 'Dev', 'Canary'], '参数异常！'
-        return request_get(config.ChromeDriverLastVersion).json()['channels'][flag]['version']
+        assert flag in ['Stable', 'Beta', 'Dev', 'Canary'], f'参数异常! {flag}'
+        return request_get(urls.ChromeDriverLastVersion).json()['channels'][flag]['version']
 
     @property
     def get_geckodriver_version(self):
@@ -199,4 +199,4 @@ class GetClientVersion(GetUrl, LogMixin):
         获取Firefox driver版本信息
         :return:
         """
-        return request_get(config.GeckodriverApiNew).json()["latest"]
+        return request_get(urls.GeckodriverApiNew).json()["latest"]

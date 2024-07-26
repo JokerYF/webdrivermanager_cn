@@ -1,7 +1,7 @@
 """
 Firefox 浏览器驱动
 """
-from webdrivermanager_cn.core import config
+from webdrivermanager_cn.core import mirror_urls as urls
 from webdrivermanager_cn.core.driver import DriverManager
 from webdrivermanager_cn.core.os_manager import OSType
 from webdrivermanager_cn.core.version_manager import GetClientVersion
@@ -20,7 +20,7 @@ class Geckodriver(DriverManager):
 
     @property
     def download_url(self):
-        return f'{config.GeckodriverUrl}/{self.driver_version}/{self.get_driver_name}'
+        return f'{urls.GeckodriverUrl}/{self.driver_version}/{self.get_driver_name}'
 
     @property
     def get_driver_name(self) -> str:
