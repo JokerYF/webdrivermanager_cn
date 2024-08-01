@@ -21,10 +21,16 @@ class DriverCacheManager(LogMixin):
         缓存管理
         :param root_dir:
         """
-        if not root_dir:
-            root_dir = os.path.expanduser('~')
-        self.root_dir = os.path.join(root_dir, '.webdriver')
+        self.root_dir = os.path.join(self.__abs_path(root_dir), '.webdriver')
         self.__json_path = os.path.join(self.root_dir, 'driver_cache.json')
+
+    @staticmethod
+    def __abs_path(path):
+        if not path:
+            path = os.path.expanduser('~')
+        if not os.path.isabs(path):
+            path = os.path.abspath(path)
+        return path
 
     @property
     def __json_exist(self):

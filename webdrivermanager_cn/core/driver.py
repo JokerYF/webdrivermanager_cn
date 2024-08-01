@@ -31,19 +31,13 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         self.driver_name = driver_name
         self.driver_version = version
         self.os_info = OSManager()
-        self.__cache_manager = DriverCacheManager(root_dir=self.__abs_path(root_dir))
+        self.__cache_manager = DriverCacheManager(root_dir=root_dir)
         self.__driver_path = os.path.join(
             self.__cache_manager.root_dir,
             self.driver_name,
             self.driver_version
         )
         self.log.info(f'获取WebDriver: {self.driver_name} - {self.driver_version}')
-
-    @staticmethod
-    def __abs_path(path):
-        if not os.path.isabs(path):
-            path = os.path.abspath(path)
-        return path
 
     @staticmethod
     def version_parse(version):
