@@ -1,7 +1,7 @@
-from webdrivermanager_cn.core import mirror_urls as urls
-from webdrivermanager_cn.core.driver import DriverManager
-from webdrivermanager_cn.core.request import request_get
-from webdrivermanager_cn.core.version_manager import GetClientVersion, ClientType
+from webdrivermanager_cn_bak.core import mirror_urls as urls
+from webdrivermanager_cn_bak.core.driver import DriverManager
+from webdrivermanager_cn_bak.core.request import request_get
+from webdrivermanager_cn_bak.core.version_manager import GetClientVersion, ClientType
 
 
 class EdgeDriver(DriverManager):

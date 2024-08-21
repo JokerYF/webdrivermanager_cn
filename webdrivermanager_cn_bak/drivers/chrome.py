@@ -1,7 +1,7 @@
-from webdrivermanager_cn.core import mirror_urls as urls
-from webdrivermanager_cn.core.driver import DriverManager
-from webdrivermanager_cn.core.os_manager import OSType
-from webdrivermanager_cn.core.version_manager import GetClientVersion
+from webdrivermanager_cn_bak.core import mirror_urls as urls
+from webdrivermanager_cn_bak.core.driver import DriverManager
+from webdrivermanager_cn_bak.core.os_manager import OSType
+from webdrivermanager_cn_bak.core.version_manager import GetClientVersion
 
 
 class ChromeDriver(DriverManager):

@@ -1,6 +1,6 @@
 import os
 
-from webdrivermanager_cn.core.log_manager import LogMixin
+from webdrivermanager_cn_bak.core.log_manager import LogMixin
 
 
 class EnvMixin(LogMixin):

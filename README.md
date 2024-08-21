@@ -46,7 +46,7 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 - ChromeDriver
 
 ```python
-from webdrivermanager_cn.chrome import ChromeDriverManager
+from webdrivermanager_cn_bak.chrome import ChromeDriverManager
 
 driver_path = ChromeDriverManager().install()
 ```
@@ -54,7 +54,7 @@ driver_path = ChromeDriverManager().install()
 - Geckodriver
 
 ```python
-from webdrivermanager_cn.geckodriver import GeckodriverManager
+from webdrivermanager_cn_bak.geckodriver import GeckodriverManager
 
 driver_path = GeckodriverManager().install()
 ```
@@ -62,7 +62,7 @@ driver_path = GeckodriverManager().install()
 - edge
 
 ```python
-from webdrivermanager_cn.microsoft import EdgeWebDriverManager
+from webdrivermanager_cn_bak.microsoft import EdgeWebDriverManager
 
 driver_path = EdgeWebDriverManager().install()
 ```

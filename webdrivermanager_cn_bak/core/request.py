@@ -3,9 +3,9 @@ import sys
 import requests
 from requests import session
 
-from webdrivermanager_cn.core.config import verify_not, request_timeout
-from webdrivermanager_cn.core.log_manager import LogMixin
-from webdrivermanager_cn.version import VERSION
+from webdrivermanager_cn_bak.core.config import verify_not, request_timeout
+from webdrivermanager_cn_bak.core.log_manager import LogMixin
+from webdrivermanager_cn_bak.version import VERSION
 
 
 class Session(LogMixin):

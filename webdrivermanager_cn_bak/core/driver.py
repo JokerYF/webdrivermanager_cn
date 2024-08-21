@@ -7,12 +7,12 @@ import os.path
 from packaging import version as vs
 from requests import RequestException
 
-from webdrivermanager_cn.core.cache_manager import DriverCacheManager
-from webdrivermanager_cn.core.download_manager import DownloadManager
-from webdrivermanager_cn.core.file_manager import FileManager
-from webdrivermanager_cn.core.mixin import EnvMixin
-from webdrivermanager_cn.core.os_manager import OSManager
-from webdrivermanager_cn.core.time_ import get_time
+from webdrivermanager_cn_bak.core.cache_manager import DriverCacheManager
+from webdrivermanager_cn_bak.core.download_manager import DownloadManager
+from webdrivermanager_cn_bak.core.file_manager import FileManager
+from webdrivermanager_cn_bak.core.mixin import EnvMixin
+from webdrivermanager_cn_bak.core.os_manager import OSManager
+from webdrivermanager_cn_bak.core.time_ import get_time
 
 
 class DriverManager(EnvMixin, metaclass=abc.ABCMeta):

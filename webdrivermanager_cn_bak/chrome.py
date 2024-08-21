@@ -1,7 +1,7 @@
 """
 ChromeDriver
 """
-from webdrivermanager_cn.drivers.chrome import ChromeDriver
+from webdrivermanager_cn_bak.drivers.chrome import ChromeDriver
 
 
 class ChromeDriverManager:

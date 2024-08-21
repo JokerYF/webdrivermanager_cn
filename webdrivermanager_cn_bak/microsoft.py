@@ -1,4 +1,4 @@
-from webdrivermanager_cn.drivers.microsoft import EdgeDriver
+from webdrivermanager_cn_bak.drivers.microsoft import EdgeDriver
 
 
 class EdgeWebDriverManager:

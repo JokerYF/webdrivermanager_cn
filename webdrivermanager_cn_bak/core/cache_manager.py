@@ -5,10 +5,10 @@ import json
 import os
 import shutil
 
-from webdrivermanager_cn.core.config import clear_wdm_cache_time
-from webdrivermanager_cn.core.log_manager import LogMixin
-from webdrivermanager_cn.core.os_manager import OSManager
-from webdrivermanager_cn.core.time_ import get_time
+from webdrivermanager_cn_bak.core.config import clear_wdm_cache_time
+from webdrivermanager_cn_bak.core.log_manager import LogMixin
+from webdrivermanager_cn_bak.core.os_manager import OSManager
+from webdrivermanager_cn_bak.core.time_ import get_time
 
 
 class DriverCacheManager(LogMixin):

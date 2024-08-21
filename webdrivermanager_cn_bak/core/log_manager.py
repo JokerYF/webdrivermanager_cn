@@ -27,7 +27,7 @@ class LogMixin:
 
     @staticmethod
     def set_logger_init():
-        from webdrivermanager_cn.core.config import init_log, init_log_level
+        from webdrivermanager_cn_bak.core.config import init_log, init_log_level
 
         global LOGGER_INIT_FLAG
 

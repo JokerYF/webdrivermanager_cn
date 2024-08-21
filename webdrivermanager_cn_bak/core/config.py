@@ -5,7 +5,7 @@ import logging
 
 from urllib3 import disable_warnings
 
-from webdrivermanager_cn.core.mixin import EnvMixin
+from webdrivermanager_cn_bak.core.mixin import EnvMixin
 
 
 # ------------------
