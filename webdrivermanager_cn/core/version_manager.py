@@ -5,7 +5,8 @@ from abc import ABC, abstractmethod
 
 from packaging import version as vs
 
-from webdrivermanager_cn.core.mirror_urls import VersionApi as va
+from webdrivermanager_cn.core.log_manager import LogMixin
+from webdrivermanager_cn.core.mirror_manager import ChromeDriverMirror, MirrorType
 from webdrivermanager_cn.core.os_manager import OSManager, OSType
 from webdrivermanager_cn.core.request import request_get
 
@@ -23,7 +24,7 @@ CLIENT_PATTERN = {
 }
 
 
-class GetClientVersion:
+class GetClientVersion(LogMixin):
     """
     获取当前环境下浏览器版本
     """
@@ -54,7 +55,7 @@ class GetClientVersion:
         :param client:
         :return:
         """
-        # self.log.debug(f'当前OS: {self.__os_name}')
+        self.log.debug(f'当前OS: {self.os_type}')
         cmd_map = {
             OSType.MAC: {
                 ClientType.Chrome: r"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
@@ -74,7 +75,7 @@ class GetClientVersion:
         }
         cmd = cmd_map[self.os_type][client]
         client_pattern = CLIENT_PATTERN[client]
-        # self.log.debug(f'执行命令: {cmd}, 解析方式: {client_pattern}')
+        self.log.debug(f'执行命令: {cmd}, 解析方式: {client_pattern}')
         return cmd, client_pattern
 
     @staticmethod
@@ -103,18 +104,19 @@ class GetClientVersion:
         :param client:
         :return:
         """
-        # self.log.info(f'获取本地浏览器版本: {client} - {self._version}')
-        return self.__read_version_from_cmd(*self.cmd_dict(client))
+        _version = self.__read_version_from_cmd(*self.cmd_dict(client))
+        self.log.info(f'获取本地浏览器版本: {client} - {_version}')
+        return _version
 
 
 class VersionManager(ABC):
+    @property
+    @abstractmethod
+    def version(self):
+        raise NotImplementedError('该方法需要重写')
+
     @staticmethod
-    def version_parse(version) -> vs.Version:
-        """
-        解析版本号
-        :param version:
-        :return:
-        """
+    def version_parser(version):
         return vs.parse(version)
 
     @property
@@ -137,11 +139,21 @@ class VersionManager(ABC):
 
 
 class ChromeDriverVersionManager(GetClientVersion, VersionManager):
-    def __init__(self, version=""):
+    def __init__(self, version="", mirror_type: MirrorType = None):
         self.__version = version
+        self.__mirror_type = mirror_type
+        self.__download_version = version
 
     def client_type(self):
         return ClientType.Chrome
+
+    @property
+    def mirror(self):
+        return ChromeDriverMirror(self.__mirror_type)
+
+    @property
+    def mirror_host(self):
+        return self.mirror.mirror_url(self.version)
 
     @property
     def version(self):
@@ -150,12 +162,43 @@ class ChromeDriverVersionManager(GetClientVersion, VersionManager):
                 self.__version = self.get_local_version
             except:
                 self.__version = self.latest_version
-        return self.__version
+        self.__download_version = self.__correct_version(self.__version)
+        self.log.info(f'Download ChromeDriverVersion: {self.__version}')
+        return self.__download_version
 
     @property
     def is_new_version(self):
-        return self.version_parse(self.version).major >= 115
+        return self.version_parser(self.version).major >= 115
 
     @property
     def latest_version(self):
-        return request_get(va.ChromeDriverApiNew).json()['channels']['Stable']['version']
+        return request_get(self.mirror.latest_version_url).json()['channels']['Stable']['version']
+
+    @property
+    def __version_list(self):
+        """
+        解析driver url，获取所有driver版本
+        :return:
+        """
+        response_data = request_get(self.mirror_host).json()
+        return [i["name"].replace("/", "") for i in response_data if 'LATEST' not in i]
+
+    def __correct_version(self, version):
+        _parser = self.version_parser(version)
+        _chrome_version = f'{_parser.major}.{_parser.minor}.{_parser.micro}'
+
+        if self.is_new_version:
+            # 根据json获取符合版本的版本号
+            _url = self.mirror.latest_patch_version_url
+            try:
+                data = request_get(_url).json()
+                return data['builds'][_chrome_version]['version']
+            except KeyError:
+                self.log.warning(
+                    f'当前chrome版本: {_chrome_version}, '
+                    f'没有找到合适的ChromeDriver版本 - {_url}'
+                )
+        # 拉取符合版本list并获取最后一个版本号
+        _chrome_version_list = [i for i in self.__version_list if _chrome_version in i and 'LATEST' not in i]
+        _chrome_version_list = sorted(_chrome_version_list, key=lambda x: tuple(map(int, x.split('.'))))
+        return _chrome_version_list[-1]
