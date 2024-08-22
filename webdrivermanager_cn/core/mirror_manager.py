@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 from webdrivermanager_cn.core.log_manager import LogMixin
 from webdrivermanager_cn.core.mirror_urls import AliMirror, HuaweiMirror, PublicMirror, VersionApi
 
@@ -7,7 +9,7 @@ class MirrorType:
     Huawei = 'huaweicloud'
 
 
-class MirrorManager(LogMixin):
+class MirrorManager(ABC, LogMixin):
     def __init__(self, mirror_type: MirrorType = None):
         self.__type = mirror_type
 
@@ -15,7 +17,7 @@ class MirrorManager(LogMixin):
         if self.__type is None:
             self.__type = MirrorType.Ali
 
-        if not isinstance(self.__type, MirrorType):
+        if not isinstance(self.__type, (MirrorType, str)):
             raise TypeError(f'mirror_type 参数传参类型错误，应为 MirrorType, 实际 {type(self.__type)}')
         self.log.debug(f'mirror_type: {self.__type}')
         return self.__type
@@ -27,6 +29,18 @@ class MirrorManager(LogMixin):
     @property
     def is_huawei(self):
         return self.mirror_type() == MirrorType.Huawei
+
+    @abstractmethod
+    def mirror_url(self, **kwargs):
+        pass
+
+    @abstractmethod
+    def latest_version_url(self, **kwargs):
+        pass
+
+    @abstractmethod
+    def latest_patch_version_url(self, **kwargs):
+        pass
 
 
 class ChromeDriverMirror(MirrorManager):
@@ -49,6 +63,9 @@ class ChromeDriverMirror(MirrorManager):
 
 
 class GeckodriverMirror(MirrorManager):
+    def latest_patch_version_url(self, **kwargs):
+        pass
+
     def mirror_url(self):
         if self.is_ali:
             return AliMirror.GeckodriverUrl

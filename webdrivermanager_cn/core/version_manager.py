@@ -110,9 +110,25 @@ class GetClientVersion(LogMixin):
 
 
 class VersionManager(ABC):
+    def __init__(self, version="", mirror_type: MirrorType = None):
+        self.__version = version
+        self.__mirror_type = mirror_type
+
+    @property
+    def driver_version(self):
+        return self.__version
+
+    @property
+    def mirror_type(self):
+        return self.__mirror_type
+
+    # @driver_version.setter
+    # def driver_version(self, version):
+    #     self.__version = version
+
     @property
     @abstractmethod
-    def version(self):
+    def download_version(self):
         raise NotImplementedError('该方法需要重写')
 
     @staticmethod
@@ -137,38 +153,40 @@ class VersionManager(ABC):
     def get_local_version(self):
         return GetClientVersion().get_version(self.client_type)
 
+    @property
+    def is_new_version(self):
+        return
+
 
 class ChromeDriverVersionManager(GetClientVersion, VersionManager):
     def __init__(self, version="", mirror_type: MirrorType = None):
-        self.__version = version
-        self.__mirror_type = mirror_type
-        self.__download_version = version
+        super().__init__(version, mirror_type)
 
     def client_type(self):
         return ClientType.Chrome
 
     @property
     def mirror(self):
-        return ChromeDriverMirror(self.__mirror_type)
+        return ChromeDriverMirror(self.mirror_type)
 
     @property
     def mirror_host(self):
-        return self.mirror.mirror_url(self.version)
+        return self.mirror.mirror_url(self.download_version)
 
     @property
-    def version(self):
-        if not self.__version:
-            try:
-                self.__version = self.get_local_version
-            except:
-                self.__version = self.latest_version
-        self.__download_version = self.__correct_version(self.__version)
-        self.log.info(f'Download ChromeDriverVersion: {self.__version}')
-        return self.__download_version
+    def download_version(self):
+        if self.driver_version and self.driver_version != "latest":
+            _download_version = self.driver_version
+        elif self.driver_version == "latest":
+            _download_version = self.latest_version
+        else:
+            _download_version = self.__correct_version(self.get_local_version)
+        self.log.info(f'Download ChromeDriverVersion: {_download_version}')
+        return _download_version
 
     @property
     def is_new_version(self):
-        return self.version_parser(self.version).major >= 115
+        return self.version_parser(self.download_version).major >= 115
 
     @property
     def latest_version(self):
