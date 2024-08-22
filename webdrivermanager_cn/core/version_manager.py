@@ -1,9 +1,13 @@
 import os
 import re
 import subprocess
-from abc import ABC
+from abc import ABC, abstractmethod
 
+from packaging import version as vs
+
+from webdrivermanager_cn.core.mirror_urls import VersionApi as va
 from webdrivermanager_cn.core.os_manager import OSManager, OSType
+from webdrivermanager_cn.core.request import request_get
 
 
 class ClientType:
@@ -25,8 +29,12 @@ class GetClientVersion:
     """
 
     @property
+    def __os_manager(self):
+        return OSManager()
+
+    @property
     def os_type(self):
-        return OSManager().get_os_name
+        return self.__os_manager.get_os_name
 
     @property
     def reg(self):
@@ -99,9 +107,55 @@ class GetClientVersion:
         return self.__read_version_from_cmd(*self.cmd_dict(client))
 
 
-class GetVersionByMirror(ABC):
-    ...
+class VersionManager(ABC):
+    @staticmethod
+    def version_parse(version) -> vs.Version:
+        """
+        解析版本号
+        :param version:
+        :return:
+        """
+        return vs.parse(version)
+
+    @property
+    @abstractmethod
+    def client_type(self):
+        """
+        获取客户端类型
+        :return:
+        """
+        raise NotImplementedError('该方法需要重写')
+
+    @property
+    @abstractmethod
+    def latest_version(self):
+        raise NotImplementedError('该方法需要重写')
+
+    @property
+    def get_local_version(self):
+        return GetClientVersion().get_version(self.client_type)
 
 
-class VersionManager:
-    ...
+class ChromeDriverVersionManager(GetClientVersion, VersionManager):
+    def __init__(self, version=""):
+        self.__version = version
+
+    def client_type(self):
+        return ClientType.Chrome
+
+    @property
+    def version(self):
+        if not self.__version:
+            try:
+                self.__version = self.get_local_version
+            except:
+                self.__version = self.latest_version
+        return self.__version
+
+    @property
+    def is_new_version(self):
+        return self.version_parse(self.version).major >= 115
+
+    @property
+    def latest_version(self):
+        return request_get(va.ChromeDriverApiNew).json()['channels']['Stable']['version']
