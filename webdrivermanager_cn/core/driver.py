@@ -87,8 +87,9 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         """
         self.__cache_manager.set_cache(
             download_time=f"{get_time('%Y%m%d')}",
-            path=path
+            path=path,
         )
+        self.__cache_manager.set_read_cache_date()
 
     @property
     @abc.abstractmethod
@@ -150,7 +151,6 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
             try:
                 driver_path = self.download()
                 self.__set_cache(driver_path)
-                self.__cache_manager.set_read_cache_date()
             except RequestException as e:
                 raise Exception(f"下载WebDriver: {self.driver_name}-{self.download_version} 失败！-- {e}")
             self.__cache_manager.clear_cache_path()
