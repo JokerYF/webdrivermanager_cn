@@ -32,9 +32,8 @@ class Session(LogMixin):
         self.__headers.update(kwargs)
 
     def get(self, url):
-        self.log.debug(f"GET {url} - {self.headers}")
         response = self._s.get(url, timeout=request_timeout(), verify=verify_not(), headers=self.headers)
-        self.log.debug(f"GET {url} - {response.status_code}")
+        self.log.debug(f"GET {url} - {response.status_code} - headers: {self.headers}")
         response.raise_for_status()
         return response
 

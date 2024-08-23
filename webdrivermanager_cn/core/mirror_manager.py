@@ -5,8 +5,8 @@ from webdrivermanager_cn.core.mirror_urls import AliMirror, HuaweiMirror, Public
 
 
 class MirrorType:
-    Ali = 'npmmirror'
-    Huawei = 'huaweicloud'
+    Ali = 'npmmirror.com'
+    Huawei = 'huaweicloud.com'
 
 
 class MirrorManager(ABC, LogMixin):
@@ -37,7 +37,6 @@ class MirrorManager(ABC, LogMixin):
     def latest_version_url(self, **kwargs):
         pass
 
-    @abstractmethod
     def latest_patch_version_url(self, **kwargs):
         pass
 
@@ -62,9 +61,6 @@ class ChromeDriverMirror(MirrorManager):
 
 
 class GeckodriverMirror(MirrorManager):
-    def latest_patch_version_url(self, **kwargs):
-        pass
-
     def mirror_url(self):
         if self.is_ali:
             return AliMirror.GeckodriverUrl
