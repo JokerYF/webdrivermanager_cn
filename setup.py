@@ -1,6 +1,6 @@
 import setuptools
 
-from webdrivermanager_cn_bak.version import VERSION
+from webdrivermanager_cn.version import VERSION
 
 with open("README.md", encoding="utf-8") as readme_file:
     readme = readme_file.read()

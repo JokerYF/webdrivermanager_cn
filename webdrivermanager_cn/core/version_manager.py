@@ -161,6 +161,7 @@ class VersionManager(ABC):
 class ChromeDriverVersionManager(GetClientVersion, VersionManager):
     def __init__(self, version="", mirror_type: MirrorType = None):
         super().__init__(version, mirror_type)
+        self.__download_version = None
 
     def client_type(self):
         return ClientType.Chrome
@@ -175,14 +176,15 @@ class ChromeDriverVersionManager(GetClientVersion, VersionManager):
 
     @property
     def download_version(self):
-        if self.driver_version and self.driver_version != "latest":
-            _download_version = self.driver_version
-        elif self.driver_version == "latest":
-            _download_version = self.latest_version
-        else:
-            _download_version = self.__correct_version(self.get_local_version)
-        self.log.info(f'Download ChromeDriverVersion: {_download_version}')
-        return _download_version
+        if not self.__download_version:
+            if self.driver_version and self.driver_version != "latest":
+                self.__download_version = self.driver_version
+            elif self.driver_version == "latest":
+                self.__download_version = self.latest_version
+            else:
+                self.__download_version = self.__correct_version(self.get_local_version)
+            # self.log.info(f'Download ChromeDriverVersion: {_download_version}')
+        return self.__download_version
 
     @property
     def is_new_version(self):

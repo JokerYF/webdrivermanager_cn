@@ -4,12 +4,13 @@ Driver 缓存记录
 import json
 import os
 import shutil
+import threading
 import time
 
-from webdrivermanager_cn_bak.core.config import clear_wdm_cache_time
-from webdrivermanager_cn_bak.core.log_manager import LogMixin
-from webdrivermanager_cn_bak.core.os_manager import OSManager
-from webdrivermanager_cn_bak.core.time_ import get_time
+from webdrivermanager_cn.core.config import clear_wdm_cache_time
+from webdrivermanager_cn.core.log_manager import LogMixin
+from webdrivermanager_cn.core.os_manager import OSManager
+from webdrivermanager_cn.core.time_ import get_time
 
 
 class CacheLock(LogMixin):
@@ -27,6 +28,10 @@ class CacheLock(LogMixin):
         self.unlock()
 
     @property
+    def thread_lock(self):
+        return str(threading.current_thread().ident)
+
+    @property
     def lock_file(self):
         return os.path.join(self.__path, '.locked')
 
@@ -36,9 +41,10 @@ class CacheLock(LogMixin):
 
     def lock(self):
         if not self.is_locked:
-            open(self.lock_file, 'w').close()
+            with open(self.lock_file, 'w+') as f:
+                f.write(self.thread_lock)
             assert self.is_locked, '缓存加锁失败！'
-        self.log.debug('缓存加锁成功！')
+        self.log.debug(f'缓存加锁成功！ {self.lock_file}')
 
     def unlock(self):
         if self.is_locked:
@@ -51,6 +57,12 @@ class CacheLock(LogMixin):
         while time.time() - start <= timeout:
             if not self.is_locked:
                 return True
+
+            with open(self.lock_file, 'r+') as f:
+                _thread = f.read()
+            if _thread == self.thread_lock:
+                return True
+
             time.sleep(0.1)
         raise TimeoutError(f'等待缓存解锁超时！')
 
@@ -82,8 +94,6 @@ class DriverCacheManager(LogMixin):
 
     @property
     def driver_version(self):
-        if not self.driver_version:
-            raise ValueError
         return self.__driver_version
 
     @driver_version.setter

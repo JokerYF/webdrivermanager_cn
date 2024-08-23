@@ -15,9 +15,9 @@ class ChromeDriver(DriverManager):
     def download_url(self) -> str:
         mirror = self.mirror.mirror_url(self.driver_version)
         if self.version_manager.is_new_version:
-            url = f'{mirror}/{self.driver_version}/{self.get_os_info}/{self.get_driver_name}'
+            url = f'{mirror}/{self.download_version}/{self.get_os_info}/{self.get_driver_name}'
         else:
-            url = f'{mirror}/{self.driver_version}/{self.get_driver_name}'
+            url = f'{mirror}/{self.download_version}/{self.get_driver_name}'
         self.log.debug(f'拼接下载url: {url}')
         return url
 
