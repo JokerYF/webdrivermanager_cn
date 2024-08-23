@@ -216,9 +216,7 @@ class DriverCacheManager(LogMixin):
         写入缓存信息
         :return:
         """
-        self.__write_cache(
-            **kwargs
-        )
+        self.__write_cache(**kwargs)
 
     def set_read_cache_date(self):
         """
