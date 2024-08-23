@@ -10,7 +10,7 @@ from requests import RequestException
 from webdrivermanager_cn.core.cache_manager import DriverCacheManager
 from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.file_manager import FileManager
-from webdrivermanager_cn.core.mirror_manager import ChromeDriverMirror
+from webdrivermanager_cn.core.mirror_manager import ChromeDriverMirror, MirrorType
 from webdrivermanager_cn.core.mixin import EnvMixin
 from webdrivermanager_cn.core.os_manager import OSManager
 from webdrivermanager_cn.core.time_ import get_time
@@ -51,6 +51,16 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         self.__mirror_type = mirror_type
         self.log.info(f'获取WebDriver: {self.driver_name} - {self.download_version}')
 
+    @property
+    def mirror_type(self):
+        if not self.__mirror_type:
+            self.__mirror_type = MirrorType.Ali
+        return self.__mirror_type
+
+    @mirror_type.setter
+    def mirror_type(self, value):
+        self.__mirror_type = value
+
     @staticmethod
     def version_parse(version):
         """
@@ -69,23 +79,11 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
     @property
     def mirror(self):
         if self.driver_name == DriverType.chrome:
-            return ChromeDriverMirror(mirror_type=self.__mirror_type)
+            return ChromeDriverMirror(mirror_type=self.mirror_type)
         elif self.driver_name == DriverType.firefox:
             ...
         elif self.driver_name == DriverType.edge:
             ...
-
-    # @property
-    # def get_last_read_by_cache(self):
-    #     """
-    #     获取 cache 中对应 WebDriver 的路径
-    #     :return: path or None
-    #     """
-    #     return self.__cache_manager.get_cache(
-    #         driver_name=self.driver_name,
-    #         version=self.driver_version,
-    #         key='last_read_time',
-    #     )
 
     def __set_cache(self, path):
         """

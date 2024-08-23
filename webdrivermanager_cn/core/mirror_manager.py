@@ -13,6 +13,7 @@ class MirrorManager(ABC, LogMixin):
     def __init__(self, mirror_type: MirrorType = None):
         self.__type = mirror_type
 
+    @property
     def mirror_type(self):
         if self.__type is None:
             self.__type = MirrorType.Ali
@@ -24,11 +25,11 @@ class MirrorManager(ABC, LogMixin):
 
     @property
     def is_ali(self):
-        return self.mirror_type() == MirrorType.Ali
+        return self.mirror_type == MirrorType.Ali
 
     @property
     def is_huawei(self):
-        return self.mirror_type() == MirrorType.Huawei
+        return self.mirror_type == MirrorType.Huawei
 
     @abstractmethod
     def mirror_url(self, **kwargs):
