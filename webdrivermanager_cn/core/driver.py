@@ -4,13 +4,12 @@ Driver抽象类
 import abc
 import os.path
 
-from packaging import version as vs
 from requests import RequestException
 
 from webdrivermanager_cn.core.cache_manager import DriverCacheManager
 from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.file_manager import FileManager
-from webdrivermanager_cn.core.mirror_manager import ChromeDriverMirror, MirrorType
+from webdrivermanager_cn.core.mirror_manager import ChromeDriverMirror, MirrorType, GeckodriverMirror, EdgeDriverMirror
 from webdrivermanager_cn.core.mixin import EnvMixin
 from webdrivermanager_cn.core.os_manager import OSManager
 from webdrivermanager_cn.core.time_ import get_time
@@ -61,29 +60,24 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
     def mirror_type(self, value):
         self.__mirror_type = value
 
-    @staticmethod
-    def version_parse(version):
-        """
-        版本号解析器
-        :return:
-        """
-        return vs.parse(version)
-
     def get_driver_path_by_cache(self):
         """
         获取 cache 中对应 WebDriver 的路径
         :return: path or None
         """
-        return self.__cache_manager.get_cache(key='path')
+        _path = self.__cache_manager.get_cache(key='path')
+        if _path:
+            self.__cache_manager.set_read_cache_date()
+        return _path
 
     @property
     def mirror(self):
         if self.driver_name == DriverType.chrome:
             return ChromeDriverMirror(mirror_type=self.mirror_type)
         elif self.driver_name == DriverType.firefox:
-            ...
+            return GeckodriverMirror(mirror_type=self.mirror_type)
         elif self.driver_name == DriverType.edge:
-            ...
+            return EdgeDriverMirror(mirror_type=self.mirror_type)
 
     def __set_cache(self, path):
         """
@@ -92,8 +86,6 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         :return: None
         """
         self.__cache_manager.set_cache(
-            driver_name=self.driver_name,
-            version=self.download_version,
             download_time=f"{get_time('%Y%m%d')}",
             path=path
         )
@@ -157,15 +149,12 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
             self.log.info('缓存不存在，开始下载...')
             try:
                 driver_path = self.download()
+                self.__set_cache(driver_path)
+                self.__cache_manager.set_read_cache_date()
             except RequestException as e:
                 raise Exception(f"下载WebDriver: {self.driver_name}-{self.download_version} 失败！-- {e}")
-            self.__set_cache(driver_path)
-
-            # 写入读取时间，并清理超期 WebDriver
-            self.__cache_manager.set_read_cache_date()
             self.__cache_manager.clear_cache_path()
 
-        # self.log.info(f'WebDriver路径: {driver_path} - 上次读取时间 {self.get_last_read_by_cache}')
         os.chmod(driver_path, 0o755)
 
         return driver_path
