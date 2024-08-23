@@ -77,12 +77,21 @@ class DriverCacheManager(LogMixin):
         缓存管理
         :param root_dir:
         """
-        self.root_dir = os.path.join(self.__abs_path(root_dir), '.webdriver')
-        self.__json_path = os.path.join(self.root_dir, 'driver_cache.json')
+        self.__root_dir = root_dir
+        # self.root_dir = os.path.join(self.__abs_path(root_dir), '.webdriver')
+        # self.__json_path = os.path.join(self.root_dir, 'driver_cache.json')
         self.__lock = CacheLock(self.root_dir)
         self.__driver_name = None
         self.__driver_version = None
         self.__download_version = None
+
+    @property
+    def root_dir(self):
+        return os.path.join(self.__root_dir, '.webdriver')
+
+    @property
+    def json_path(self):
+        return os.path.join(self.root_dir, 'driver_cache.json')
 
     @staticmethod
     def __abs_path(path):
@@ -126,7 +135,7 @@ class DriverCacheManager(LogMixin):
         判断缓存文件是否存在
         :return:
         """
-        return os.path.exists(self.__json_path)
+        return os.path.exists(self.json_path)
 
     @property
     def __read_cache(self) -> dict:
@@ -138,11 +147,11 @@ class DriverCacheManager(LogMixin):
 
         if not self.__json_exist:
             return {}
-        with open(self.__json_path, 'r', encoding='utf-8') as f:
+        with open(self.json_path, 'r', encoding='utf-8') as f:
             return json.load(f)
 
     def __dump_cache(self, data: dict):
-        with open(self.__json_path, 'w+', encoding='utf-8') as f:
+        with open(self.json_path, 'w+', encoding='utf-8') as f:
             json.dump(data, f, indent=4)
 
     def __write_cache(self, **kwargs):
