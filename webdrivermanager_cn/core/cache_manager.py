@@ -256,6 +256,7 @@ class DriverCacheManager(LogMixin):
                 self.log.warning(f'缓存目录无该路径: {clear_path}')
 
             cache_data = self.__read_cache
+            self.download_version = version
             cache_data[self.driver_name].pop(self.format_key)
             self.__dump_cache(cache_data)
 
