@@ -29,12 +29,11 @@ class Session(LogMixin):
 
     @headers.setter
     def headers(self, **kwargs):
-        for k, v in kwargs:
-            self.__headers[k] = v
+        self.__headers.update(kwargs)
 
     def get(self, url):
-        self.log.debug(f"GET {url} - {self.__headers}")
-        response = self._s.get(url, timeout=request_timeout(), verify=verify_not())
+        self.log.debug(f"GET {url} - {self.headers}")
+        response = self._s.get(url, timeout=request_timeout(), verify=verify_not(), headers=self.headers)
         self.log.debug(f"GET {url} - {response.status_code}")
         response.raise_for_status()
         return response
