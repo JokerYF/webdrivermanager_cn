@@ -155,22 +155,23 @@ class DriverCacheManager(LogMixin):
             data = self.__read_cache
             key = self.format_key
 
-            if self.driver_version not in data.keys():
+            if self.driver_name not in data.keys():
                 data[self.driver_name] = {}
             if key not in data[self.driver_name].keys():
                 data[self.driver_name][key] = {}
 
             driver_data = data[self.driver_name][key]
             driver_data.update(kwargs)
-            driver_data.pop('driver_name')  # WebDriver cache 信息内不记录这些字段
+            try:
+                driver_data.pop('driver_name')  # WebDriver cache 信息内不记录这些字段
+            except KeyError:
+                pass
             self.__dump_cache(data)
 
     @property
     def format_key(self) -> str:
         """
         格式化缓存 key 名称
-        :param driver_name:
-        :param version:
         :return:
         """
         return f'{self.driver_name}_{OSManager().get_os_name}_{self.download_version}'
@@ -210,16 +211,12 @@ class DriverCacheManager(LogMixin):
             self.log.debug(f'{self.driver_name} - {_version} 尚未过期 {read_time}')
         return _clear_version
 
-    def set_cache(self, driver_name, version, **kwargs):
+    def set_cache(self, **kwargs):
         """
         写入缓存信息
-        :param driver_name:
-        :param version:
         :return:
         """
         self.__write_cache(
-            driver_name=driver_name,
-            version=version,
             **kwargs
         )
 
@@ -230,7 +227,7 @@ class DriverCacheManager(LogMixin):
         """
         times = get_time('%Y%m%d')
         if self.get_cache(key='last_read_time') != times:
-            self.set_cache(driver_name=self.driver_name, version=self.download_version, last_read_time=f"{times}")
+            self.set_cache(last_read_time=f"{times}")
             self.log.debug(f'更新 {self.driver_name} - {self.download_version} 读取时间: {times}')
 
     def clear_cache_path(self):

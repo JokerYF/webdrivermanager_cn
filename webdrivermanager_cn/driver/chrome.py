@@ -8,16 +8,17 @@ class ChromeDriver(DriverManager):
         super().__init__(
             driver_name='chromedriver',
             version=version,
-            root_dir=path
+            root_dir=path,
+            mirror_type=mirror_type,
         )
 
     @property
     def download_url(self) -> str:
         mirror = self.mirror.mirror_url(self.driver_version)
-        if self.version_manager.is_new_version:
-            url = f'{mirror}/{self.download_version}/{self.get_os_info}/{self.get_driver_name}'
-        else:
+        if self.mirror.is_huawei or (self.mirror.is_ali and not self.version_manager.is_new_version):
             url = f'{mirror}/{self.download_version}/{self.get_driver_name}'
+        else:
+            url = f'{mirror}/{self.download_version}/{self.get_os_info}/{self.get_driver_name}'
         self.log.debug(f'拼接下载url: {url}')
         return url
 

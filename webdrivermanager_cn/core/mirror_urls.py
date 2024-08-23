@@ -18,5 +18,5 @@ class AliMirror:
 
 
 class HuaweiMirror:
-    ChromeDriverUrl = 'https://repo.huaweicloud.com/chromedriver/'
-    GeckodriverUrl = 'https://repo.huaweicloud.com/geckodriver/'
+    ChromeDriverUrl = 'https://mirrors.huaweicloud.com/chromedriver'
+    GeckodriverUrl = 'https://mirrors.huaweicloud.com/geckodriver'

@@ -49,7 +49,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         self.__cache_manager.driver_name = self.driver_name
         self.__cache_manager.download_version = self.download_version
         self.__mirror_type = mirror_type
-        self.log.info(f'获取WebDriver: {self.driver_name} - {self.driver_version}')
+        self.log.info(f'获取WebDriver: {self.driver_name} - {self.download_version}')
 
     @staticmethod
     def version_parse(version):
@@ -93,8 +93,12 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         :param path: 解压后的driver全路径
         :return: None
         """
-        self.__cache_manager.set_cache(driver_name=self.driver_name, version=self.driver_version,
-                                       download_time=f"{get_time('%Y%m%d')}", path=path)
+        self.__cache_manager.set_cache(
+            driver_name=self.driver_name,
+            version=self.download_version,
+            download_time=f"{get_time('%Y%m%d')}",
+            path=path
+        )
 
     @property
     @abc.abstractmethod
