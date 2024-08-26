@@ -86,9 +86,9 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         :return: None
         """
         self.__cache_manager.set_cache(
+            version=self.download_version,
             download_time=f"{get_time('%Y%m%d')}",
             path=path,
-            version=self.download_version,
         )
         self.__cache_manager.set_read_cache_date()
 
