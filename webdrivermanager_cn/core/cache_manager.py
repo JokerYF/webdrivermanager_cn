@@ -28,6 +28,10 @@ class CacheLock(LogMixin):
         self.unlock()
 
     @property
+    def __id(self):
+        return str(id(self))
+
+    @property
     def thread_lock(self):
         return str(threading.current_thread().ident)
 
@@ -42,15 +46,22 @@ class CacheLock(LogMixin):
     def lock(self):
         if not self.is_locked:
             with open(self.lock_file, 'w+') as f:
-                f.write(self.thread_lock)
+                f.write(f'{self.thread_lock}|{self.__id}')
             assert self.is_locked, '缓存加锁失败！'
-        self.log.debug(f'缓存加锁成功！ {self.lock_file}')
+            self.log.debug(f'缓存加锁成功！ {self.lock_file}')
+        else:
+            self.log.debug(f'缓存被其他线程加锁！{self.__get_lock_file_info}')
 
     def unlock(self):
         if self.is_locked:
-            os.remove(self.lock_file)
-            assert not self.is_locked, '缓存解锁失败！'
-        self.log.debug('缓存解锁成功！')
+            # 谁加锁谁解锁
+            _thread, _key = self.__get_lock_file_info
+            if _key == self.__id:
+                os.remove(self.lock_file)
+                assert not self.is_locked, '缓存解锁失败！'
+                self.log.debug('缓存解锁成功！')
+            else:
+                self.log.debug(f'非当前线程和任务加锁！{_thread} | {_key}')
 
     def wait_unlock(self, timeout=30):
         start = time.time()
@@ -58,13 +69,20 @@ class CacheLock(LogMixin):
             if not self.is_locked:
                 return True
 
-            with open(self.lock_file, 'r+') as f:
-                _thread = f.read()
+            _thread, _key = self.__get_lock_file_info
             if _thread == self.thread_lock:
                 return True
 
             time.sleep(0.1)
         raise TimeoutError(f'等待缓存解锁超时！')
+
+    @property
+    def __get_lock_file_info(self):
+        if not self.is_locked:
+            return None, None
+        with open(self.lock_file, 'r+') as f:
+            _thread = f.read()
+        return _thread.split('|')[0], _thread.split('|')[1]
 
 
 class DriverCacheManager(LogMixin):
@@ -87,7 +105,9 @@ class DriverCacheManager(LogMixin):
 
     @property
     def root_dir(self):
-        return os.path.join(self.__root_dir, '.webdriver')
+        path = os.path.join(self.__abs_path(self.__root_dir), '.webdriver')
+        os.makedirs(path, exist_ok=True)
+        return path
 
     @property
     def json_path(self):
@@ -154,7 +174,7 @@ class DriverCacheManager(LogMixin):
         with open(self.json_path, 'w+', encoding='utf-8') as f:
             json.dump(data, f, indent=4)
 
-    def __write_cache(self, **kwargs):
+    def set_cache(self, **kwargs):
         """
         写入缓存文件
         :param kwargs:
@@ -220,13 +240,6 @@ class DriverCacheManager(LogMixin):
             self.log.debug(f'{self.driver_name} - {_version} 尚未过期 {read_time}')
         return _clear_version
 
-    def set_cache(self, **kwargs):
-        """
-        写入缓存信息
-        :return:
-        """
-        self.__write_cache(**kwargs)
-
     def set_read_cache_date(self):
         """
         写入当前读取 WebDriver 的时间
@@ -258,6 +271,6 @@ class DriverCacheManager(LogMixin):
             cache_data = self.__read_cache
             self.download_version = version
             cache_data[self.driver_name].pop(self.format_key)
-            self.__dump_cache(cache_data)
+            self.set_cache(**cache_data)
 
             self.log.info(f'清理过期WebDriver: {clear_path}')
