@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from packaging import version as vs
 
 from webdrivermanager_cn.core.log_manager import LogMixin
-from webdrivermanager_cn.core.mirror_manager import ChromeDriverMirror, MirrorType
+from webdrivermanager_cn.core.mirror_manager import ChromeDriverMirror, MirrorType, GeckodriverMirror
 from webdrivermanager_cn.core.os_manager import OSManager, OSType
 from webdrivermanager_cn.core.request import request_get
 
@@ -118,6 +118,10 @@ class VersionManager(ABC):
     def driver_version(self):
         return self.__version
 
+    @driver_version.setter
+    def driver_version(self, version):
+        self.__version = version
+
     @property
     def mirror_type(self):
         return self.__mirror_type
@@ -129,6 +133,11 @@ class VersionManager(ABC):
     @property
     @abstractmethod
     def download_version(self):
+        raise NotImplementedError('该方法需要重写')
+
+    @property
+    @abstractmethod
+    def mirror(self):
         raise NotImplementedError('该方法需要重写')
 
     @staticmethod
@@ -222,3 +231,29 @@ class ChromeDriverVersionManager(GetClientVersion, VersionManager):
         _chrome_version_list = [i for i in self.__version_list if _chrome_version in i and 'LATEST' not in i]
         _chrome_version_list = sorted(_chrome_version_list, key=lambda x: tuple(map(int, x.split('.'))))
         return _chrome_version_list[-1]
+
+
+class GeckodriverVersionManager(GetClientVersion, VersionManager):
+    def __init__(self, version="", mirror_type: MirrorType = None):
+        super().__init__(version, mirror_type)
+        self.__download_version = None
+
+    @property
+    def mirror(self):
+        return GeckodriverMirror(self.mirror_type)
+
+    @property
+    def download_version(self):
+        if self.driver_version and self.driver_version != "latest":
+            if not self.driver_version.startswith('v'):
+                self.driver_version = f'v{self.driver_version}'
+            return self.driver_version
+        return self.latest_version
+
+    @property
+    def client_type(self):
+        return ClientType.Firefox
+
+    @property
+    def latest_version(self):
+        return request_get(self.mirror.latest_version_url).json()['latest']
