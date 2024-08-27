@@ -30,14 +30,14 @@ class MirrorManager(ABC, LogMixin):
         return self.mirror_type == MirrorType.Huawei
 
     @abstractmethod
-    def mirror_url(self, **kwargs):
+    def mirror_url(self, *args, **kwargs):
         pass
 
     @abstractmethod
-    def latest_version_url(self, **kwargs):
+    def latest_version_url(self, *args, **kwargs):
         pass
 
-    def latest_patch_version_url(self, **kwargs):
+    def latest_patch_version_url(self, *args, **kwargs):
         pass
 
 

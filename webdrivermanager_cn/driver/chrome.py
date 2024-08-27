@@ -1,4 +1,4 @@
-from webdrivermanager_cn.core.driver import DriverManager
+from webdrivermanager_cn.core.driver import DriverManager, DriverType
 from webdrivermanager_cn.core.mirror_manager import MirrorType
 from webdrivermanager_cn.core.version_manager import ChromeDriverVersionManager
 
@@ -6,7 +6,7 @@ from webdrivermanager_cn.core.version_manager import ChromeDriverVersionManager
 class ChromeDriver(DriverManager):
     def __init__(self, version='latest', path=None, mirror_type: MirrorType = None):
         super().__init__(
-            driver_name='chromedriver',
+            driver_name=DriverType.chrome,
             version=version,
             root_dir=path,
             mirror_type=mirror_type,
