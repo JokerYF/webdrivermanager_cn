@@ -1,9 +1,15 @@
 from webdrivermanager_cn.chrome import ChromeDriverManager
+from webdrivermanager_cn.chrome import ChromeDriverManagerAliMirror
+from webdrivermanager_cn.chrome import ChromeDriverManagerHuaweiMirror
 from webdrivermanager_cn.geckodriver import GeckodriverManager
-from webdrivermanager_cn.microsoft import EdgeWebDriverManager
+from webdrivermanager_cn.geckodriver import GeckodriverManagerAliMirror
+from webdrivermanager_cn.geckodriver import GeckodriverManagerHuaweiMirror
 
 __all__ = [
     'ChromeDriverManager',
-    'EdgeWebDriverManager',
+    'ChromeDriverManagerAliMirror',
+    'ChromeDriverManagerHuaweiMirror',
     'GeckodriverManager',
+    'GeckodriverManagerAliMirror',
+    'GeckodriverManagerHuaweiMirror',
 ]

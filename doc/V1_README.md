@@ -1,8 +1,8 @@
-# WebDriverManagerCn V2
+# WebDriverManagerCn
 
-> 基于 [阿里源](https://www.npmmirror.com/)、[华为源](https://mirrors.huaweicloud.com/) 整合的WebDriver下载工具
-> 
-> 如有新的国内源，欢迎提Issue
+> 基于 [阿里源](https://www.npmmirror.com/)
+> 开发，灵感来源：[webdriver_manager](https://githHub.com/SergeyPirogov/webdriver_manager)，向原作者致敬！
+> V1 版本WebDriverManagerCn对应pypi源版本为 webdrivermanager_cn-1.X，现已归档，这里仅保留说明文档
 
 ## 开发背景
 
@@ -13,7 +13,7 @@
 
 ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源都无法正确同步新版的ChromeDriver，作者使用的阿里源，也停留在了114版本上，无法继续更新。已向阿里源开发团队提交Issue后，已将新版ChromeDriver源同步完成，但是，已经无法按照新版源更换源地址实现下载了。
 
-所以，经过作者研究源码，决定重新写一个下载模块，且基于国内源为下载源！
+所以，经过作者研究源码，决定重新写一个下载模块，且基于阿里源为下载源！
 
 ## 解决问题
 
@@ -23,11 +23,14 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 ## 已实现功能
 
 > 如果有其他 WebDriver 需求请及时提Issue
+>
+> IE 浏览器已停止维护，且 selenium4.x 不支持IE浏览器，故不会加入 IE Driver 的相关逻辑了，有需要的同学可以自行访问下载：[https://learn.microsoft.com/zh-cn/microsoft-edge/webdriver-chromium/ie-mode?tabs=python](https://learn.microsoft.com/zh-cn/microsoft-edge/webdriver-chromium/ie-mode?tabs=python)
 
 | Client  | Windows | MacOS |    Linux     |
 |:-------:|:-------:|:-----:|:------------:|
 | Chrome  |    ✅    |   ✅   |      ✅       |
 | Firefox |    ✅    |   ✅   |      ✅       |
+|  Edge   |    ✅    |   ✅   | ✅ <br/>(未验证) |
 
 ## 使用方法
 
@@ -38,57 +41,36 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 
 ### 导入使用
 
+为简化使用方法，降低替换成本，决定沿用`webdriver_manager`的使用风格：
+如：
+
 - ChromeDriver
-  - 阿里源
-    ```python
-    from webdrivermanager_cn import ChromeDriverManagerAliMirror
-    
-    driver_path = ChromeDriverManagerAliMirror().install()
-    ```
-  - 华为源
-    ```python
-    from webdrivermanager_cn import ChromeDriverManagerHuaweiMirror
 
-    driver_path = ChromeDriverManagerHuaweiMirror().install()
-    ```
-  - 手动切换源
-    ```python
-    from webdrivermanager_cn import ChromeDriverManager
+```python
+from webdrivermanager_cn.chrome import ChromeDriverManager
 
-    driver = ChromeDriverManager()
-    driver.set_ali_mirror()  # 切换为阿里源
-    driver.set_huawei_mirror()  # 切换为华为源
-
-    driver_path = driver.install()
-    ```
+driver_path = ChromeDriverManager().install()
+```
 
 - Geckodriver
-  - 阿里源
-    ```python
-    from webdrivermanager_cn import GeckodriverManagerAliMirror
-    
-    driver_path = GeckodriverManagerAliMirror().install()
-    ```
-  - 华为源
-    ```python
-    from webdrivermanager_cn import GeckodriverManagerHuaweiMirror
 
-    driver_path = GeckodriverManagerHuaweiMirror().install()
-    ```
-  - 手动切换源
-    ```python
-    from webdrivermanager_cn import GeckodriverManager
+```python
+from webdrivermanager_cn.geckodriver import GeckodriverManager
 
-    driver = GeckodriverManager()
-    driver.set_ali_mirror()  # 切换为阿里源
-    driver.set_huawei_mirror()  # 切换为华为源
+driver_path = GeckodriverManager().install()
+```
 
-    driver_path = driver.install()
-    ```
+- edge
+
+```python
+from webdrivermanager_cn.microsoft import EdgeWebDriverManager
+
+driver_path = EdgeWebDriverManager().install()
+```
 
 ## 全局变量
 
-wdmcn内置了一些全局变量，后续会根据需求继续添加，具体请看`config.py`，这里简单列举一下。
+wdmcn也像wdm一样，内置了一些全局变量，后续会根据需求继续添加，具体请看`config.py`，这里简单列举一下。
 
 - 日志功能
 

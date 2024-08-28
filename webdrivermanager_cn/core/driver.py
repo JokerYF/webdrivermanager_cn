@@ -4,15 +4,22 @@ Driver抽象类
 import abc
 import os.path
 
-from packaging import version as vs
 from requests import RequestException
 
-from webdrivermanager_cn.core.cache_manager import DriverCacheManager
+from webdrivermanager_cn.core.cache_manager import DriverCacheManager, CacheLock
 from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.file_manager import FileManager
+from webdrivermanager_cn.core.mirror_manager import ChromeDriverMirror, MirrorType, GeckodriverMirror, EdgeDriverMirror
 from webdrivermanager_cn.core.mixin import EnvMixin
 from webdrivermanager_cn.core.os_manager import OSManager
 from webdrivermanager_cn.core.time_ import get_time
+from webdrivermanager_cn.core.version_manager import VersionManager
+
+
+class DriverType:
+    chrome = 'chromedriver'
+    firefox = 'geckodriver'
+    edge = 'msedgedriver'
 
 
 class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
@@ -21,7 +28,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
     不能实例化，只能继承并重写抽象方法
     """
 
-    def __init__(self, driver_name, version, root_dir):
+    def __init__(self, driver_name, version, root_dir, mirror_type=None):
         """
         Driver基类
         :param driver_name: Driver名称
@@ -35,59 +42,42 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         self.__driver_path = os.path.join(
             self.__cache_manager.root_dir,
             self.driver_name,
-            self.driver_version
+            self.download_version
         )
-        self.log.info(f'获取WebDriver: {self.driver_name} - {self.driver_version}')
+        self.__cache_manager.driver_version = self.driver_version
+        self.__cache_manager.driver_name = self.driver_name
+        self.__cache_manager.download_version = self.download_version
+        self.__mirror_type = mirror_type
+        self.log.info(f'获取WebDriver: {self.driver_name} - {self.download_version}')
 
-    @staticmethod
-    def version_parse(version):
-        """
-        版本号解析器
-        :return:
-        """
-        return vs.parse(version)
+    @property
+    def mirror_type(self):
+        if not self.__mirror_type:
+            self.__mirror_type = MirrorType.Ali
+        return self.__mirror_type
+
+    @mirror_type.setter
+    def mirror_type(self, value):
+        self.__mirror_type = value
 
     def get_driver_path_by_cache(self):
         """
         获取 cache 中对应 WebDriver 的路径
         :return: path or None
         """
-
-        path = self.get_env
-
-        if not path:
-            path = self.__cache_manager.get_cache(
-                driver_name=self.driver_name,
-                version=self.driver_version,
-                key='path',
-            )
-            if path:
-                self.set_env(path)
-
-        return path
+        _path = self.__cache_manager.get_cache(key='path')
+        if _path:
+            self.__cache_manager.set_read_cache_date()
+        return _path
 
     @property
-    def __env_key(self):
-        return f'{self.driver_name}_{self.driver_version}'
-
-    @property
-    def get_env(self):
-        return self.get(self.__env_key)
-
-    def set_env(self, path):
-        self.set(self.__env_key, path)
-
-    # @property
-    # def get_last_read_by_cache(self):
-    #     """
-    #     获取 cache 中对应 WebDriver 的路径
-    #     :return: path or None
-    #     """
-    #     return self.__cache_manager.get_cache(
-    #         driver_name=self.driver_name,
-    #         version=self.driver_version,
-    #         key='last_read_time',
-    #     )
+    def mirror(self):
+        if self.driver_name == DriverType.chrome:
+            return ChromeDriverMirror(mirror_type=self.mirror_type)
+        elif self.driver_name == DriverType.firefox:
+            return GeckodriverMirror(mirror_type=self.mirror_type)
+        elif self.driver_name == DriverType.edge:
+            return EdgeDriverMirror(mirror_type=self.mirror_type)
 
     def __set_cache(self, path):
         """
@@ -95,8 +85,12 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         :param path: 解压后的driver全路径
         :return: None
         """
-        self.__cache_manager.set_cache(driver_name=self.driver_name, version=self.driver_version,
-                                       download_time=f"{get_time('%Y%m%d')}", path=path)
+        self.__cache_manager.set_cache(
+            version=self.download_version,
+            download_time=f"{get_time('%Y%m%d')}",
+            path=path,
+        )
+        self.__cache_manager.set_read_cache_date()
 
     @property
     @abc.abstractmethod
@@ -125,6 +119,15 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         """
         raise NotImplementedError("该方法需要重写")
 
+    @property
+    def download_version(self):
+        return self.version_manager.download_version
+
+    @property
+    @abc.abstractmethod
+    def version_manager(self) -> VersionManager:
+        raise NotImplementedError("该方法需要重写")
+
     def download(self) -> str:
         """
         文件下载、解压
@@ -147,17 +150,13 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         if not driver_path:
             self.log.info('缓存不存在，开始下载...')
             try:
-                driver_path = self.download()
+                with CacheLock(self.__cache_manager.root_dir):
+                    driver_path = self.download()
+                    self.__set_cache(driver_path)
             except RequestException as e:
-                raise Exception(f"下载WebDriver: {self.driver_name}-{self.driver_version} 失败！-- {e}")
-            self.__set_cache(driver_path)
-            self.set_env(driver_path)
+                raise Exception(f"下载WebDriver: {self.driver_name}-{self.download_version} 失败！-- {e}")
+            self.__cache_manager.clear_cache_path()
 
-            # 写入读取时间，并清理超期 WebDriver
-            self.__cache_manager.set_read_cache_date(self.driver_name, self.driver_version)
-            self.__cache_manager.clear_cache_path(self.driver_name)
-
-        # self.log.info(f'WebDriver路径: {driver_path} - 上次读取时间 {self.get_last_read_by_cache}')
         os.chmod(driver_path, 0o755)
 
         return driver_path

@@ -89,6 +89,18 @@ class OSManager:
         获取操作系统架构
         :return:
         """
-        if self.get_os_name == OSType.MAC:
+        if self.is_mac:
             return self.get_mac_framework
         return ''
+
+    @property
+    def is_win(self):
+        return self.get_os_name == OSType.WIN
+
+    @property
+    def is_linux(self):
+        return self.get_os_name == OSType.LINUX
+
+    @property
+    def is_mac(self):
+        return self.get_os_name == OSType.MAC

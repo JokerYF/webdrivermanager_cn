@@ -1,18 +1,42 @@
-from webdrivermanager_cn.drivers.geckodriver import Geckodriver
+from webdrivermanager_cn.core.mirror_manager import MirrorType
+from webdrivermanager_cn.driver.geckodriver import Geckodriver
 
 
 class GeckodriverManager:
     def __init__(self, version='latest', path=None):
-        """
-        获取GeckodriverManager实例
-        :param version: latest 或 具体版本
-        :param path:
-        """
-        self.geckodriver = Geckodriver(version=version, path=path)
+        self.__driver = Geckodriver(version=version, path=path)
+
+    @property
+    def driver(self):
+        return self.__driver
+
+    def set_ali_mirror(self):
+        self.driver.mirror_type = MirrorType.Ali
+
+    def set_huawei_mirror(self):
+        self.driver.mirror_type = MirrorType.Huawei
+
+    @property
+    def get_cur_mirror(self):
+        return self.driver.mirror_type
 
     def install(self) -> str:
-        """
-        安装 geckodriver，返回Driver绝对路径
-        :return:
-        """
-        return self.geckodriver.install()
+        return self.driver.install()
+
+
+class GeckodriverManagerAliMirror:
+    def __init__(self, version='latest', path=None):
+        self.manager = GeckodriverManager(version=version, path=path)
+        self.manager.set_ali_mirror()
+
+    def install(self) -> str:
+        return self.manager.install()
+
+
+class GeckodriverManagerHuaweiMirror:
+    def __init__(self, version='latest', path=None):
+        self.manager = GeckodriverManager(version=version, path=path)
+        self.manager.set_huawei_mirror()
+
+    def install(self) -> str:
+        return self.manager.install()

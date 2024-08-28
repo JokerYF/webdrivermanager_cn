@@ -1,27 +1,42 @@
-"""
-ChromeDriver
-"""
-from webdrivermanager_cn.drivers.chrome import ChromeDriver
+from webdrivermanager_cn.core.mirror_manager import MirrorType
+from webdrivermanager_cn.driver.chrome import ChromeDriver
 
 
 class ChromeDriverManager:
-    """
-    ChromeDriver管理器
-    """
-
     def __init__(self, version='latest', path=None):
-        """
-        ChromeDriver管理器
-        :param version:
-            latest: 自动获取当前安装的Chrome版本最新的ChromeDriver版本号，如果获取失败则拉取最新的发行版本号
-            xxx.xxx.xxx.xxx: 指定的具体ChromeDriver版本号
-        :param path:
-        """
-        self.chromedriver = ChromeDriver(version=version, path=path)
+        self.__driver = ChromeDriver(version=version, path=path)
 
-    def install(self):
-        """
-        下载chromedriver，并返回本地路径
-        :return:
-        """
-        return self.chromedriver.install()
+    @property
+    def driver(self):
+        return self.__driver
+
+    def set_ali_mirror(self):
+        self.driver.mirror_type = MirrorType.Ali
+
+    def set_huawei_mirror(self):
+        self.driver.mirror_type = MirrorType.Huawei
+
+    @property
+    def get_cur_mirror(self):
+        return self.driver.mirror_type
+
+    def install(self) -> str:
+        return self.driver.install()
+
+
+class ChromeDriverManagerAliMirror:
+    def __init__(self, version='latest', path=None):
+        self.manager = ChromeDriverManager(version=version, path=path)
+        self.manager.set_ali_mirror()
+
+    def install(self) -> str:
+        return self.manager.install()
+
+
+class ChromeDriverManagerHuaweiMirror:
+    def __init__(self, version='latest', path=None):
+        self.manager = ChromeDriverManager(version=version, path=path)
+        self.manager.set_huawei_mirror()
+
+    def install(self) -> str:
+        return self.manager.install()
