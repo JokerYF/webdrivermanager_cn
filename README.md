@@ -1,7 +1,7 @@
 # WebDriverManagerCn V2
 
 > 基于 [阿里源](https://www.npmmirror.com/)、[华为源](https://mirrors.huaweicloud.com/) 整合的WebDriver下载工具
-> 
+>
 > 如有新的国内源，欢迎提Issue
 
 ## 开发背景
@@ -24,10 +24,10 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 
 > 如果有其他 WebDriver 需求请及时提Issue
 
-| Client  | Windows | MacOS |    Linux     |
-|:-------:|:-------:|:-----:|:------------:|
-| Chrome  |    ✅    |   ✅   |      ✅       |
-| Firefox |    ✅    |   ✅   |      ✅       |
+| Client  | Windows | MacOS | Linux |
+|:-------:|:-------:|:-----:|:-----:|
+| Chrome  |    ✅    |   ✅   |   ✅   |
+| Firefox |    ✅    |   ✅   |   ✅   |
 
 ## 使用方法
 
@@ -39,52 +39,52 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
 ### 导入使用
 
 - ChromeDriver
-  - 阿里源
-    ```python
-    from webdrivermanager_cn import ChromeDriverManagerAliMirror
-    
-    driver_path = ChromeDriverManagerAliMirror().install()
-    ```
-  - 华为源
-    ```python
-    from webdrivermanager_cn import ChromeDriverManagerHuaweiMirror
-
-    driver_path = ChromeDriverManagerHuaweiMirror().install()
-    ```
-  - 手动切换源
-    ```python
-    from webdrivermanager_cn import ChromeDriverManager
-
-    driver = ChromeDriverManager()
-    driver.set_ali_mirror()  # 切换为阿里源
-    driver.set_huawei_mirror()  # 切换为华为源
-
-    driver_path = driver.install()
-    ```
+    - 阿里源
+      ```python
+      from webdrivermanager_cn import ChromeDriverManagerAliMirror
+      
+      driver_path = ChromeDriverManagerAliMirror().install()
+      ```
+    - 华为源
+      ```python
+      from webdrivermanager_cn import ChromeDriverManagerHuaweiMirror
+  
+      driver_path = ChromeDriverManagerHuaweiMirror().install()
+      ```
+    - 手动切换源
+      ```python
+      from webdrivermanager_cn import ChromeDriverManager
+  
+      driver = ChromeDriverManager()
+      driver.set_ali_mirror()  # 切换为阿里源
+      driver.set_huawei_mirror()  # 切换为华为源
+  
+      driver_path = driver.install()
+      ```
 
 - Geckodriver
-  - 阿里源
-    ```python
-    from webdrivermanager_cn import GeckodriverManagerAliMirror
-    
-    driver_path = GeckodriverManagerAliMirror().install()
-    ```
-  - 华为源
-    ```python
-    from webdrivermanager_cn import GeckodriverManagerHuaweiMirror
-
-    driver_path = GeckodriverManagerHuaweiMirror().install()
-    ```
-  - 手动切换源
-    ```python
-    from webdrivermanager_cn import GeckodriverManager
-
-    driver = GeckodriverManager()
-    driver.set_ali_mirror()  # 切换为阿里源
-    driver.set_huawei_mirror()  # 切换为华为源
-
-    driver_path = driver.install()
-    ```
+    - 阿里源
+      ```python
+      from webdrivermanager_cn import GeckodriverManagerAliMirror
+      
+      driver_path = GeckodriverManagerAliMirror().install()
+      ```
+    - 华为源
+      ```python
+      from webdrivermanager_cn import GeckodriverManagerHuaweiMirror
+  
+      driver_path = GeckodriverManagerHuaweiMirror().install()
+      ```
+    - 手动切换源
+      ```python
+      from webdrivermanager_cn import GeckodriverManager
+  
+      driver = GeckodriverManager()
+      driver.set_ali_mirror()  # 切换为阿里源
+      driver.set_huawei_mirror()  # 切换为华为源
+  
+      driver_path = driver.install()
+      ```
 
 ## 全局变量
 
