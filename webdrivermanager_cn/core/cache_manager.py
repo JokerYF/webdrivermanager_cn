@@ -168,7 +168,8 @@ class DriverCacheManager(LogMixin):
         if not self.__json_exist:
             return {}
         with open(self.json_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
+            data = json.load(f)
+        return data if data else {}
 
     def __dump_cache(self, data: dict):
         with open(self.json_path, 'w+', encoding='utf-8') as f:
