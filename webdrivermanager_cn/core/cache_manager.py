@@ -256,9 +256,7 @@ class DriverCacheManager(LogMixin):
         以当前时间为准，清除超过清理时间的 WebDriver 目录
         :return:
         """
-        _clear_version = self.get_clear_version_by_read_time
-
-        for version in _clear_version:
+        for version in self.get_clear_version_by_read_time:
             clear_path = os.path.join(self.root_dir, self.driver_name, version)
             if os.path.exists(clear_path):
                 try:
