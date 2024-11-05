@@ -29,21 +29,41 @@ class CacheLock(LogMixin):
 
     @property
     def __id(self):
+        """
+        返回当前对象ID
+        :return:
+        """
         return str(id(self))
 
     @property
     def thread_lock(self):
+        """
+        返回当前线程的ID
+        :return:
+        """
         return str(threading.current_thread().ident)
 
     @property
     def lock_file(self):
+        """
+        返回锁定文件path
+        :return:
+        """
         return os.path.join(self.__path, '.locked')
 
     @property
     def is_locked(self):
+        """
+        是否加锁
+        :return:
+        """
         return os.path.exists(self.lock_file)
 
     def lock(self):
+        """
+        加锁
+        :return:
+        """
         if not self.is_locked:
             with open(self.lock_file, 'w+') as f:
                 f.write(f'{self.thread_lock}|{self.__id}')
@@ -53,6 +73,10 @@ class CacheLock(LogMixin):
             self.log.debug(f'缓存被其他线程加锁！{self.__get_lock_file_info}')
 
     def unlock(self):
+        """
+        解锁
+        :return:
+        """
         if self.is_locked:
             # 谁加锁谁解锁
             _thread, _key = self.__get_lock_file_info
@@ -64,6 +88,11 @@ class CacheLock(LogMixin):
                 self.log.debug(f'非当前线程和任务加锁！{_thread} | {_key}')
 
     def wait_unlock(self, timeout=30):
+        """
+        等待解锁
+        :param timeout:
+        :return:
+        """
         start = time.time()
         while time.time() - start <= timeout:
             if not self.is_locked:
@@ -78,6 +107,10 @@ class CacheLock(LogMixin):
 
     @property
     def __get_lock_file_info(self):
+        """
+        读取解析文件
+        :return:
+        """
         if not self.is_locked:
             return None, None
         with open(self.lock_file, 'r+') as f:
@@ -105,16 +138,29 @@ class DriverCacheManager(LogMixin):
 
     @property
     def root_dir(self):
+        """
+        cache文件目录
+        :return:
+        """
         path = os.path.join(self.__abs_path(self.__root_dir), '.webdriver')
         os.makedirs(path, exist_ok=True)
         return path
 
     @property
     def json_path(self):
+        """
+        cache文件目录
+        :return:
+        """
         return os.path.join(self.root_dir, 'driver_cache.json')
 
     @staticmethod
     def __abs_path(path):
+        """
+        返回绝对路径
+        :param path:
+        :return:
+        """
         if not path:
             path = os.path.expanduser('~')
         if not os.path.isabs(path):
@@ -123,6 +169,10 @@ class DriverCacheManager(LogMixin):
 
     @property
     def driver_version(self):
+        """
+        返回driver版本
+        :return:
+        """
         return self.__driver_version
 
     @driver_version.setter
@@ -131,6 +181,10 @@ class DriverCacheManager(LogMixin):
 
     @property
     def driver_name(self):
+        """
+        返回driver名称
+        :return:
+        """
         if not self.__driver_name:
             raise ValueError
         return self.__driver_name
@@ -141,6 +195,10 @@ class DriverCacheManager(LogMixin):
 
     @property
     def download_version(self):
+        """
+        返回下载driver版本
+        :return:
+        """
         if not self.__download_version:
             raise ValueError
         return self.__download_version
@@ -172,6 +230,11 @@ class DriverCacheManager(LogMixin):
         return data if data else {}
 
     def __dump_cache(self, data: dict):
+        """
+        写入缓存
+        :param data:
+        :return:
+        """
         with open(self.json_path, 'w+', encoding='utf-8') as f:
             json.dump(data, f, indent=4)
 
