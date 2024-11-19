@@ -19,7 +19,7 @@ class ChromeDriver(DriverManager):
             url = f'{mirror}/{self.download_version}/{self.get_driver_name}'
         else:
             url = f'{mirror}/{self.download_version}/{self.get_os_info}/{self.get_driver_name}'
-        self.log.debug(f'拼接下载url: {url}')
+        self.log.debug(f'拼接下载url {self.mirror_type} - {url}')
         return url
 
     @property

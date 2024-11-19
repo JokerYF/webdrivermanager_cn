@@ -18,7 +18,6 @@ class MirrorManager(ABC, LogMixin):
         if self.__type is None:
             self.__type = MirrorType.Ali
         assert self.__type in [MirrorType.Ali, MirrorType.Huawei], '传入的源类型不正确！'
-        self.log.debug(f'mirror_type: {self.__type}')
         return self.__type
 
     @property

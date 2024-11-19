@@ -167,11 +167,11 @@ class VersionManager(ABC):
         return
 
 
-class ChromeDriverVersionManager(GetClientVersion, VersionManager):
+class ChromeDriverVersionManager(VersionManager, GetClientVersion):
     def __init__(self, version="", mirror_type: MirrorType = None):
         super().__init__(version, mirror_type)
-        self.__download_version = None
 
+    @property
     def client_type(self):
         return ClientType.Chrome
 
@@ -185,15 +185,14 @@ class ChromeDriverVersionManager(GetClientVersion, VersionManager):
 
     @property
     def download_version(self):
-        if not self.__download_version:
-            if self.driver_version and self.driver_version != "latest":
-                self.__download_version = self.driver_version
-            elif self.driver_version == "latest":
-                self.__download_version = self.latest_version
-            else:
-                self.__download_version = self.__correct_version(self.get_local_version)
-            # self.log.info(f'Download ChromeDriverVersion: {_download_version}')
-        return self.__download_version
+        if self.driver_version and self.driver_version != "latest":
+            return self.driver_version
+        elif self.driver_version == "latest":
+            try:
+                return self.__correct_version(self.get_local_version)
+            except:
+                pass
+        return self.latest_version
 
     @property
     def is_new_version(self):
@@ -216,7 +215,7 @@ class ChromeDriverVersionManager(GetClientVersion, VersionManager):
         _parser = self.version_parser(version)
         _chrome_version = f'{_parser.major}.{_parser.minor}.{_parser.micro}'
 
-        if self.is_new_version:
+        if self.version_parser(version).major >= 115:
             # 根据json获取符合版本的版本号
             _url = self.mirror.latest_patch_version_url
             try:
@@ -236,7 +235,6 @@ class ChromeDriverVersionManager(GetClientVersion, VersionManager):
 class GeckodriverVersionManager(GetClientVersion, VersionManager):
     def __init__(self, version="", mirror_type: MirrorType = None):
         super().__init__(version, mirror_type)
-        self.__download_version = None
 
     @property
     def mirror(self):
