@@ -48,7 +48,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         self.__cache_manager.driver_name = self.driver_name
         self.__cache_manager.download_version = self.download_version
         self.__mirror_type = mirror_type
-        self.log.info(f'获取WebDriver: {self.driver_name} - {self.download_version}')
+        # self.log.info(f'获取WebDriver: {self.driver_name} - {self.download_version}')
 
     @property
     def mirror_type(self):
@@ -158,5 +158,6 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
             self.__cache_manager.clear_cache_path()
 
         os.chmod(driver_path, 0o755)
+        self.log.info(f'获取 {self.driver_name} - {self.download_version} - {driver_path}')
 
         return driver_path

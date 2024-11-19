@@ -167,7 +167,7 @@ class VersionManager(ABC):
         return
 
 
-class ChromeDriverVersionManager(GetClientVersion, VersionManager):
+class ChromeDriverVersionManager(VersionManager, GetClientVersion):
     def __init__(self, version="", mirror_type: MirrorType = None):
         super().__init__(version, mirror_type)
 
@@ -185,16 +185,14 @@ class ChromeDriverVersionManager(GetClientVersion, VersionManager):
 
     @property
     def download_version(self):
-        # 如果值存在，且不是latest，则直接返回
         if self.driver_version and self.driver_version != "latest":
             return self.driver_version
-
-        # 如果值是latest或者为空，则判断本地是否有版本号，有则返回本地版本号，没有则返回最新版本号
-        elif not self.driver_version or self.driver_version == "latest":
+        elif self.driver_version == "latest":
             try:
                 return self.__correct_version(self.get_local_version)
             except:
-                return self.latest_version
+                pass
+        return self.latest_version
 
     @property
     def is_new_version(self):
@@ -217,7 +215,7 @@ class ChromeDriverVersionManager(GetClientVersion, VersionManager):
         _parser = self.version_parser(version)
         _chrome_version = f'{_parser.major}.{_parser.minor}.{_parser.micro}'
 
-        if self.is_new_version:
+        if self.version_parser(version).major >= 115:
             # 根据json获取符合版本的版本号
             _url = self.mirror.latest_patch_version_url
             try:
