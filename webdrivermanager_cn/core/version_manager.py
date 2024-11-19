@@ -170,8 +170,8 @@ class VersionManager(ABC):
 class ChromeDriverVersionManager(GetClientVersion, VersionManager):
     def __init__(self, version="", mirror_type: MirrorType = None):
         super().__init__(version, mirror_type)
-        self.__download_version = None
 
+    @property
     def client_type(self):
         return ClientType.Chrome
 
@@ -185,15 +185,16 @@ class ChromeDriverVersionManager(GetClientVersion, VersionManager):
 
     @property
     def download_version(self):
-        if not self.__download_version:
-            if self.driver_version and self.driver_version != "latest":
-                self.__download_version = self.driver_version
-            elif self.driver_version == "latest":
-                self.__download_version = self.latest_version
-            else:
-                self.__download_version = self.__correct_version(self.get_local_version)
-            # self.log.info(f'Download ChromeDriverVersion: {_download_version}')
-        return self.__download_version
+        # 如果值存在，且不是latest，则直接返回
+        if self.driver_version and self.driver_version != "latest":
+            return self.driver_version
+
+        # 如果值是latest或者为空，则判断本地是否有版本号，有则返回本地版本号，没有则返回最新版本号
+        elif not self.driver_version or self.driver_version == "latest":
+            try:
+                return self.__correct_version(self.get_local_version)
+            except:
+                return self.latest_version
 
     @property
     def is_new_version(self):
@@ -236,7 +237,6 @@ class ChromeDriverVersionManager(GetClientVersion, VersionManager):
 class GeckodriverVersionManager(GetClientVersion, VersionManager):
     def __init__(self, version="", mirror_type: MirrorType = None):
         super().__init__(version, mirror_type)
-        self.__download_version = None
 
     @property
     def mirror(self):
