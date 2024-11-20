@@ -128,10 +128,6 @@ class VersionManager(ABC):
     def mirror_type(self):
         return self.__mirror_type
 
-    # @driver_version.setter
-    # def driver_version(self, version):
-    #     self.__version = version
-
     @property
     @abstractmethod
     def download_version(self):
