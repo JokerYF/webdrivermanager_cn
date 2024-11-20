@@ -105,6 +105,8 @@ class GetClientVersion(LogMixin):
         :return:
         """
         _version = self.__read_version_from_cmd(*self.cmd_dict(client))
+        if not _version:
+            raise RuntimeError(f'获取本地浏览器版本失败，请检查是否正确安装{client}')
         self.log.info(f'获取本地浏览器版本: {client} - {_version}')
         return _version
 
