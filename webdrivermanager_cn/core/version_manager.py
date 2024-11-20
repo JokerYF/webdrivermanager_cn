@@ -94,8 +94,7 @@ class GetClientVersion(LogMixin):
         ) as stream:
             stdout = stream.communicate()[0].decode()
             version = re.search(pattern, stdout)
-            version = version.group(0) if version else None
-        return version
+        return version.group(0) if version else None
 
     def get_version(self, client):
         """
