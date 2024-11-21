@@ -1,4 +1,5 @@
 import sys
+from functools import wraps
 
 import requests
 from requests import session
@@ -41,6 +42,27 @@ class Session(LogMixin):
         self._s.close()
 
 
+CACHE = {}
+
+
+def url_cache(func):
+    global CACHE
+    log = LogMixin().log
+
+    @wraps(func)
+    def wrapper(url):
+        if url not in CACHE.keys():
+            log.debug(f"未命中请求缓存 {url}")
+            res = func(url)
+            CACHE[url] = res
+            log.debug(f"请求缓存已添加 {url}")
+        log.debug(f"命中请求缓存 {url}")
+        return CACHE[url]
+
+    return wrapper
+
+
+@url_cache
 def request_get(url):
     with Session() as r:
         return r.get(url)

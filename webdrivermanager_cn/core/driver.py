@@ -66,9 +66,10 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         :return: path or None
         """
         _path = self.__cache_manager.get_cache(key='path')
-        if _path:
+        if _path and os.path.exists(_path):
             self.__cache_manager.set_read_cache_date()
-        return _path
+            return _path
+        return None
 
     @property
     def mirror(self):
