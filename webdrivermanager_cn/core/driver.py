@@ -147,6 +147,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         :raise: Exception，如果下载版本不存在，则会报错
         :return: abs path
         """
+        self.log.info(f'开始获取 {self.driver_name}-{self.get_os_info} - {self.download_version}')
         driver_path = self.get_driver_path_by_cache()
         if not driver_path:
             self.log.info('缓存不存在，开始下载...')
@@ -159,6 +160,6 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
             self.__cache_manager.clear_cache_path()
 
         os.chmod(driver_path, 0o755)
-        self.log.info(f'获取 {self.driver_name} - {self.download_version} - {driver_path}')
+        self.log.info(f'获取 {self.driver_name}-{self.get_os_info} - {self.download_version} - {driver_path}')
 
         return driver_path
