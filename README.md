@@ -101,6 +101,16 @@ wdmcn内置了一些全局变量，后续会根据需求继续添加，具体请
     - 如果您使用的wdmcn时间很长以后，webdriver会随着chrome等浏览器版本的迭代越来越多，现在可以默认删除无用的webdriver，可以使用`os.environ['WDM_CACHE_TIME'] = 5`
     设置，默认会清理5天前的webdriver，以减少磁盘占用。
 
+## 声明
+
+本项目基于 Apache-2.0 协议开源，目的仅供提供自动化测试工具使用，请勿用于非法用途。对于任何使用者的行为，本项目及本人不承担任何责任。
+
+本项目中，基于以下付网站提供服务，如有服务相关的问题，本人会积极推进，但是无法保证完全解决，请悉知风险。
+
+- [Gitee](https://gitee.com/)
+- [阿里云开源镜像站](https://www.npmmirror.com/)
+- [华为云开源镜像站](https://mirrors.huaweicloud.com/home)
+
 ## 其他
 
 如果在使用过程中有任何问题，欢迎提Issue，会在第一时间处理！
