@@ -57,3 +57,7 @@ class LogMixin:
         if not INIT_LOG_TITLE:
             logger.info(f'{"*" * 10} WebDriverManagerCn {"*" * 10}')
             INIT_LOG_TITLE = True
+
+
+def get_logger():
+    return LOGGER
