@@ -183,10 +183,10 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
     @property
     def download_version(self):
         if self.driver_version and self.driver_version != "latest":
-            return self.driver_version
+            return self.__correct_version(self.driver_version)
         elif self.driver_version == "latest":
             try:
-                return self.__correct_version(self.get_local_version)
+                return self.__correct_version(self.driver_version)
             except:
                 pass
         return self.latest_version
