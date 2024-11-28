@@ -186,7 +186,7 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
             return self.__correct_version(self.driver_version)
         elif self.driver_version == "latest":
             try:
-                return self.__correct_version(self.driver_version)
+                return self.__correct_version(self.get_local_version)
             except:
                 pass
         return self.latest_version
