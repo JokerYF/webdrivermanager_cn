@@ -167,6 +167,7 @@ class VersionManager(ABC):
 class ChromeDriverVersionManager(VersionManager, GetClientVersion):
     def __init__(self, version="", mirror_type: MirrorType = None):
         super().__init__(version, mirror_type)
+        self.__mirror = ChromeDriverMirror(self.mirror_type)
 
     @property
     def client_type(self):
@@ -176,9 +177,8 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
     def mirror(self):
         return ChromeDriverMirror(self.mirror_type)
 
-    @property
-    def mirror_host(self):
-        return self.mirror.mirror_url(self.download_version)
+    def mirror_host(self, new_version=True):
+        return self.mirror.mirror_url(new_version)
 
     @property
     def download_version(self):
@@ -199,20 +199,21 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
     def latest_version(self):
         return request_get(self.mirror.latest_version_url).json()['channels']['Stable']['version']
 
-    @property
-    def __version_list(self):
+    def __version_list(self, new_version=True):
         """
         解析driver url，获取所有driver版本
         :return:
         """
-        response_data = request_get(self.mirror_host).json()
+        response_data = request_get(self.mirror_host(new_version)).json()
         return [i["name"].replace("/", "") for i in response_data if 'LATEST' not in i]
 
     def __correct_version(self, version):
         _parser = self.version_parser(version)
         _chrome_version = f'{_parser.major}.{_parser.minor}.{_parser.micro}'
 
+        new_version = False
         if self.version_parser(version).major >= 115:
+            new_version = True
             # 根据json获取符合版本的版本号
             _url = self.mirror.latest_patch_version_url
             try:
@@ -223,8 +224,9 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
                     f'当前chrome版本: {_chrome_version}, '
                     f'没有找到合适的ChromeDriver版本 - {_url}'
                 )
+
         # 拉取符合版本list并获取最后一个版本号
-        _chrome_version_list = [i for i in self.__version_list if _chrome_version in i and 'LATEST' not in i]
+        _chrome_version_list = [i for i in self.__version_list(new_version) if _chrome_version in i and 'LATEST' not in i]
         _chrome_version_list = sorted(_chrome_version_list, key=lambda x: tuple(map(int, x.split('.'))))
         return _chrome_version_list[-1]
 
