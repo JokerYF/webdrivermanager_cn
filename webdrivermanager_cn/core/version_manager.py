@@ -178,12 +178,12 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
 
     @property
     def mirror_host(self):
-        return self.mirror.mirror_url(self.download_version)
+        return self.mirror.mirror_url(self.is_new_version)
 
     @property
     def download_version(self):
         if self.driver_version and self.driver_version != "latest":
-            return self.driver_version
+            return self.__correct_version(self.driver_version)
         elif self.driver_version == "latest":
             try:
                 return self.__correct_version(self.get_local_version)
@@ -193,7 +193,10 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
 
     @property
     def is_new_version(self):
-        return self.version_parser(self.download_version).major >= 115
+        version = self.driver_version
+        if not version or version == 'latest':
+            return True
+        return self.version_parser(version).major >= 115
 
     @property
     def latest_version(self):
@@ -212,7 +215,7 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
         _parser = self.version_parser(version)
         _chrome_version = f'{_parser.major}.{_parser.minor}.{_parser.micro}'
 
-        if self.version_parser(version).major >= 115:
+        if _parser.major >= 115:
             # 根据json获取符合版本的版本号
             _url = self.mirror.latest_past_version_url
             try:
