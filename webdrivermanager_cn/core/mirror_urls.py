@@ -1,6 +1,6 @@
 class VersionApi:
     ChromeDriverApiNew = 'https://gitee.com/Joker_JH/DriverRelease/raw/master/ChromeDriverLastVersion.json'
-    ChromeDriverLastPatchVersion = 'https://gitee.com/Joker_JH/DriverRelease/raw/master/ChromeDriverLatestPatchVersion.json'
+    ChromeDriverLastPastVersion = 'https://gitee.com/Joker_JH/DriverRelease/raw/master/ChromeDriverLatestPatchVersion.json'
     GeckodriverApiNew = 'https://gitee.com/Joker_JH/DriverRelease/raw/master/GeckodriverLastVersion.json'
 
 

@@ -52,7 +52,7 @@ class ChromeDriverMirror(MirrorManager):
 
     @property
     def latest_past_version_url(self):
-        return VersionApi.ChromeDriverLastPatchVersion
+        return VersionApi.ChromeDriverLastPastVersion
 
 
 class GeckodriverMirror(MirrorManager):
