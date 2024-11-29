@@ -34,13 +34,10 @@ class MirrorManager(ABC, LogMixin):
 
 
 class ChromeDriverMirror(MirrorManager):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.new_version = True
-
-    def mirror_url(self, new_version=True):
+    def mirror_url(self, version):
         if self.is_ali:
-            if new_version:
+            from webdrivermanager_cn.core.version_manager import ChromeDriverVersionManager
+            if ChromeDriverVersionManager(version).is_new_version:
                 return AliMirror.ChromeDriverUrlNew
             return AliMirror.ChromeDriverUrl
         elif self.is_huawei:
