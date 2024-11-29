@@ -19,8 +19,11 @@ stages:
         displayName: Python 单元测试
         pythonVersion: '3.9'
         commands:
+          - pip install -r requirements.txt
+          - ''
           - '# Python单元测试默认命令'
           - pytest --html=report/index.html
+          - ''
         report:
           path: report
           index: index.html
