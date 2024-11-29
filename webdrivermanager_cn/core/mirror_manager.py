@@ -71,8 +71,7 @@ class EdgeDriverMirror(MirrorManager):
     def mirror_url(self):
         if self.is_ali:
             return AliMirror.EdgeDriverUrl
-        else:
-            return PublicMirror.EdgeDriverUrl
+        return PublicMirror.EdgeDriverUrl
 
     @property
     def latest_version_url(self):
