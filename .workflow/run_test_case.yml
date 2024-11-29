@@ -1,0 +1,38 @@
+version: '1.0'
+name: run_test_case
+displayName: run_test_case
+triggers:
+  trigger: auto
+  push:
+    branches:
+      prefix:
+        - master
+stages:
+  - name: stage-d92ced3d
+    displayName: pytest
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: ut@python
+        name: unit_test_python
+        displayName: Python 单元测试
+        pythonVersion: '3.9'
+        commands:
+          - pip install -r requirements.txt
+          - ''
+          - '# Python单元测试默认命令'
+          - pytest --html=report/index.html
+          - ''
+        report:
+          path: report
+          index: index.html
+        checkpoints:
+          - key: TestPassRate
+            value: 100
+            logicalOperator: '&&'
+            relationalOperator: '>='
+        caches: []
+        notify: []
+        strategy:
+          retry: '0'
