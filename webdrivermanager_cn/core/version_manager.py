@@ -215,7 +215,7 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
         if self.version_parser(version).major >= 115:
             new_version = True
             # 根据json获取符合版本的版本号
-            _url = self.mirror.latest_patch_version_url
+            _url = self.mirror.latest_past_version_url
             try:
                 data = request_get(_url).json()
                 return data['builds'][_chrome_version]['version']

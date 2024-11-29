@@ -32,13 +32,6 @@ class MirrorManager(ABC, LogMixin):
     def mirror_url(self, *args, **kwargs):
         pass
 
-    @abstractmethod
-    def latest_version_url(self, *args, **kwargs):
-        pass
-
-    def latest_patch_version_url(self, *args, **kwargs):
-        pass
-
 
 class ChromeDriverMirror(MirrorManager):
     def __init__(self, *args, **kwargs):
@@ -58,7 +51,7 @@ class ChromeDriverMirror(MirrorManager):
         return VersionApi.ChromeDriverApiNew
 
     @property
-    def latest_patch_version_url(self):
+    def latest_past_version_url(self):
         return VersionApi.ChromeDriverLastPatchVersion
 
 
