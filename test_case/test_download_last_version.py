@@ -1,6 +1,5 @@
 import os.path
 import shutil
-import sys
 
 from webdrivermanager_cn import ChromeDriverManager, GeckodriverManager
 
