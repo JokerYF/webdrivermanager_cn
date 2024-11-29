@@ -14,8 +14,9 @@ class ChromeDriver(DriverManager):
 
     @property
     def download_url(self) -> str:
-        mirror = self.mirror.mirror_url(self.version_manager.is_new_version)
-        if self.mirror.is_huawei or (self.mirror.is_ali and not self.version_manager.is_new_version):
+        new_version = self.version_manager.is_new_version
+        mirror = self.mirror.mirror_url(new_version)
+        if self.mirror.is_huawei or (self.mirror.is_ali and not new_version):
             url = f'{mirror}/{self.download_version}/{self.get_driver_name}'
         else:
             url = f'{mirror}/{self.download_version}/{self.get_os_info}/{self.get_driver_name}'
