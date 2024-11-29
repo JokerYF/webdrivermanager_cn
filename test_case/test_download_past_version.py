@@ -23,6 +23,21 @@ class TestDownloadPastVersion:
         # assert os.path.exists(path), 'ChromeDriver下载失败'
         # shutil.rmtree(os.path.join(base_path, '.webdriver'))
 
+    def test_download_chromedriver_past_version2(self):
+        version = '115.0.5781.0'
+        # ali
+        dm = ChromeDriverManager(path=base_path, version=version)
+        dm.set_ali_mirror()
+        path = dm.install()
+        assert os.path.exists(path), 'ChromeDriver下载失败'
+        shutil.rmtree(os.path.join(base_path, '.webdriver'))
+
+        # huawei
+        dm.set_huawei_mirror()
+        path = dm.install()
+        assert os.path.exists(path), 'ChromeDriver下载失败'
+        shutil.rmtree(os.path.join(base_path, '.webdriver'))
+
     def test_download_geckodriver_past_version(self):
         version = 'v0.10.0'
         # ali
