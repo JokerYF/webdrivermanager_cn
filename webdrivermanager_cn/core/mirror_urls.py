@@ -1,7 +1,7 @@
 class VersionApi:
-    ChromeDriverApiNew = 'https://gitee.com/Joker_JH/DriverRelease/raw/master/ChromeDriverLastVersion.json'
-    ChromeDriverLastPastVersion = 'https://gitee.com/Joker_JH/DriverRelease/raw/master/ChromeDriverLatestPatchVersion.json'
-    GeckodriverApiNew = 'https://gitee.com/Joker_JH/DriverRelease/raw/master/GeckodriverLastVersion.json'
+    ChromeDriverApiNew = 'https://gitlab.com/JokerYF/DriverRelease/-/raw/master/ChromeDriverLastVersion.json'
+    ChromeDriverLastPastVersion = 'https://gitlab.com/JokerYF/DriverRelease/-/raw/master/ChromeDriverLatestPatchVersion.json'
+    GeckodriverApiNew = 'https://gitlab.com/Joker_JH/DriverRelease/raw/master/GeckodriverLastVersion.json'
 
 
 class PublicMirror:
