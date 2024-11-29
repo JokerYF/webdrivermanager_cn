@@ -13,7 +13,7 @@ variables:
 stages:
   - name: stage-3cc1e226
     displayName: pytest
-    strategy: naturally
+    strategy: fast
     trigger: auto
     executor: []
     steps:
