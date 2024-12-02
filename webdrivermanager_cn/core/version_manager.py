@@ -1,3 +1,4 @@
+import functools
 import os
 import re
 import subprocess
@@ -96,6 +97,7 @@ class GetClientVersion(LogMixin):
             version = re.search(pattern, stdout)
         return version.group(0) if version else None
 
+    @functools.lru_cache()
     def get_version(self, client):
         """
         获取指定浏览器版本
@@ -104,8 +106,6 @@ class GetClientVersion(LogMixin):
         :return:
         """
         _version = self.__read_version_from_cmd(*self.cmd_dict(client))
-        if not _version:
-            raise RuntimeError(f'获取本地浏览器版本失败，请检查是否正确安装: {client}')
         self.log.debug(f'获取本地浏览器版本: {client} - {_version}')
         return _version
 
@@ -185,17 +185,18 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
         if self.driver_version and self.driver_version != "latest":
             return self.__correct_version(self.driver_version)
         elif self.driver_version == "latest":
-            try:
-                return self.__correct_version(self.get_local_version)
-            except:
-                pass
+            local_version = self.get_local_version
+            if local_version:
+                return self.__correct_version(local_version)
         return self.latest_version
 
     @property
     def is_new_version(self):
         version = self.driver_version
         if not version or version == 'latest':
-            return True
+            version = self.get_local_version
+            if version is None:
+                return True
         return self.version_parser(version).major >= 115
 
     @property
