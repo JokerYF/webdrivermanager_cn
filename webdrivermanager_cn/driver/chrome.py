@@ -38,9 +38,9 @@ class ChromeDriver(DriverManager):
         if self.os_info.is_mac:
             mac_suffix = self.os_info.get_mac_framework
             if mac_suffix and mac_suffix in _os_type:
-                return "mac64_m1"
+                return "mac-arm64" if self.version_manager.is_new_version else 'mac64_m1'
             else:
-                return "mac64"
+                return "mac-x64" if self.version_manager.is_new_version else 'mac64'
         elif self.os_info.is_win:
             if not self.version_manager.is_new_version:
                 return 'win32'
