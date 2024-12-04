@@ -255,4 +255,7 @@ class GeckodriverVersionManager(GetClientVersion, VersionManager):
 
     @property
     def latest_version(self):
-        return request_get(self.mirror.latest_version_url).json()['latest']
+        # return request_get(self.mirror.latest_version_url).json()['latest']
+        data = request_get(self.mirror.latest_version_url).json()
+        return list(data['geckodriver'].keys())[0]
+
