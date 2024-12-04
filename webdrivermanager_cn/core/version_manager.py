@@ -23,6 +23,8 @@ CLIENT_PATTERN = {
     ClientType.Edge: r"\d+\.\d+\.\d+\.\d+",
 }
 
+LOCAL_VERSION_CACHE = None
+
 
 class GetClientVersion(LogMixin):
     """
@@ -154,7 +156,10 @@ class VersionManager(ABC):
 
     @property
     def get_local_version(self):
-        return GetClientVersion().get_version(self.client_type)
+        global LOCAL_VERSION_CACHE
+        if not LOCAL_VERSION_CACHE:
+            LOCAL_VERSION_CACHE = GetClientVersion().get_version(self.client_type)
+        return LOCAL_VERSION_CACHE
 
     @property
     def is_new_version(self):
