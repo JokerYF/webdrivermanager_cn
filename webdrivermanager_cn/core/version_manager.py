@@ -1,4 +1,3 @@
-import functools
 import os
 import re
 import subprocess
@@ -56,7 +55,6 @@ class GetClientVersion(LogMixin):
         :param client:
         :return:
         """
-        self.log.debug(f'当前OS: {self.os_type}')
         cmd_map = {
             OSType.MAC: {
                 ClientType.Chrome: r"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
@@ -76,7 +74,7 @@ class GetClientVersion(LogMixin):
         }
         cmd = cmd_map[self.os_type][client]
         client_pattern = CLIENT_PATTERN[client]
-        self.log.debug(f'执行命令: {cmd}, 解析方式: {client_pattern}')
+        self.log.debug(f'当前OS: {self.os_type} 执行命令: {cmd}, 解析方式: {client_pattern}')
         return cmd, client_pattern
 
     @staticmethod
@@ -97,7 +95,6 @@ class GetClientVersion(LogMixin):
             version = re.search(pattern, stdout)
         return version.group(0) if version else None
 
-    @functools.lru_cache()
     def get_version(self, client):
         """
         获取指定浏览器版本
@@ -117,7 +114,7 @@ class VersionManager(ABC):
 
     @property
     def driver_version(self):
-        return self.__version
+        return self.__version if self.__version else "latest"
 
     @driver_version.setter
     def driver_version(self, version):
@@ -182,18 +179,17 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
 
     @property
     def download_version(self):
-        if self.driver_version and self.driver_version != "latest":
-            return self.__correct_version(self.driver_version)
-        elif self.driver_version == "latest":
-            local_version = self.get_local_version
-            if local_version:
-                return self.__correct_version(local_version)
-        return self.latest_version
+        version = self.driver_version
+        if version == 'latest':
+            version = self.get_local_version
+            if version is None:
+                return self.latest_version
+        return self.__correct_version(version)
 
     @property
     def is_new_version(self):
         version = self.driver_version
-        if not version or version == 'latest':
+        if version == 'latest':
             version = self.get_local_version
             if version is None:
                 return True
@@ -258,4 +254,3 @@ class GeckodriverVersionManager(GetClientVersion, VersionManager):
         # return request_get(self.mirror.latest_version_url).json()['latest']
         data = request_get(self.mirror.latest_version_url).json()
         return list(data['geckodriver'].keys())[0]
-
