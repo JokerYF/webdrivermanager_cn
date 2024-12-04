@@ -28,4 +28,8 @@ class EnvMixin(LogMixin):
         :return:
         """
         os.environ[key] = str(value)
-        self.log.debug(f"set env {key} - {value}")
+        self.log.debug(f"set env {key} = {value}")
+
+
+class Env(EnvMixin):
+    pass

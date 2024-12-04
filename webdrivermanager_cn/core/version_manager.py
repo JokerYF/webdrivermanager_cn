@@ -7,6 +7,7 @@ from packaging import version as vs
 
 from webdrivermanager_cn.core.log_manager import LogMixin
 from webdrivermanager_cn.core.mirror_manager import ChromeDriverMirror, MirrorType, GeckodriverMirror
+from webdrivermanager_cn.core.mixin import Env
 from webdrivermanager_cn.core.os_manager import OSManager, OSType
 from webdrivermanager_cn.core.request import request_get
 
@@ -22,8 +23,6 @@ CLIENT_PATTERN = {
     ClientType.Firefox: r"\d+\.\d+\.\d+",
     ClientType.Edge: r"\d+\.\d+\.\d+\.\d+",
 }
-
-LOCAL_VERSION_CACHE = None
 
 
 class GetClientVersion(LogMixin):
@@ -156,10 +155,10 @@ class VersionManager(ABC):
 
     @property
     def get_local_version(self):
-        global LOCAL_VERSION_CACHE
-        if not LOCAL_VERSION_CACHE:
-            LOCAL_VERSION_CACHE = GetClientVersion().get_version(self.client_type)
-        return LOCAL_VERSION_CACHE
+        env = Env()
+        if not env.get(self.client_type):
+            env.set(self.client_type, GetClientVersion().get_version(self.client_type))
+        return env.get(self.client_type)
 
     @property
     def is_new_version(self):
