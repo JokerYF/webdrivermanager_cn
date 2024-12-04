@@ -2,7 +2,7 @@
 
 > 基于 [阿里源](https://www.npmmirror.com/)、[华为源](https://mirrors.huaweicloud.com/) 整合的WebDriver下载工具
 >
-> 如有新的国内源，欢迎提Issue
+> 如有新的国内源，欢迎提交Issue，或者提交PR贡献代码
 
 ## 开发背景
 
