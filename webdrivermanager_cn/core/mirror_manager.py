@@ -60,7 +60,7 @@ class GeckodriverMirror(MirrorManager):
 
     @property
     def latest_version_url(self):
-        return VersionApi.GeckodriverApiNew
+        return HuaweiMirror.GeckodriverVersion
 
 
 class EdgeDriverMirror(MirrorManager):

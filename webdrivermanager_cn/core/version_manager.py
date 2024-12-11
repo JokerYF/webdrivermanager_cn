@@ -7,6 +7,7 @@ from packaging import version as vs
 
 from webdrivermanager_cn.core.log_manager import LogMixin
 from webdrivermanager_cn.core.mirror_manager import ChromeDriverMirror, MirrorType, GeckodriverMirror
+from webdrivermanager_cn.core.mixin import Env
 from webdrivermanager_cn.core.os_manager import OSManager, OSType
 from webdrivermanager_cn.core.request import request_get
 
@@ -55,7 +56,6 @@ class GetClientVersion(LogMixin):
         :param client:
         :return:
         """
-        self.log.debug(f'当前OS: {self.os_type}')
         cmd_map = {
             OSType.MAC: {
                 ClientType.Chrome: r"/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version",
@@ -75,7 +75,7 @@ class GetClientVersion(LogMixin):
         }
         cmd = cmd_map[self.os_type][client]
         client_pattern = CLIENT_PATTERN[client]
-        self.log.debug(f'执行命令: {cmd}, 解析方式: {client_pattern}')
+        self.log.debug(f'当前OS: {self.os_type} 执行命令: {cmd}, 解析方式: {client_pattern}')
         return cmd, client_pattern
 
     @staticmethod
@@ -104,8 +104,6 @@ class GetClientVersion(LogMixin):
         :return:
         """
         _version = self.__read_version_from_cmd(*self.cmd_dict(client))
-        if not _version:
-            raise RuntimeError(f'获取本地浏览器版本失败，请检查是否正确安装: {client}')
         self.log.debug(f'获取本地浏览器版本: {client} - {_version}')
         return _version
 
@@ -117,7 +115,7 @@ class VersionManager(ABC):
 
     @property
     def driver_version(self):
-        return self.__version
+        return self.__version if self.__version else "latest"
 
     @driver_version.setter
     def driver_version(self, version):
@@ -157,7 +155,10 @@ class VersionManager(ABC):
 
     @property
     def get_local_version(self):
-        return GetClientVersion().get_version(self.client_type)
+        env = Env()
+        if not env.get(self.client_type):
+            env.set(self.client_type, GetClientVersion().get_version(self.client_type))
+        return env.get(self.client_type)
 
     @property
     def is_new_version(self):
@@ -182,20 +183,20 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
 
     @property
     def download_version(self):
-        if self.driver_version and self.driver_version != "latest":
-            return self.__correct_version(self.driver_version)
-        elif self.driver_version == "latest":
-            try:
-                return self.__correct_version(self.get_local_version)
-            except:
-                pass
-        return self.latest_version
+        version = self.driver_version
+        if version == 'latest':
+            version = self.get_local_version
+            if version is None:
+                return self.latest_version
+        return self.__correct_version(version)
 
     @property
     def is_new_version(self):
         version = self.driver_version
-        if not version or version == 'latest':
-            return True
+        if version == 'latest':
+            version = self.get_local_version
+            if version is None:
+                return True
         return self.version_parser(version).major >= 115
 
     @property
@@ -254,4 +255,6 @@ class GeckodriverVersionManager(GetClientVersion, VersionManager):
 
     @property
     def latest_version(self):
-        return request_get(self.mirror.latest_version_url).json()['latest']
+        # return request_get(self.mirror.latest_version_url).json()['latest']
+        data = request_get(self.mirror.latest_version_url).json()
+        return list(data['geckodriver'].keys())[0]
