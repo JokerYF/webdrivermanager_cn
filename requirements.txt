@@ -1,4 +1,4 @@
 packaging
-pytest==8.2.0
+pytest
 Requests
-urllib3==2.2.3
+urllib3
