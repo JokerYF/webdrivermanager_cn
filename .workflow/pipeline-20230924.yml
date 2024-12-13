@@ -22,6 +22,11 @@ stages:
         displayName: Python 单元测试
         pythonVersion: '3.9'
         commands:
+          - ''
+          - '# 查看文件列表'
+          - ls
+          - ''
+          - '# 构建依赖'
           - pip install -r requirements.txt
           - ''
           - '# Python单元测试默认命令'
