@@ -70,7 +70,7 @@ stages:
           - python --version
           - ''
           - '# 安装项目依赖'
-          - pip install --user -r requirements.txt
+          - '# pip install --user -r requirements.txt'
           - ''
           - '# 安装指定打包模块'
           - pip install setuptools wheel twine
