@@ -157,7 +157,8 @@ class VersionManager(ABC):
     def get_local_version(self):
         env = Env()
         if not env.get(self.client_type):
-            env.set(self.client_type, GetClientVersion().get_version(self.client_type))
+            driver_version = GetClientVersion().get_version(self.client_type)
+            env.set(self.client_type, (driver_version if driver_version else ''))
         return env.get(self.client_type)
 
     @property
@@ -186,7 +187,7 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
         version = self.driver_version
         if version == 'latest':
             version = self.get_local_version
-            if version is None:
+            if version:
                 return self.latest_version
         return self.__correct_version(version)
 
@@ -195,7 +196,7 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
         version = self.driver_version
         if version == 'latest':
             version = self.get_local_version
-            if version is None:
+            if version:
                 return True
         return self.version_parser(version).major >= 115
 
