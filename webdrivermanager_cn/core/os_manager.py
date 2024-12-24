@@ -43,8 +43,7 @@ class OSManager:
         """
         if platform.machine().endswith("64"):
             return 64
-        else:
-            return 32
+        return 32
 
     @property
     def get_os_type(self):
