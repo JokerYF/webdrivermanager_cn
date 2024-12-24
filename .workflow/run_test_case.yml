@@ -2,7 +2,7 @@ version: '1.0'
 name: run_test_case
 displayName: run_test_case
 triggers:
-  trigger: manual
+  trigger: auto
   push:
     branches:
       prefix:
