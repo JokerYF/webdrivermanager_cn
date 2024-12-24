@@ -51,9 +51,7 @@ class OSManager:
         获取操作系统类型
         :return:
         """
-        if self._os_type:
-            return self._os_type
-        return f"{self.get_os_name}{self.get_os_architecture}"
+        return self._os_type if self._os_type else f"{self.get_os_name}{self.get_os_architecture}"
 
     @staticmethod
     def is_arch(os_sys_type):
