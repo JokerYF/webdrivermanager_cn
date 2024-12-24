@@ -33,6 +33,18 @@ stages:
             logicalOperator: '&&'
             relationalOperator: '>='
         caches: []
-        notify: []
+        notify:
+          - certificate: 19b73520-9089-013d-19d6-3ee4d8100835
+            events:
+              - fail
+            content:
+              - repository
+              - pipeline
+              - stage
+              - task
+              - operator
+              - branch
+              - detail
+            type: dingtalk
         strategy:
           retry: '0'
