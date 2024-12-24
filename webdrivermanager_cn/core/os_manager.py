@@ -60,7 +60,8 @@ class OSManager:
         :param os_sys_type:
         :return:
         """
-        if "_m1" in os_sys_type or "_m2" in os_sys_type:
+        mac_cpu_list = ('_m1', '_m2')
+        if any(x in os_sys_type for x in mac_cpu_list):
             return True
         return platform.processor() != "i386"
 
