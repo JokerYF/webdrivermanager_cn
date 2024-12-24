@@ -19,7 +19,7 @@ stages:
         displayName: Python 单元测试
         pythonVersion: '3.12'
         commands:
-          - pip install -r requirements.txt
+          - pip install -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
           - ''
           - '# Python单元测试默认命令'
           - pytest --html=report/index.html
