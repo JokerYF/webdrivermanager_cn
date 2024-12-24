@@ -27,12 +27,12 @@ class OSManager:
         :return:
         """
         pl = sys.platform
-        if pl in ['linux', 'linux2']:
-            return OSType.LINUX
-        elif pl == "darwin":
-            return OSType.MAC
-        elif pl in ['win32', 'cygwin']:
+        if pl in ['win32', 'cygwin']:
             return OSType.WIN
+        elif pl in ["darwin"]:
+            return OSType.MAC
+        elif pl in ['linux', 'linux2']:
+            return OSType.LINUX
         raise OSError(f'WDM未适配当前OS系统: {pl}')
 
     @property
