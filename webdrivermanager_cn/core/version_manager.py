@@ -94,7 +94,7 @@ class GetClientVersion(LogMixin):
         ) as stream:
             stdout = stream.communicate()[0].decode()
             version = re.search(pattern, stdout)
-        return version.group(0) if version else ''
+        return version.group(0) if version else None
 
     def get_version(self, client):
         """
@@ -158,7 +158,8 @@ class VersionManager(ABC):
         env = Env()
         if not env.get(self.client_type):
             env.set(self.client_type, GetClientVersion().get_version(self.client_type))
-        return env.get(self.client_type)
+        _version = env.get(self.client_type)
+        return _version if _version.lower() != 'none' else None
 
     @property
     def is_new_version(self):
@@ -182,21 +183,22 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
         return self.mirror.mirror_url(self.is_new_version)
 
     @property
-    def download_version(self):
-        version = self.driver_version
-        if version == 'latest':
-            version = self.get_local_version
-            if not version:
+    def __get_effective_version(self):
+        _version = self.driver_version
+        if _version == 'latest':
+            _version = self.get_local_version
+            if not _version:
                 return self.latest_version
-        return self.__correct_version(version)
+        return _version
+
+    @property
+    def download_version(self):
+        _version = self.__get_effective_version
+        return self.__correct_version(_version)
 
     @property
     def is_new_version(self):
-        version = self.driver_version
-        if version == 'latest':
-            version = self.get_local_version
-            if not version:
-                return True
+        version = self.__get_effective_version
         return self.version_parser(version).major >= 115
 
     @property
