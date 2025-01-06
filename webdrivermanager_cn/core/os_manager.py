@@ -27,12 +27,12 @@ class OSManager:
         :return:
         """
         pl = sys.platform
-        if pl in ['linux', 'linux2']:
-            return OSType.LINUX
-        elif pl == "darwin":
-            return OSType.MAC
-        elif pl in ['win32', 'cygwin']:
+        if pl in ['win32', 'cygwin']:
             return OSType.WIN
+        elif pl in ["darwin"]:
+            return OSType.MAC
+        elif pl in ['linux', 'linux2']:
+            return OSType.LINUX
         raise OSError(f'WDM未适配当前OS系统: {pl}')
 
     @property
@@ -43,8 +43,7 @@ class OSManager:
         """
         if platform.machine().endswith("64"):
             return 64
-        else:
-            return 32
+        return 32
 
     @property
     def get_os_type(self):
@@ -52,9 +51,7 @@ class OSManager:
         获取操作系统类型
         :return:
         """
-        if self._os_type:
-            return self._os_type
-        return f"{self.get_os_name}{self.get_os_architecture}"
+        return self._os_type if self._os_type else f"{self.get_os_name}{self.get_os_architecture}"
 
     @staticmethod
     def is_arch(os_sys_type):
@@ -63,7 +60,8 @@ class OSManager:
         :param os_sys_type:
         :return:
         """
-        if "_m1" in os_sys_type or "_m2" in os_sys_type:
+        mac_cpu_list = ('_m1', '_m2')
+        if any(x in os_sys_type for x in mac_cpu_list):
             return True
         return platform.processor() != "i386"
 

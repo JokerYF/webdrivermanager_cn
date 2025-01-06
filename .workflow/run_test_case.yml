@@ -2,11 +2,16 @@ version: '1.0'
 name: run_test_case
 displayName: run_test_case
 triggers:
-  trigger: manual
+  trigger: auto
   push:
     branches:
       prefix:
         - master
+    paths:
+      precise:
+        - test_case/*
+      include:
+        - webdrivermanager_cn/*
 stages:
   - name: stage-d92ced3d
     displayName: pytest
@@ -17,9 +22,9 @@ stages:
       - step: ut@python
         name: unit_test_python
         displayName: Python 单元测试
-        pythonVersion: '3.9'
+        pythonVersion: '3.12'
         commands:
-          - pip install -r requirements.txt
+          - pip install -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
           - ''
           - '# Python单元测试默认命令'
           - pytest --html=report/index.html
@@ -33,6 +38,18 @@ stages:
             logicalOperator: '&&'
             relationalOperator: '>='
         caches: []
-        notify: []
+        notify:
+          - certificate: 19b73520-9089-013d-19d6-3ee4d8100835
+            events:
+              - fail
+            content:
+              - repository
+              - pipeline
+              - stage
+              - task
+              - operator
+              - branch
+              - detail
+            type: dingtalk
         strategy:
           retry: '0'

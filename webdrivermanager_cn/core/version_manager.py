@@ -158,7 +158,8 @@ class VersionManager(ABC):
         env = Env()
         if not env.get(self.client_type):
             env.set(self.client_type, GetClientVersion().get_version(self.client_type))
-        return env.get(self.client_type)
+        _version = env.get(self.client_type)
+        return _version if _version and _version.lower() != 'none' else None
 
     @property
     def is_new_version(self):
@@ -182,22 +183,26 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
         return self.mirror.mirror_url(self.is_new_version)
 
     @property
+    def __get_effective_version(self):
+        # 这里只解析传入的版本信息或者本地版本信息，获取失败则返回None
+        _version = self.driver_version
+        if _version == 'latest':
+            _version = self.get_local_version
+        return _version
+
+    @property
     def download_version(self):
-        version = self.driver_version
-        if version == 'latest':
-            version = self.get_local_version
-            if version is None:
-                return self.latest_version
-        return self.__correct_version(version)
+        _version = self.__get_effective_version
+        if not _version:
+            return self.latest_version
+        return self.__correct_version(_version)
 
     @property
     def is_new_version(self):
-        version = self.driver_version
-        if version == 'latest':
-            version = self.get_local_version
-            if version is None:
-                return True
-        return self.version_parser(version).major >= 115
+        _version = self.__get_effective_version
+        if not _version:
+            return True
+        return self.version_parser(_version).major >= 115
 
     @property
     def latest_version(self):

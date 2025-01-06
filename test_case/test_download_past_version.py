@@ -1,9 +1,13 @@
+import logging
 import os.path
 import shutil
 
 from webdrivermanager_cn import ChromeDriverManager, GeckodriverManager
 
 base_path = os.getcwd()
+
+os.environ['WDM_LOG'] = 'true'
+os.environ['WDM_LOG_LEVEL'] = f'{logging.DEBUG}'
 
 
 class TestDownloadPastVersion:

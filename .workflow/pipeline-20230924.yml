@@ -22,7 +22,12 @@ stages:
         displayName: Python 单元测试
         pythonVersion: '3.9'
         commands:
-          - pip install -r requirements.txt
+          - ''
+          - '# 查看文件列表'
+          - ls
+          - ''
+          - '# 构建依赖'
+          - pip install -U -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple --force-reinstall
           - ''
           - '# Python单元测试默认命令'
           - pytest --html=report/index.html
@@ -64,13 +69,11 @@ stages:
         displayName: Python 构建
         pythonVersion: '3.9'
         commands:
-          - pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-          - ''
           - '# 可以使用pip下载依赖'
           - python --version
           - ''
           - '# 安装项目依赖'
-          - pip install --user -r requirements.txt
+          - '# pip install --user -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple'
           - ''
           - '# 安装指定打包模块'
           - pip install setuptools wheel twine

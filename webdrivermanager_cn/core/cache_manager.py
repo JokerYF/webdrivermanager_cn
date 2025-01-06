@@ -6,6 +6,7 @@ import os
 import shutil
 import threading
 import time
+from json import JSONDecodeError
 
 from webdrivermanager_cn.core.config import clear_wdm_cache_time
 from webdrivermanager_cn.core.log_manager import LogMixin
@@ -224,10 +225,16 @@ class DriverCacheManager(LogMixin):
         self.__lock.wait_unlock()
 
         if not self.__json_exist:
+            self.log.debug(f'配置文件不存在: {self.json_path}')
             return {}
         with open(self.json_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        return data if data else {}
+            try:
+                data = json.load(f)
+            except JSONDecodeError:
+                data = None
+        _data = data if data else {}
+        self.log.debug(f"获取到的缓存信息: {_data}")
+        return _data
 
     def __dump_cache(self, data: dict):
         """
@@ -248,18 +255,20 @@ class DriverCacheManager(LogMixin):
             data = self.__read_cache
             key = self.format_key
 
+            self.log.debug(f'即将写入的数据: {self.driver_name} - {key} - {kwargs}')
+
             if self.driver_name not in data.keys():
                 data[self.driver_name] = {}
             if key not in data[self.driver_name].keys():
                 data[self.driver_name][key] = {}
 
-            driver_data = data[self.driver_name][key]
-            driver_data.update(kwargs)
+            data[self.driver_name][key].update(kwargs)
             try:
-                driver_data.pop('driver_name')  # WebDriver cache 信息内不记录这些字段
+                data[self.driver_name][key].pop('driver_name')  # WebDriver cache 信息内不记录这些字段
             except KeyError:
                 pass
             self.__dump_cache(data)
+            self.log.debug(f'写入缓存: {data}')
 
     @property
     def format_key(self) -> str:
