@@ -45,7 +45,7 @@ class LogMixin:
         LOGGER.setLevel(init_log_level())
 
         # log 格式
-        log_format = "%(asctime)s-[%(filename)s:%(lineno)d]-[%(levelname)s]: %(message)s"
+        log_format = "%(asctime)s-[%(levelname)s]: %(message)s"
         formatter = logging.Formatter(fmt=log_format)
         stream = logging.StreamHandler()
         stream.setFormatter(formatter)
