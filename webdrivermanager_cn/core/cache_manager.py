@@ -7,6 +7,7 @@ import shutil
 import threading
 import time
 from json import JSONDecodeError
+from pathlib import Path
 
 from webdrivermanager_cn.core.config import clear_wdm_cache_time
 from webdrivermanager_cn.core.log_manager import LogMixin
@@ -233,7 +234,7 @@ class DriverCacheManager(LogMixin):
             except JSONDecodeError:
                 data = None
         _data = data if data else {}
-        self.log.debug(f"获取到的缓存信息: {_data}")
+        self.log.debug(f"缓存文件大小: {os.path.getsize(self.json_path)}")
         return _data
 
     def __dump_cache(self, data: dict):
