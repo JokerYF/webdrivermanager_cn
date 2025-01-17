@@ -257,17 +257,16 @@ class DriverCacheManager(LogMixin):
             key = self.format_key
 
             self.log.debug(f'即将写入的数据: {self.driver_name} - {key} - {kwargs}')
-
             if self.driver_name not in data.keys():
                 data[self.driver_name] = {}
             if key not in data[self.driver_name].keys():
                 data[self.driver_name][key] = {}
 
+            # WebDriver cache 信息内不记录这些字段
+            if 'driver_name' in kwargs.keys():
+                kwargs.pop('driver_name')
+
             data[self.driver_name][key].update(kwargs)
-            try:
-                data[self.driver_name][key].pop('driver_name')  # WebDriver cache 信息内不记录这些字段
-            except KeyError:
-                pass
             self.__dump_cache(data)
             self.log.debug(f'写入缓存: {data}')
 
