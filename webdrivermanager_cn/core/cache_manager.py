@@ -7,7 +7,6 @@ import shutil
 import threading
 import time
 from json import JSONDecodeError
-from pathlib import Path
 
 from webdrivermanager_cn.core.config import clear_wdm_cache_time
 from webdrivermanager_cn.core.log_manager import LogMixin
