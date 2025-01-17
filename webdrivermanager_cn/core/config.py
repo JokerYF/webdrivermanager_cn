@@ -67,7 +67,9 @@ def clear_wdm_cache_time():
 
 def verify_not():
     """
-    禁用SSL认证（代理）
+    启用SSL认证（代理）
+    True: 启用
+    False：禁用
     默认为 False
     执行以下代码修改
     os.environ['WDM_VERIFY'] = 'true'
