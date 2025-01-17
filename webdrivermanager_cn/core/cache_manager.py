@@ -130,8 +130,6 @@ class DriverCacheManager(LogMixin):
         :param root_dir:
         """
         self.__root_dir = root_dir
-        # self.root_dir = os.path.join(self.__abs_path(root_dir), '.webdriver')
-        # self.__json_path = os.path.join(self.root_dir, 'driver_cache.json')
         self.__lock = CacheLock(self.root_dir)
         self.__driver_name = None
         self.__driver_version = None
