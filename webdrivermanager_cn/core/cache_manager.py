@@ -251,7 +251,7 @@ class DriverCacheManager(LogMixin):
         """
         with self.__lock:
             data = self.__read_cache
-            key = self.format_key
+            key = self.key
 
             self.log.debug(f'即将写入的数据: {self.driver_name} - {key} - {kwargs}')
             if self.driver_name not in data.keys():
@@ -267,13 +267,17 @@ class DriverCacheManager(LogMixin):
             self.__dump_cache(data)
             self.log.debug(f'写入缓存: {data}')
 
+    @staticmethod
+    def __format_key(driver_name, os_name, version):
+        return f'{driver_name}_{os_name}_{version}'
+
     @property
-    def format_key(self) -> str:
+    def key(self) -> str:
         """
         格式化缓存 key 名称
         :return:
         """
-        return f'{self.driver_name}_{OSManager().get_os_name}_{self.download_version}'
+        return self.__format_key(self.driver_name, OSManager().get_os_name, self.download_version)
 
     def get_cache(self, key):
         """
@@ -285,7 +289,7 @@ class DriverCacheManager(LogMixin):
         if not self.__json_exist:
             return None
         try:
-            return self.__read_cache[self.driver_name][self.format_key][key]
+            return self.__read_cache[self.driver_name][self.key][key]
         except KeyError:
             return None
 
@@ -337,8 +341,10 @@ class DriverCacheManager(LogMixin):
                 self.log.warning(f'缓存目录无该路径: {clear_path}')
 
             cache_data = self.__read_cache
-            self.download_version = version
-            cache_data[self.driver_name].pop(self.format_key)
-            self.set_cache(**cache_data)
+            __key = self.__format_key(self.driver_name, OSManager().get_os_name, version)
+            cache_data[self.driver_name].pop(__key)
+
+            with self.__lock:
+                self.__dump_cache(cache_data)
 
             self.log.info(f'清理过期WebDriver: {clear_path}')
