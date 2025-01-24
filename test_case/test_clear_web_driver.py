@@ -26,4 +26,5 @@ class TestClearWebDriver:
 
         cache_manager.clear_cache_path()
 
-        assert not cache_manager.get_cache('path'), 'WebDriver清理失败'
+        assert not os.path.exists(path), 'WebDriver清理失败'
+        assert not cache_manager.get_cache('path'), 'WebDriverCache清理失败'
