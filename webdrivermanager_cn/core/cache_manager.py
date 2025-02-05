@@ -207,6 +207,10 @@ class DriverCacheManager(LogMixin):
         self.__download_version = value
 
     @property
+    def os_name(self):
+        return OSManager().get_os_name
+
+    @property
     def __json_exist(self):
         """
         判断缓存文件是否存在
@@ -277,7 +281,7 @@ class DriverCacheManager(LogMixin):
         格式化缓存 key 名称
         :return:
         """
-        return self.__format_key(self.driver_name, OSManager().get_os_name, self.download_version)
+        return self.__format_key(self.driver_name, self.os_name, self.download_version)
 
     def get_cache(self, key):
         """
@@ -329,22 +333,22 @@ class DriverCacheManager(LogMixin):
         以当前时间为准，清除超过清理时间的 WebDriver 目录
         :return:
         """
+        cache_data = self.__read_cache
+
         for version in self.get_clear_version_by_read_time:
             clear_path = os.path.join(self.root_dir, self.driver_name, version)
             if os.path.exists(clear_path):
                 try:
                     shutil.rmtree(clear_path)
+                    self.log.info(f'清理过期WebDriver: {clear_path}')
                 except Exception as e:
                     self.log.error(f'清理过期WebDriver: {clear_path} 失败! {e}')
                     continue
             else:
                 self.log.warning(f'缓存目录无该路径: {clear_path}')
 
-            cache_data = self.__read_cache
-            __key = self.__format_key(self.driver_name, OSManager().get_os_name, version)
+            __key = self.__format_key(self.driver_name, self.os_name, version)
             cache_data[self.driver_name].pop(__key)
 
-            with self.__lock:
-                self.__dump_cache(cache_data)
-
-            self.log.info(f'清理过期WebDriver: {clear_path}')
+        self.__dump_cache(cache_data)
+        self.log.info(f'清理过期WebDriver: {self.driver_name} 成功!')
