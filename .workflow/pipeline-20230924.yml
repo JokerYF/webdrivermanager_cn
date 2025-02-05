@@ -76,7 +76,7 @@ stages:
           - pip install -U -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
           - ''
           - '# 安装指定打包模块'
-          - pip install -U setuptools wheel twine==6.0.0
+          - pip install -U setuptools wheel twine==6.0.0 -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
           - ''
           - '# 编译为wheel包'
           - python setup.py bdist_wheel
