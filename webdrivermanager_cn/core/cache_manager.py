@@ -4,119 +4,12 @@ Driver 缓存记录
 import json
 import os
 import shutil
-import threading
-import time
 from json import JSONDecodeError
 
 from webdrivermanager_cn.core.config import clear_wdm_cache_time
 from webdrivermanager_cn.core.log_manager import LogMixin
 from webdrivermanager_cn.core.os_manager import OSManager
 from webdrivermanager_cn.core.time_ import get_time
-
-
-class CacheLock(LogMixin):
-    """
-    实现缓存加锁
-    """
-
-    def __init__(self, cache_path):
-        self.__path = cache_path
-
-    def __enter__(self):
-        self.lock()
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.unlock()
-
-    @property
-    def __id(self):
-        """
-        返回当前对象ID
-        :return:
-        """
-        return str(id(self))
-
-    @property
-    def thread_lock(self):
-        """
-        返回当前线程的ID
-        :return:
-        """
-        return str(threading.current_thread().ident)
-
-    @property
-    def lock_file(self):
-        """
-        返回锁定文件path
-        :return:
-        """
-        return os.path.join(self.__path, '.locked')
-
-    @property
-    def is_locked(self):
-        """
-        是否加锁
-        :return:
-        """
-        return os.path.exists(self.lock_file)
-
-    def lock(self):
-        """
-        加锁
-        :return:
-        """
-        if not self.is_locked:
-            with open(self.lock_file, 'w+') as f:
-                f.write(f'{self.thread_lock}|{self.__id}')
-            assert self.is_locked, '缓存加锁失败！'
-            self.log.debug(f'缓存加锁成功！ {self.lock_file}')
-        else:
-            self.log.debug(f'缓存被其他线程加锁！{self.__get_lock_file_info}')
-
-    def unlock(self):
-        """
-        解锁
-        :return:
-        """
-        if self.is_locked:
-            # 谁加锁谁解锁
-            _thread, _key = self.__get_lock_file_info
-            if _key == self.__id:
-                os.remove(self.lock_file)
-                assert not self.is_locked, '缓存解锁失败！'
-                self.log.debug('缓存解锁成功！')
-            else:
-                self.log.debug(f'非当前线程和任务加锁！{_thread} | {_key}')
-
-    def wait_unlock(self, timeout=30):
-        """
-        等待解锁
-        :param timeout:
-        :return:
-        """
-        start = time.time()
-        while time.time() - start <= timeout:
-            if not self.is_locked:
-                return True
-
-            _thread, _key = self.__get_lock_file_info
-            if _thread == self.thread_lock:
-                return True
-
-            time.sleep(0.1)
-        raise TimeoutError(f'等待缓存解锁超时！')
-
-    @property
-    def __get_lock_file_info(self):
-        """
-        读取解析文件
-        :return:
-        """
-        if not self.is_locked:
-            return None, None
-        with open(self.lock_file, 'r+') as f:
-            _thread = f.read()
-        return _thread.split('|')[0], _thread.split('|')[1]
 
 
 class DriverCacheManager(LogMixin):
@@ -130,7 +23,6 @@ class DriverCacheManager(LogMixin):
         :param root_dir:
         """
         self.__root_dir = root_dir
-        self.__lock = CacheLock(self.root_dir)
         self.__driver_name = None
         self.__driver_version = None
         self.__download_version = None
@@ -224,8 +116,6 @@ class DriverCacheManager(LogMixin):
         读取缓存文件
         :return:
         """
-        self.__lock.wait_unlock()
-
         if not self.__json_exist:
             self.log.debug(f'配置文件不存在: {self.json_path}')
             return {}
@@ -253,22 +143,21 @@ class DriverCacheManager(LogMixin):
         :param kwargs:
         :return:
         """
-        with self.__lock:
-            data = self.__read_cache
-            key = self.key
+        data = self.__read_cache
+        key = self.key
 
-            self.log.debug(f'即将写入的数据: {self.driver_name} - {key} - {kwargs}')
-            if self.driver_name not in data.keys():
-                data[self.driver_name] = {}
-            if key not in data[self.driver_name].keys():
-                data[self.driver_name][key] = {}
+        self.log.debug(f'即将写入的数据: {self.driver_name} - {key} - {kwargs}')
+        if self.driver_name not in data.keys():
+            data[self.driver_name] = {}
+        if key not in data[self.driver_name].keys():
+            data[self.driver_name][key] = {}
 
-            # WebDriver cache 信息内不记录这些字段
-            if 'driver_name' in kwargs.keys():
-                kwargs.pop('driver_name')
+        # WebDriver cache 信息内不记录这些字段
+        if 'driver_name' in kwargs.keys():
+            kwargs.pop('driver_name')
 
-            data[self.driver_name][key].update(kwargs)
-            self.__dump_cache(data)
+        data[self.driver_name][key].update(kwargs)
+        self.__dump_cache(data)
 
     @staticmethod
     def __format_key(driver_name, os_name, version):
@@ -304,7 +193,7 @@ class DriverCacheManager(LogMixin):
         """
         _clear_version = []
         time_interval = clear_wdm_cache_time()
-        cache_dist = self.__read_cache.get(self.driver_name) if self.__read_cache.get(self.driver_name) else {}
+        cache_dist = self.__read_cache.get(self.driver_name, {})
         for driver, info in cache_dist.items():
             _version = info.get('version')
             try:
@@ -316,6 +205,7 @@ class DriverCacheManager(LogMixin):
                 self.log.debug(f'{self.driver_name} - {_version} 已过期 {read_time}, 即将清理!')
                 continue
             self.log.debug(f'{self.driver_name} - {_version} 尚未过期 {read_time}')
+        self.log.debug(f'需要清理的driver: {_clear_version}')
         return _clear_version
 
     def set_read_cache_date(self):
@@ -334,21 +224,23 @@ class DriverCacheManager(LogMixin):
         :return:
         """
         cache_data = self.__read_cache
+        need_clear_version = self.get_clear_version_by_read_time
 
-        for version in self.get_clear_version_by_read_time:
+        if not need_clear_version:
+            self.log.info(f'{self.driver_name} 没有过期的 WebDriver')
+            return
+
+        for version in need_clear_version:
             clear_path = os.path.join(self.root_dir, self.driver_name, version)
+            # 清理本地目录
             if os.path.exists(clear_path):
-                try:
-                    shutil.rmtree(clear_path)
-                    self.log.info(f'清理过期WebDriver: {clear_path}')
-                except Exception as e:
-                    self.log.error(f'清理过期WebDriver: {clear_path} 失败! {e}')
-                    continue
-            else:
-                self.log.warning(f'缓存目录无该路径: {clear_path}')
+                shutil.rmtree(clear_path)
 
+            # 清理缓存数据
             __key = self.__format_key(self.driver_name, self.os_name, version)
-            cache_data[self.driver_name].pop(__key)
+            if __key in cache_data[self.driver_name].keys():
+                cache_data[self.driver_name].pop(__key)
+            self.log.info(f'清理过期WebDriver: {clear_path}')
 
         self.__dump_cache(cache_data)
         self.log.info(f'清理过期WebDriver: {self.driver_name} 成功!')

@@ -136,7 +136,8 @@ class UnpackManager:
         文件解压缩，并返回解压缩后的路径
         :return:
         """
-        self.__unpack_obj(self.__path).extractall(self.__to_dir)
+        if not os.path.exists(self.__to_dir):
+            self.__unpack_obj(self.__path).extractall(self.__to_dir)
         return self.__to_dir
 
 

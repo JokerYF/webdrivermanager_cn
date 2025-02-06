@@ -6,7 +6,7 @@ import os.path
 
 from requests import RequestException
 
-from webdrivermanager_cn.core.cache_manager import DriverCacheManager, CacheLock
+from webdrivermanager_cn.core.cache_manager import DriverCacheManager
 from webdrivermanager_cn.core.download_manager import DownloadManager
 from webdrivermanager_cn.core.file_manager import FileManager
 from webdrivermanager_cn.core.mirror_manager import ChromeDriverMirror, MirrorType, GeckodriverMirror, EdgeDriverMirror
@@ -151,13 +151,12 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         driver_path = self.get_driver_path_by_cache()
         if not driver_path:
             self.log.info('缓存不存在，开始下载...')
-            with CacheLock(self.__cache_manager.root_dir):
-                try:
-                    driver_path = self.download()
-                    self.__set_cache(driver_path)
-                except RequestException as e:
-                    raise Exception(f"下载WebDriver: {self.driver_name}-{self.download_version} 失败！-- {e}")
-                self.__cache_manager.clear_cache_path()
+            try:
+                driver_path = self.download()
+                self.__set_cache(driver_path)
+            except RequestException as e:
+                raise Exception(f"下载WebDriver: {self.driver_name}-{self.download_version} 失败！-- {e}")
+            self.__cache_manager.clear_cache_path()
 
         os.chmod(driver_path, 0o755)
         self.log.info(f'获取 {self.driver_name}-{self.os_info} - {self.download_version} - {driver_path}')
