@@ -46,6 +46,8 @@ class LogMixin:
 
         # log 格式
         log_format = "%(asctime)s-[%(levelname)s]: %(message)s"
+        if LOGGER.level == logging.DEBUG:
+            log_format = "%(asctime)s-[%(filename)s:%(lineno)d]-[%(levelname)s]: %(message)s"
         formatter = logging.Formatter(fmt=log_format)
         stream = logging.StreamHandler()
         stream.setFormatter(formatter)

@@ -27,7 +27,7 @@ stages:
           - ls
           - ''
           - '# 构建依赖'
-          - pip install -U -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple --force-reinstall
+          - pip install -U -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
           - ''
           - '# Python单元测试默认命令'
           - pytest --html=report/index.html
@@ -73,10 +73,10 @@ stages:
           - python --version
           - ''
           - '# 安装项目依赖'
-          - '# pip install --user -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple'
+          - pip install -U -r requirements.txt -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
           - ''
           - '# 安装指定打包模块'
-          - pip install setuptools wheel twine
+          - pip install -U setuptools wheel twine==6.0.0 -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
           - ''
           - '# 编译为wheel包'
           - python setup.py bdist_wheel

@@ -19,7 +19,7 @@ class ChromeDriver(DriverManager):
         if self.mirror.is_huawei or (self.mirror.is_ali and not new_version):
             url = f'{mirror}/{self.download_version}/{self.get_driver_name}'
         else:
-            url = f'{mirror}/{self.download_version}/{self.get_os_info}/{self.get_driver_name}'
+            url = f'{mirror}/{self.download_version}/{self.os_info}/{self.get_driver_name}'
         self.log.debug(f'拼接下载url {self.mirror_type} - {url}')
         return url
 
@@ -29,19 +29,19 @@ class ChromeDriver(DriverManager):
 
     @property
     def get_driver_name(self) -> str:
-        _name = f"chromedriver-{self.get_os_info}.zip"
+        _name = f"chromedriver-{self.os_info}.zip"
         return _name if self.version_manager.is_new_version else _name.replace('-', '_')
 
     @property
-    def get_os_info(self):
-        _os_type = f"{self.os_info.get_os_type}{self.os_info.get_framework}"
+    def os_info(self):
+        _os_type = f"{self.os_manager.get_os_type}{self.os_manager.get_framework}"
         is_new_version = self.version_manager.is_new_version
-        if self.os_info.is_mac:
-            mac_suffix = self.os_info.get_mac_framework
+        if self.os_manager.is_mac:
+            mac_suffix = self.os_manager.get_mac_framework
             if mac_suffix and mac_suffix in _os_type:
                 return "mac-arm64" if is_new_version else 'mac64_m1'
             return "mac-x64" if is_new_version else 'mac64'
-        elif self.os_info.is_win:
+        elif self.os_manager.is_win:
             if not self.version_manager.is_new_version:
                 return 'win32'
         return _os_type
