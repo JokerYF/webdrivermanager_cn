@@ -269,7 +269,6 @@ class DriverCacheManager(LogMixin):
 
             data[self.driver_name][key].update(kwargs)
             self.__dump_cache(data)
-            self.log.debug(f'写入缓存: {data}')
 
     @staticmethod
     def __format_key(driver_name, os_name, version):
@@ -305,8 +304,9 @@ class DriverCacheManager(LogMixin):
         """
         _clear_version = []
         time_interval = clear_wdm_cache_time()
-        for driver, info in self.__read_cache[self.driver_name].items():
-            _version = info['version']
+        cache_dist = self.__read_cache.get(self.driver_name) if self.__read_cache.get(self.driver_name) else {}
+        for driver, info in cache_dist.items():
+            _version = info.get('version')
             try:
                 read_time = int(info['last_read_time'])
             except (KeyError, ValueError):
