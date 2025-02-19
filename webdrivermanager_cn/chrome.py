@@ -8,19 +8,39 @@ class ChromeDriverManager:
 
     @property
     def driver(self):
+        """
+        返回ChromeDriver对象
+        :return:
+        """
         return self.__driver
 
     def set_ali_mirror(self):
+        """
+        设置下载源为阿里源
+        :return:
+        """
         self.driver.mirror_type = MirrorType.Ali
 
     def set_huawei_mirror(self):
+        """
+        设置下载源为华为源
+        :return:
+        """
         self.driver.mirror_type = MirrorType.Huawei
 
     @property
     def get_cur_mirror(self):
+        """
+        获取当前下载源
+        :return:
+        """
         return self.driver.mirror_type
 
     def install(self) -> str:
+        """
+        下载ChromeDriver
+        :return:
+        """
         return self.driver.install()
 
 
