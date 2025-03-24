@@ -5,12 +5,14 @@ import json
 import os
 import shutil
 from json import JSONDecodeError
+from threading import Lock
 
 from webdrivermanager_cn.core.config import clear_wdm_cache_time
 from webdrivermanager_cn.core.log_manager import LogMixin
 from webdrivermanager_cn.core.os_manager import OSManager
 from webdrivermanager_cn.core.time_ import get_time
 
+lock = Lock()
 
 class DriverCacheManager(LogMixin):
     """
@@ -134,8 +136,9 @@ class DriverCacheManager(LogMixin):
         :param data:
         :return:
         """
-        with open(self.json_path, 'w+', encoding='utf-8') as f:
-            json.dump(data, f, indent=4)
+        with lock:
+            with open(self.json_path, 'w+', encoding='utf-8') as f:
+                json.dump(data, f, indent=4)
 
     def set_cache(self, **kwargs):
         """
