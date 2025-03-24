@@ -12,7 +12,20 @@ from webdrivermanager_cn.core.log_manager import LogMixin
 from webdrivermanager_cn.core.os_manager import OSManager
 from webdrivermanager_cn.core.time_ import get_time
 
-lock = Lock()
+
+def lock(func):
+    """
+    缓存锁
+    :param func:
+    :return:
+    """
+    __lock = Lock()
+
+    def wrapper(*args, **kwargs):
+        with __lock:
+            return func(*args, **kwargs)
+
+    return wrapper
 
 class DriverCacheManager(LogMixin):
     """
@@ -136,10 +149,10 @@ class DriverCacheManager(LogMixin):
         :param data:
         :return:
         """
-        with lock:
-            with open(self.json_path, 'w+', encoding='utf-8') as f:
-                json.dump(data, f, indent=4)
+        with open(self.json_path, 'w+', encoding='utf-8') as f:
+            json.dump(data, f, indent=4)
 
+    @lock
     def set_cache(self, **kwargs):
         """
         写入缓存文件
@@ -221,6 +234,7 @@ class DriverCacheManager(LogMixin):
             self.set_cache(last_read_time=f"{times}")
             self.log.debug(f'更新 {self.driver_name} - {self.download_version} 读取时间: {times}')
 
+    @lock
     def clear_cache_path(self):
         """
         以当前时间为准，清除超过清理时间的 WebDriver 目录
