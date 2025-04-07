@@ -5,27 +5,13 @@ import json
 import os
 import shutil
 from json import JSONDecodeError
-from threading import Lock
+from filelock import FileLock
 
 from webdrivermanager_cn.core.config import clear_wdm_cache_time
 from webdrivermanager_cn.core.log_manager import LogMixin
 from webdrivermanager_cn.core.os_manager import OSManager
 from webdrivermanager_cn.core.time_ import get_time
 
-
-def lock(func):
-    """
-    缓存锁
-    :param func:
-    :return:
-    """
-    __lock = Lock()
-
-    def wrapper(*args, **kwargs):
-        with __lock:
-            return func(*args, **kwargs)
-
-    return wrapper
 
 class DriverCacheManager(LogMixin):
     """
@@ -41,6 +27,7 @@ class DriverCacheManager(LogMixin):
         self.__driver_name = None
         self.__driver_version = None
         self.__download_version = None
+        self.__lock = FileLock(f'{self.json_path}.lock')
 
     @property
     def root_dir(self):
@@ -134,13 +121,14 @@ class DriverCacheManager(LogMixin):
         if not self.__json_exist:
             self.log.debug(f'配置文件不存在: {self.json_path}')
             return {}
-        with open(self.json_path, 'r', encoding='utf-8') as f:
-            try:
-                data = json.load(f)
-            except JSONDecodeError:
-                data = None
+        with self.__lock:
+            with open(self.json_path, 'r', encoding='utf-8') as f:
+                try:
+                    data = json.load(f)
+                except JSONDecodeError:
+                    data = None
         _data = data if data else {}
-        self.log.debug(f"缓存文件大小: {os.path.getsize(self.json_path)}")
+        # self.log.debug(f"缓存文件大小: {os.path.getsize(self.json_path)}")
         return _data
 
     def __dump_cache(self, data: dict):
@@ -149,10 +137,10 @@ class DriverCacheManager(LogMixin):
         :param data:
         :return:
         """
-        with open(self.json_path, 'w+', encoding='utf-8') as f:
-            json.dump(data, f, indent=4)
+        with self.__lock:
+            with open(self.json_path, 'w+', encoding='utf-8') as f:
+                json.dump(data, f, indent=4)
 
-    @lock
     def set_cache(self, **kwargs):
         """
         写入缓存文件
@@ -234,7 +222,6 @@ class DriverCacheManager(LogMixin):
             self.set_cache(last_read_time=f"{times}")
             self.log.debug(f'更新 {self.driver_name} - {self.download_version} 读取时间: {times}')
 
-    @lock
     def clear_cache_path(self):
         """
         以当前时间为准，清除超过清理时间的 WebDriver 目录
