@@ -75,6 +75,7 @@ class FileManager(LogMixin):
         for i in self.unpack_list():
             if driver_name == os.path.basename(i):
                 return i
+        raise FileNotFoundError(f'未找到Driver: {self.__driver_name} - {self.__unpack_path}')
 
 
 class UnpackManager:
