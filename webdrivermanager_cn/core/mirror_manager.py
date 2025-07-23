@@ -41,6 +41,7 @@ class ChromeDriverMirror(MirrorManager):
             return AliMirror.ChromeDriverUrl
         elif self.is_huawei:
             return HuaweiMirror.ChromeDriverUrl
+        raise Exception('暂不支持该源！')
 
     @property
     def latest_version_url(self):
@@ -57,6 +58,7 @@ class GeckodriverMirror(MirrorManager):
             return AliMirror.GeckodriverUrl
         elif self.is_huawei:
             return HuaweiMirror.GeckodriverUrl
+        raise Exception('暂不支持该源！')
 
     @property
     def latest_version_url(self):

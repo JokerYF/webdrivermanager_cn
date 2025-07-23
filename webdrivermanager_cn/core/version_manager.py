@@ -49,6 +49,7 @@ class GetClientVersion(LogMixin):
             if not os.path.exists(reg):
                 raise FileNotFoundError(f'当前Windows环境没有该命令: {reg}')
             return reg
+        return None
 
     def cmd_dict(self, client):
         """

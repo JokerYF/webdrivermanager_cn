@@ -51,6 +51,10 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         # self.log.info(f'获取WebDriver: {self.driver_name} - {self.download_version}')
 
     @property
+    def cache_dir(self):
+        return self.__cache_manager.root_dir
+
+    @property
     def mirror_type(self):
         if not self.__mirror_type:
             self.__mirror_type = MirrorType.Ali
@@ -65,10 +69,10 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
         获取 cache 中对应 WebDriver 的路径
         :return: path or None
         """
-        _path = self.__cache_manager.get_cache(key='path')
-        if _path and os.path.exists(_path):
+        path = self.__cache_manager.get_cache(key='path')
+        if path and os.path.exists(path):
             self.__cache_manager.set_read_cache_date()
-            return _path
+            return path
         return None
 
     @property
@@ -79,6 +83,7 @@ class DriverManager(EnvMixin, metaclass=abc.ABCMeta):
             return GeckodriverMirror(mirror_type=self.mirror_type)
         elif self.driver_name == DriverType.edge:
             return EdgeDriverMirror(mirror_type=self.mirror_type)
+        raise Exception(f"不支持的WebDriver: {self.driver_name}")
 
     def __set_cache(self, path):
         """

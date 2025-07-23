@@ -29,13 +29,11 @@ class Geckodriver(DriverManager):
 
     @property
     def os_info(self):
-        _os_type_suffix = self.os_manager.get_os_architecture
-        _os_type = self.os_manager.get_os_name
-
+        os_type_suffix = self.os_manager.get_os_architecture
+        os_type = self.os_manager.get_os_name
         if self.os_manager.is_aarch64:
-            _os_type_suffix = '-aarch64'
-        elif _os_type == OSType.MAC:
-            _os_type_suffix = ''
-            _os_type = 'macos'
-
-        return f'{_os_type}{_os_type_suffix}'
+            os_type_suffix = '-aarch64'
+        elif os_type == OSType.MAC:
+            os_type_suffix = ''
+            os_type = 'macos'
+        return f'{os_type}{os_type_suffix}'
