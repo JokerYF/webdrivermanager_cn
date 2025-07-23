@@ -56,7 +56,7 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
       from webdrivermanager_cn import ChromeDriverManager
   
       driver = ChromeDriverManager()
-      driver.set_ali_mirror()  # 切换为阿里源
+      driver.set_ali_mirror()  # 切换为阿里源（默认源，可以不需要显式设定）
       driver.set_huawei_mirror()  # 切换为华为源
   
       driver_path = driver.install()
@@ -80,7 +80,7 @@ ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源�
       from webdrivermanager_cn import GeckodriverManager
   
       driver = GeckodriverManager()
-      driver.set_ali_mirror()  # 切换为阿里源
+      driver.set_ali_mirror()  # 切换为阿里源（默认源，可以不需要显式设定）
       driver.set_huawei_mirror()  # 切换为华为源
   
       driver_path = driver.install()
