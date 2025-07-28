@@ -34,14 +34,14 @@ class ChromeDriver(DriverManager):
 
     @property
     def os_info(self):
-        _os_type = f"{self.os_manager.get_os_type}{self.os_manager.get_framework}"
+        os_type = f"{self.os_manager.get_os_type}{self.os_manager.get_framework}"
         is_new_version = self.version_manager.is_new_version
         if self.os_manager.is_mac:
             mac_suffix = self.os_manager.get_mac_framework
-            if mac_suffix and mac_suffix in _os_type:
+            if mac_suffix and mac_suffix in os_type:
                 return "mac-arm64" if is_new_version else 'mac64_m1'
             return "mac-x64" if is_new_version else 'mac64'
         elif self.os_manager.is_win:
             if not self.version_manager.is_new_version:
                 return 'win32'
-        return _os_type
+        return os_type

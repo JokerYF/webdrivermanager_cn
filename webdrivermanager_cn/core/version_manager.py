@@ -104,9 +104,9 @@ class GetClientVersion(LogMixin):
         :param client:
         :return:
         """
-        _version = self.__read_version_from_cmd(*self.cmd_dict(client))
-        self.log.debug(f'获取本地浏览器版本: {client} - {_version}')
-        return _version
+        version = self.__read_version_from_cmd(*self.cmd_dict(client))
+        self.log.debug(f'获取本地浏览器版本: {client} - {version}')
+        return version
 
 
 class VersionManager(ABC):
@@ -159,8 +159,8 @@ class VersionManager(ABC):
         env = Env()
         if not env.get(self.client_type):
             env.set(self.client_type, GetClientVersion().get_version(self.client_type))
-        _version = env.get(self.client_type)
-        return _version if _version and _version.lower() != 'none' else None
+        version = env.get(self.client_type)
+        return version if version and version.lower() != 'none' else None
 
     @property
     def is_new_version(self):
@@ -186,24 +186,24 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
     @property
     def __get_effective_version(self):
         # 这里只解析传入的版本信息或者本地版本信息，获取失败则返回None
-        _version = self.driver_version
-        if _version == 'latest':
-            _version = self.get_local_version
-        return _version
+        version = self.driver_version
+        if version == 'latest':
+            version = self.get_local_version
+        return version
 
     @property
     def download_version(self):
-        _version = self.__get_effective_version
-        if not _version:
+        version = self.__get_effective_version
+        if not version:
             return self.latest_version
-        return self.__correct_version(_version)
+        return self.__correct_version(version)
 
     @property
     def is_new_version(self):
-        _version = self.__get_effective_version
-        if not _version:
+        version = self.__get_effective_version
+        if not version:
             return True
-        return self.version_parser(_version).major >= 115
+        return self.version_parser(version).major >= 115
 
     @property
     def latest_version(self):
@@ -219,24 +219,24 @@ class ChromeDriverVersionManager(VersionManager, GetClientVersion):
         return [i["name"].replace("/", "") for i in response_data if 'LATEST' not in i]
 
     def __correct_version(self, version):
-        _parser = self.version_parser(version)
-        _chrome_version = f'{_parser.major}.{_parser.minor}.{_parser.micro}'
+        parser = self.version_parser(version)
+        chrome_version = f'{parser.major}.{parser.minor}.{parser.micro}'
 
-        if _parser.major >= 115:
+        if parser.major >= 115:
             # 根据json获取符合版本的版本号
-            _url = self.mirror.latest_past_version_url
+            url = self.mirror.latest_past_version_url
             try:
-                data = request_get(_url).json()
-                return data['builds'][_chrome_version]['version']
+                data = request_get(url).json()
+                return data['builds'][chrome_version]['version']
             except KeyError:
                 self.log.warning(
-                    f'当前chrome版本: {_chrome_version}, '
-                    f'没有找到合适的ChromeDriver版本 - {_url}'
+                    f'当前chrome版本: {chrome_version}, '
+                    f'没有找到合适的ChromeDriver版本 - {url}'
                 )
         # 拉取符合版本list并获取最后一个版本号
-        _chrome_version_list = [i for i in self.__version_list if _chrome_version in i and 'LATEST' not in i]
-        _chrome_version_list = sorted(_chrome_version_list, key=lambda x: tuple(map(int, x.split('.'))))
-        return _chrome_version_list[-1]
+        chrome_version_list = [i for i in self.__version_list if chrome_version in i and 'LATEST' not in i]
+        chrome_version_list = sorted(chrome_version_list, key=lambda x: tuple(map(int, x.split('.'))))
+        return chrome_version_list[-1]
 
 
 class GeckodriverVersionManager(GetClientVersion, VersionManager):

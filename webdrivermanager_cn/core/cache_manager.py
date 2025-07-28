@@ -5,6 +5,7 @@ import json
 import os
 import shutil
 from json import JSONDecodeError
+
 from filelock import FileLock
 
 from webdrivermanager_cn.core.config import clear_wdm_cache_time
@@ -127,9 +128,9 @@ class DriverCacheManager(LogMixin):
                     data = json.load(f)
                 except JSONDecodeError:
                     data = None
-        _data = data if data else {}
+        data = data if data else {}
         # self.log.debug(f"缓存文件大小: {os.path.getsize(self.json_path)}")
-        return _data
+        return data
 
     def __dump_cache(self, data: dict):
         """
@@ -195,22 +196,22 @@ class DriverCacheManager(LogMixin):
         获取超过清理时间的 WebDriver 版本
         :return:
         """
-        _clear_version = []
+        clear_version = []
         time_interval = clear_wdm_cache_time()
         cache_dist = self.__read_cache.get(self.driver_name, {})
         for driver, info in cache_dist.items():
-            _version = info.get('version')
+            version = info.get('version')
             try:
                 read_time = int(info['last_read_time'])
             except (KeyError, ValueError):
                 read_time = 0
             if not read_time or int(get_time('%Y%m%d')) - read_time >= time_interval:
-                _clear_version.append(_version)
-                self.log.debug(f'{self.driver_name} - {_version} 已过期 {read_time}, 即将清理!')
+                clear_version.append(version)
+                self.log.debug(f'{self.driver_name} - {version} 已过期 {read_time}, 即将清理!')
                 continue
-            self.log.debug(f'{self.driver_name} - {_version} 尚未过期 {read_time}')
-        self.log.debug(f'需要清理的driver: {_clear_version}')
-        return _clear_version
+            self.log.debug(f'{self.driver_name} - {version} 尚未过期 {read_time}')
+        self.log.debug(f'需要清理的driver: {clear_version}')
+        return clear_version
 
     def set_read_cache_date(self):
         """
@@ -241,9 +242,9 @@ class DriverCacheManager(LogMixin):
                 shutil.rmtree(clear_path)
 
             # 清理缓存数据
-            __key = self.__format_key(self.driver_name, self.os_name, version)
-            if __key in cache_data[self.driver_name].keys():
-                cache_data[self.driver_name].pop(__key)
+            key = self.__format_key(self.driver_name, self.os_name, version)
+            if key in cache_data[self.driver_name].keys():
+                cache_data[self.driver_name].pop(key)
             self.log.info(f'清理过期WebDriver: {clear_path}')
 
         self.__dump_cache(cache_data)
