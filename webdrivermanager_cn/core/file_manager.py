@@ -131,6 +131,7 @@ class UnpackManager:
             return zipfile.ZipFile
         elif self.is_tar_file:
             return TarFile
+        raise FileNotFoundError(f'未知的压缩文件类型: {self.__path}')
 
     def unpack(self) -> str:
         """
