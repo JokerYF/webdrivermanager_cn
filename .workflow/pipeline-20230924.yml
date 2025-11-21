@@ -6,7 +6,7 @@ triggers:
   push:
     tags:
       include:
-        - v\d\.\d\.\d
+        - v\d+\.\d+\.\d+
 variables:
   global:
     - pypi_account_token
