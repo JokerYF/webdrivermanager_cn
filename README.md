@@ -1,116 +1,220 @@
-# WebDriverManagerCn V2
+<div align="center">
 
-> 基于 [阿里源](https://www.npmmirror.com/)、[华为源](https://mirrors.huaweicloud.com/) 整合的WebDriver下载工具
->
-> 如有新的国内源，欢迎提交Issue，或者提交PR贡献代码
+# WebDriverManager CN
 
-## 开发背景
+[![Python Version](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI Version](https://img.shields.io/pypi/v/webdrivermanager-cn.svg)](https://pypi.org/project/webdrivermanager-cn/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](https://github.com/eternallyyf/webdrivermanagercn/blob/master/LICENSE)
+[![Downloads](https://img.shields.io/pypi/dm/webdrivermanager-cn.svg)](https://pypi.org/project/webdrivermanager-cn/)
 
-作者是测开一枚，一直在公司默默无闻的做着自动化测试，偶然公司同事安利 `webdriver_manager`
-这个模块可以有效解决Chrome频繁更新导致ChromeDriver无法使用的问题，可以直接更换国内源，解决默认为GitHub源而导致下载慢或者失败的问题。
+**基于国内镜像源的 WebDriver 自动管理工具**
 
-自动化项目引入这个模块后，效果很好，稳定性也很好，且一直相安无事。直到2023年中的某一天，这个平静的情况被打破了。。。
+[简体中文](README.md)
 
-ChromeDriver官方团队修改了发布方式，导致国内绝大部分的源都无法正确同步新版的ChromeDriver，作者使用的阿里源，也停留在了114版本上，无法继续更新。已向阿里源开发团队提交Issue后，已将新版ChromeDriver源同步完成，但是，已经无法按照新版源更换源地址实现下载了。
+</div>
 
-所以，经过作者研究源码，决定重新写一个下载模块，且基于国内源为下载源！
+---
 
-## 解决问题
+## 📖 简介
 
-本模块可以看作是 `webdriver_manager` 模块的国内平替，为那些公司无法通过魔法手段连接GitHub(比如作者公司T_T)
-，和需要持续更新WebDriver的自动化测试同学们提供服务。
+WebDriverManager CN 是一个基于 [阿里云镜像源](https://www.npmmirror.com/)
+和 [华为云镜像源](https://mirrors.huaweicloud.com/) 的 WebDriver 自动下载管理工具，是 `webdriver_manager` 的国内镜像版本。
 
-## 已实现功能
+### ✨ 特性
 
-> 如果有其他 WebDriver 需求请及时提Issue
+- 🚀 **自动下载** - 自动匹配浏览器版本并下载对应的 WebDriver
+- 🇨🇳 **国内加速** - 支持阿里云、华为云镜像源，下载速度快
+- 💾 **智能缓存** - 自动缓存已下载的驱动，避免重复下载
+- 🧹 **自动清理** - 可配置自动清理过期的驱动文件
+- 🔄 **灵活切换** - 支持多镜像源切换，保证可用性
+- 🎯 **跨平台** - 支持 Windows、MacOS、Linux
 
-| Client  | Windows | MacOS | Linux |
+---
+
+## 📦 安装
+
+### 使用 pip 安装
+
+```bash
+pip install webdrivermanager_cn
+```
+
+### 升级到最新版本
+
+```bash
+pip install -U webdrivermanager_cn
+```
+
+---
+
+## 🚀 快速开始
+
+### ChromeDriver 使用示例
+
+#### 方式一：使用阿里云镜像源（推荐）
+
+```python
+from webdrivermanager_cn import ChromeDriverManagerAliMirror
+
+driver_path = ChromeDriverManagerAliMirror().install()
+```
+
+#### 方式二：使用华为云镜像源
+
+```python
+from webdrivermanager_cn import ChromeDriverManagerHuaweiMirror
+
+driver_path = ChromeDriverManagerHuaweiMirror().install()
+```
+
+#### 方式三：手动切换镜像源
+
+```python
+from webdrivermanager_cn import ChromeDriverManager
+
+driver = ChromeDriverManager()
+driver.set_ali_mirror()  # 切换为阿里源（默认）
+# driver.set_huawei_mirror() # 切换为华为源
+
+driver_path = driver.install()
+```
+
+### Geckodriver (Firefox) 使用示例
+
+#### 使用阿里云镜像源
+
+```python
+from webdrivermanager_cn import GeckodriverManagerAliMirror
+
+driver_path = GeckodriverManagerAliMirror().install()
+```
+
+#### 使用华为云镜像源
+
+```python
+from webdrivermanager_cn import GeckodriverManagerHuaweiMirror
+
+driver_path = GeckodriverManagerHuaweiMirror().install()
+```
+
+#### 手动切换镜像源
+
+```python
+from webdrivermanager_cn import GeckodriverManager
+
+driver = GeckodriverManager()
+driver.set_ali_mirror()  # 切换为阿里源（默认）
+# driver.set_huawei_mirror() # 切换为华为源
+
+driver_path = driver.install()
+```
+
+---
+
+## 🛠️ 配置选项
+
+### 日志配置
+
+```python
+import os
+import logging
+
+# 开启日志功能（默认关闭）
+os.environ['WDM_LOG'] = 'true'
+
+# 设置日志级别（默认为 INFO）
+os.environ['WDM_LOG_LEVEL'] = str(logging.INFO)
+```
+
+### 自定义 Logger
+
+```python
+from webdrivermanager_cn.core.log_manager import set_logger
+import logging
+
+# 使用自定义 logger
+my_logger = logging.getLogger('my_custom_logger')
+set_logger(my_logger)
+```
+
+### 缓存管理
+
+```python
+import os
+
+# 设置缓存清理时间（单位：天，默认为 5 天）
+# 会自动删除 5 天前下载的旧版本 WebDriver
+os.environ['WDM_CACHE_TIME'] = '5'
+```
+
+---
+
+## 📊 支持的浏览器
+
+|   浏览器   | Windows | MacOS | Linux |
 |:-------:|:-------:|:-----:|:-----:|
 | Chrome  |    ✅    |   ✅   |   ✅   |
 | Firefox |    ✅    |   ✅   |   ✅   |
 
-## 使用方法
+> 💡 如需支持其他浏览器，欢迎提交 [Issue](https://gitee.com/Joker_JH/webdrivermanagercn/issues)
 
-### 安装升级
+---
 
-- 安装命令：`pip install webdrivermanager_cn`
-- 在线升级：`pip install -U webdrivermanager_cn`
+## 🤝 贡献
 
-### 导入使用
+欢迎贡献代码、提出建议或报告问题！
 
-- ChromeDriver
-    - 阿里源
-      ```python
-      from webdrivermanager_cn import ChromeDriverManagerAliMirror
-      
-      driver_path = ChromeDriverManagerAliMirror().install()
-      ```
-    - 华为源
-      ```python
-      from webdrivermanager_cn import ChromeDriverManagerHuaweiMirror
-  
-      driver_path = ChromeDriverManagerHuaweiMirror().install()
-      ```
-    - 手动切换源
-      ```python
-      from webdrivermanager_cn import ChromeDriverManager
-  
-      driver = ChromeDriverManager()
-      driver.set_ali_mirror()  # 切换为阿里源（默认源，可以不需要显式设定）
-      driver.set_huawei_mirror()  # 切换为华为源
-  
-      driver_path = driver.install()
-      ```
+1. Fork 本仓库
+2. 创建您的特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交您的更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 提交 Pull Request
 
-- Geckodriver
-    - 阿里源
-      ```python
-      from webdrivermanager_cn import GeckodriverManagerAliMirror
-      
-      driver_path = GeckodriverManagerAliMirror().install()
-      ```
-    - 华为源
-      ```python
-      from webdrivermanager_cn import GeckodriverManagerHuaweiMirror
-  
-      driver_path = GeckodriverManagerHuaweiMirror().install()
-      ```
-    - 手动切换源
-      ```python
-      from webdrivermanager_cn import GeckodriverManager
-  
-      driver = GeckodriverManager()
-      driver.set_ali_mirror()  # 切换为阿里源（默认源，可以不需要显式设定）
-      driver.set_huawei_mirror()  # 切换为华为源
-  
-      driver_path = driver.install()
-      ```
+如果您发现了新的国内镜像源，欢迎提交 Issue 或 PR！
 
-## 全局变量
+---
 
-wdmcn内置了一些全局变量，后续会根据需求继续添加，具体请看`config.py`，这里简单列举一下。
+## 📄 许可证
 
-- 日志功能
+本项目基于 [Apache-2.0](LICENSE) 协议开源。
 
-    - 日志功能默认关闭，可以通过`os.environ['WDM_LOG'] = 'true'`打开，默认为false
-    - 日志等级，可以通过`os.environ['WDM_LOG_LEVEL'] = f'{logging.INFO}'`修改，默认等级为INFO
-    - 自定义logger，可以通过导入`set_logger()`方法，将您自己的logger添加进来，则日志输出就会使用您的logger记录
+---
 
-- 定期清理旧的webdriver
+## ⚠️ 免责声明
 
-    - 如果您使用的wdmcn时间很长以后，webdriver会随着chrome等浏览器版本的迭代越来越多，现在可以默认删除无用的webdriver，可以使用`os.environ['WDM_CACHE_TIME'] = 5`
-    设置，默认会清理5天前的webdriver，以减少磁盘占用。
+本项目仅供自动化测试工具使用，请勿用于非法用途。对于任何使用者的行为，本项目及作者不承担任何责任。
 
-## 声明
-
-本项目基于 Apache-2.0 协议开源，目的仅供提供自动化测试工具使用，请勿用于非法用途。对于任何使用者的行为，本项目及本人不承担任何责任。
-
-本项目中，基于以下网站提供服务，如有服务相关的问题，本人会积极推进，但是无法保证完全解决，请悉知风险。
+本项目依赖以下第三方服务，如有相关问题，会积极推进解决，但无法保证完全解决：
 
 - [Gitee](https://gitee.com/)
 - [阿里云开源镜像站](https://www.npmmirror.com/)
 - [华为云开源镜像站](https://mirrors.huaweicloud.com/home)
 
-## 其他
+---
 
-如果在使用过程中有任何问题，欢迎提Issue，会在第一时间处理！
+## 📮 联系方式
+
+- **作者**: 御风
+- **Email**: eternallyyf@163.com
+- **项目地址**: [Gitee](https://gitee.com/Joker_JH/webdrivermanagercn)
+
+如果在使用过程中遇到任何问题，欢迎提交 [Issue](https://gitee.com/Joker_JH/webdrivermanagercn/issues)！
+
+---
+
+## 💡 开发背景
+
+作者是一名测试开发工程师，在自动化测试工作中使用 `webdriver_manager` 解决了 Chrome 频繁更新导致 ChromeDriver 无法使用的问题。
+
+然而，2023年中期，ChromeDriver 官方修改了发布方式，导致国内大部分镜像源无法正确同步新版本（停留在 114
+版本）。虽然阿里云镜像已经完成了新版同步，但原有的下载方式已经无法适配。
+
+因此，作者研究源码后决定重新开发一个基于国内镜像源的 WebDriver 管理工具，帮助无法访问 GitHub 的团队和个人继续使用自动化测试。
+
+---
+
+<div align="center">
+
+**如果这个项目对您有帮助，请给一个 ⭐️ Star！**
+
+</div>
