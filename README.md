@@ -51,7 +51,7 @@ pip install -U webdrivermanager_cn
 
 ### ChromeDriver 使用示例
 
-#### 方式一：使用阿里云镜像源（推荐）
+#### 使用阿里云镜像源（推荐）
 
 ```python
 from webdrivermanager_cn import ChromeDriverManagerAliMirror
@@ -59,7 +59,7 @@ from webdrivermanager_cn import ChromeDriverManagerAliMirror
 driver_path = ChromeDriverManagerAliMirror().install()
 ```
 
-#### 方式二：使用华为云镜像源
+#### 使用华为云镜像源
 
 ```python
 from webdrivermanager_cn import ChromeDriverManagerHuaweiMirror
@@ -67,7 +67,7 @@ from webdrivermanager_cn import ChromeDriverManagerHuaweiMirror
 driver_path = ChromeDriverManagerHuaweiMirror().install()
 ```
 
-#### 方式三：手动切换镜像源
+#### 手动切换镜像源
 
 ```python
 from webdrivermanager_cn import ChromeDriverManager
