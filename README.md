@@ -200,16 +200,6 @@ os.environ['WDM_CACHE_TIME'] = '5'
 
 如果在使用过程中遇到任何问题，欢迎提交 [Issue](https://gitee.com/Joker_JH/webdrivermanagercn/issues)！
 
----
-
-## 💡 开发背景
-
-作者是一名测试开发工程师，在自动化测试工作中使用 `webdriver_manager` 解决了 Chrome 频繁更新导致 ChromeDriver 无法使用的问题。
-
-然而，2023年中期，ChromeDriver 官方修改了发布方式，导致国内大部分镜像源无法正确同步新版本（停留在 114
-版本）。虽然阿里云镜像已经完成了新版同步，但原有的下载方式已经无法适配。
-
-因此，作者研究源码后决定重新开发一个基于国内镜像源的 WebDriver 管理工具，帮助无法访问 GitHub 的团队和个人继续使用自动化测试。
 
 ---
 
